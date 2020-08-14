@@ -1,48 +1,52 @@
 import 'dart:io';
-
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:haweyati/auth-pages/signup.dart';
-import 'package:haweyati/models/order-model.dart';
+import 'package:haweyati/models/dumpster_model.dart';
+import 'package:haweyati/models/hive-models/orders/dumpster-order_model.dart';
+import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
+import 'package:haweyati/models/hive-models/orders/order_model.dart';
+import 'package:haweyati/models/hive-models/orders/transaction_model.dart';
+import 'package:haweyati/models/hive-models/time-slots.dart';
 import 'package:haweyati/models/order-time_and_location.dart';
-import 'package:haweyati/pages/building-material/building-material-List.dart';
 import 'package:haweyati/pages/dumpster/calender/custom-datepicker.dart';
-import 'package:haweyati/src/utlis/local-data.dart';
+import 'package:haweyati/pages/payment/payment-method.dart';
+import 'package:haweyati/services/haweyati-service.dart';
+import 'package:haweyati/services/time-slots_service.dart';
+import 'package:haweyati/src/utlis/simple-future-builder.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
 import 'package:hive/hive.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/models/temp-model.dart';
-import 'package:haweyati/pages/orderDetail/orderDetail.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/emptyContainer.dart';
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-
 import 'package:haweyati/widgits/haweyati-appbody.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../locations-map_page.dart';
-import '../phoneNumber.dart';
+import 'dumpster-order-confirmation.dart';
 
-class TimeAndLocation extends StatefulWidget {
-  ConstructionService constructionService;
-  TimeAndLocation({this.constructionService});
+class DumpsterTimeAndLocation extends StatefulWidget {
+  final Dumpster dumpster;
+  DumpsterTimeAndLocation({this.dumpster});
   @override
-  _TimeAndLocationState createState() => _TimeAndLocationState();
+  _DumpsterTimeAndLocationState createState() => _DumpsterTimeAndLocationState();
 }
 
-class _TimeAndLocationState extends State<TimeAndLocation> {
-  static List<String> timeIntervals = ['6:00am-9:00am', '9:00am-12:00pm' ,'12:pm-3:00pm', '6:00pm-9:00pm', '9:00pm-12:00am'];
+class _DumpsterTimeAndLocationState extends State<DumpsterTimeAndLocation> {
+  Future<List<String>> timeSlots;
   SharedPreferences prefs;
-  String selectedInterval = timeIntervals[0];
+  String selectedInterval;
   var scaffoldKey = GlobalKey<ScaffoldState>();
   File _image;
-  DateTime dateTime;
+  DateTime dateTime = DateTime.now();
   OrderLocation dropOffLocation;
   String start = "...";
-  TimeOfDay _preferredTime;
+  var key= GlobalKey<RefreshIndicatorState>();
+  TextEditingController note = TextEditingController();
+
+
 
   Future getCamera() async {
     var image = await ImagePicker.pickImage(source: ImageSource.camera);
@@ -58,21 +62,48 @@ class _TimeAndLocationState extends State<TimeAndLocation> {
     });
   }
 
+
   @override
   void initState() {
     super.initState();
     initTimeAndLocation();
   }
 
+  Future<List<String>> fetchTimeSlots([bool flag=true]) async {
+    timeSlots = TimeSlotsService().getAvailableTimeSlots(0,flag);
+    timeSlots.then((value) {
+      selectedInterval = value[0];
+    });
+    return timeSlots;
+  }
+
   void initTimeAndLocation() async {
+    fetchTimeSlots();
     prefs = await SharedPreferences.getInstance();
     setState(() {
       dropOffLocation = OrderLocation(
           cords: LatLng(prefs.getDouble('latitude'),prefs.getDouble('latitude')),
-          address: prefs.getString('address')
+          address: prefs.getString('address'),
+          city: prefs.getString('city')
       );
     });
   }
+
+  void addOrder(Order order) async {
+    final box = await Hive.openBox('orders');
+    await box.clear();
+    box.add(order);
+    order.save();
+    print(order.city + "v");
+  }
+
+  void addTransaction(Transaction transaction) async {
+    final box = await Hive.openBox('transactions');
+    await box.clear();
+    box.add(transaction);
+    transaction.save();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,6 +118,7 @@ class _TimeAndLocationState extends State<TimeAndLocation> {
         child: ListView(
           padding: EdgeInsets.fromLTRB(20, 10, 20, 100),
           children: <Widget>[
+
             EmptyContainer(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -150,7 +182,16 @@ class _TimeAndLocationState extends State<TimeAndLocation> {
 
                 Expanded(
                   child: DatePickerField(
-                    onChanged: (date) => dateTime = date,
+                    onChanged: (date) async {
+                      dateTime = date;
+                      print(date?.day);
+                      if(date!=null){
+                        timeSlots = TimeSlotsService().getAvailableTimeSlots(0,date.day == DateTime.now().day);
+                        await timeSlots;
+                        setState(() {
+                        });
+                      }
+                    } ,
                   ),
                 ),
                 SizedBox(
@@ -163,28 +204,39 @@ class _TimeAndLocationState extends State<TimeAndLocation> {
                       decoration: BoxDecoration(color:Color(0xfff2f2f2f2),
                           borderRadius: BorderRadius.circular(15)),
                       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                        DropdownButton<String>(
-                          underline: SizedBox(),
-                          value: selectedInterval,
-                          items: timeIntervals.map((String value) {
-                            return new DropdownMenuItem<String>(
-                              value: value,
-                              child: Text('$value', textAlign: TextAlign.center),
+                        SimpleFutureBuilder.simpler(
+                          context : context,
+                          future: timeSlots,
+                          builder: (AsyncSnapshot<List<String>> timeSlots){
+                            return DropdownButton<String>(
+                              underline: SizedBox(),
+                              value: selectedInterval,
+                              items: timeSlots.data.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left:14.0),
+                                    child: Text('$value', textAlign: TextAlign.center),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (_) {
+                                setState(() {
+                                selectedInterval = _;
+                              });
+                              },
                             );
-                          }).toList(),
-                          onChanged: (_) {setState(() {
-                            selectedInterval = _;
-                          });
-                          },
+                        },
                         ),
                       ],)
                   ),
-                )   ],
+                )
+              ],
             ),
 
             
             
-            Text("Take a photo for contact less deliver and make sure to pay online.",style: boldText,)
+            Text("Take a photo for contact less delivery and make sure to pay online.",style: boldText,)
            ,
             SizedBox(height: 15,),Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -244,6 +296,7 @@ class _TimeAndLocationState extends State<TimeAndLocation> {
             SizedBox(
               height: 25,
             ),            TextFormField(
+              controller: note,
               scrollPadding: EdgeInsets.only(bottom: 150),
               maxLength: 80,
               maxLines: 2,
@@ -257,25 +310,27 @@ class _TimeAndLocationState extends State<TimeAndLocation> {
         ),
         showButton: true,
         onTap: () async {
-          var dumpsterOrder = await Hive.openBox('dumpster');
-          print(dumpsterOrder.values);
-
-          if(dateTime==null){
+          if(selectedInterval==null){
             scaffoldKey.currentState.showSnackBar(SnackBar(
-              content: Text('Please select drop off date'),
+              content: Text('Please select drop off time'),
               behavior: SnackBarBehavior.floating,
             ));
             return;
           }
+          await addOrder(Order(
+            image: _image?.path,
+            city: dropOffLocation.city,
+            service: 'Construction Dumpster',
+            dropOffDate: dateTime.toIso8601String(),
+            dropOffTime: selectedInterval,
+            address: dropOffLocation.address,
+            latitude: dropOffLocation.cords.latitude.toString(),
+            longitude: dropOffLocation.cords.longitude.toString(),
+            note: note.text,
+          ));
 
-//          CustomNavigator.navigateTo(context, PhoneNumber());
+          CustomNavigator.navigateTo(context, DumpsterOrderConfirmation(item: widget.dumpster,));
 
-//          Navigator.of(context).push(MaterialPageRoute(
-//              builder: (context) => OrderDetail(
-//                time: selectedInterval,
-//                date: dateTime.add(Duration(days: 10)),
-//                    constructionService: widget.constructionService,
-//                  )));
         },
         btnName:tr("Continue")
       ),
@@ -311,16 +366,4 @@ class _TimeAndLocationState extends State<TimeAndLocation> {
     );
   }
 
-  Widget _buildRowwithDetail({Widget child1, Widget child2}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Expanded(flex: 2, child: child1),
-        SizedBox(
-          width: 10,
-        ),
-        Expanded(flex: 2, child: EmptyContainer(child: child2)),
-      ],
-    );
-  }
 }

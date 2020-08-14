@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/bm-pricing.dart';
 import 'package:haweyati/models/building-material_sublist.dart';
-import 'package:haweyati/pages/building-material/productServiceDetail.dart';
+import 'package:haweyati/pages/building-material/building-quantity.dart';
 import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
@@ -9,7 +9,7 @@ import 'package:haweyati/widgits/stackButton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BuildingDetail extends StatefulWidget {
-  final BMSubList item;
+  final BMProduct item;
   BuildingDetail({this.item});
   @override
   _BuildingDetailState createState() => _BuildingDetailState();
@@ -18,6 +18,7 @@ class BuildingDetail extends StatefulWidget {
 class _BuildingDetailState extends State<BuildingDetail> {
 
   SharedPreferences prefs;
+  BMProduct bmItem;
   BMPricing pricing;
   @override
   void initState() {
@@ -27,13 +28,17 @@ class _BuildingDetailState extends State<BuildingDetail> {
 
   initDetail() async {
     var prefs = await SharedPreferences.getInstance();
-    widget.item.pricing.forEach((element) {
-      if(element.city== prefs.getString('city')){
+    bmItem = widget.item;
+    for(var item in widget.item.pricing){
+      if(item.city == prefs.getString('city')){
         setState(() {
-          pricing = element;
+          pricing = item;
         });
+        bmItem.pricing.clear();
+        bmItem.pricing.add(item);
+        break;
       }
-    });
+    }
   }
 
   @override
@@ -52,7 +57,7 @@ class _BuildingDetailState extends State<BuildingDetail> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: 250,
-                  child: (Image.network(HaweyatiService.convertImgUrl(widget.item.images[0].name),fit: BoxFit.cover,)),
+                  child: (Image.network(HaweyatiService.convertImgUrl(widget.item.image.name),fit: BoxFit.cover,)),
                 ),
                 SizedBox(
                   height: 20,
@@ -67,8 +72,7 @@ class _BuildingDetailState extends State<BuildingDetail> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      pricing?.price.toString(),
+                    Text("${pricing?.price12yard.toString()} / 12 Yard | ${pricing?.price20yard.toString()} / 20 Yard",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
@@ -89,10 +93,10 @@ class _BuildingDetailState extends State<BuildingDetail> {
           ),
           StackButton(
             onTap: () {
-//              CustomNavigator.navigateTo(
-//                  context, BuildingProductDetail());
+              CustomNavigator.navigateTo(
+                  context, BuildingProductDetail(item: bmItem ,));
             },
-            buttonName: "Rent Now ",
+            buttonName: "Buy Now ",
           )
         ],
       ),

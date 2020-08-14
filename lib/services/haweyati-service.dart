@@ -5,12 +5,15 @@ import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/src/utlis/local-data.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
 abstract class HaweyatiService<T> {
 
   Dio dio = Dio();
+  SharedPreferences prefs;
+
 
 
   Future<List<T>> getAll(String route) async {
@@ -57,8 +60,8 @@ abstract class HaweyatiService<T> {
     return jsonDecode(encodedData).cast<Map<String, dynamic>>();
   }
 
-  static getConvertedImageUrl(String url) {
-    return "$apiUrl/$url";
+  static resolveImage(String url) {
+    return "$apiUrl/uploads/$url";
   }
 
   T parse(Map<String, dynamic> item);
@@ -89,8 +92,44 @@ abstract class HaweyatiService<T> {
         print(e.request);
         print(e.message);
       }
+      return e.response.data['message'];
+
     }
   }
+
+
+
+  static patch(String route, data) async {
+    Dio dio =  Dio();
+
+    try {
+      print('$apiUrl/$route');
+      Response response = await dio.patch("$apiUrl/$route", data: data,options: Options(
+
+      ));
+      print(response.data);
+      return response;
+    }
+    on DioError catch(e) {
+//      return e;
+
+
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx and is also not 304.
+      if (e.response != null) {
+        print(e.response.data);
+        print(e.response.headers);
+        print(e.response.request);
+      } else {
+        // Something happened in setting up or sending the request that triggered an Error
+        print(e.request);
+        print(e.message);
+      }
+      return e.response.data['message'];
+
+    }
+  }
+
 
   static convertImgUrl(String url){
     return "$apiUrl/uploads/$url";
@@ -98,9 +137,17 @@ abstract class HaweyatiService<T> {
 
 
   Future<T> getOne(String route) async {
+    prefs = await SharedPreferences.getInstance();
     print("$apiUrl/$route");
-    final response = await dio.get('$apiUrl/$route'
+    final response = await dio.get('$apiUrl/$route',
+      options: Options(
+        headers: {
+          'Authorization' : "Bearer ${prefs.getString('bearer')}"
+        }
+      )
     );
+
+    print(response.data);
 
     switch(response.statusCode){
       case 200:

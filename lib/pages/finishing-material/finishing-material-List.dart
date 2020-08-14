@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/finishing-material_category.dart';
-import 'package:haweyati/models/temp-model.dart';
-import 'package:haweyati/pages/dumpster/dumpsterDetail.dart';
 import 'package:haweyati/services/finishing-material_service.dart';
-import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/src/utlis/simple-future-builder.dart';
 import 'package:haweyati/widgits/appBar.dart';
@@ -47,10 +44,9 @@ class _FinishingMaterialListingState extends State<FinishingMaterialListing> {
                 itemCount: snapshot.data.length,
                 itemBuilder: (context,i){
                   var fMaterial = snapshot.data[i];
-                  return
-                    ContainerDetailList(
+                  return ContainerDetailList(
                       name: fMaterial.name,
-                      imgpath: fMaterial.images[0].name,
+                      imgpath: fMaterial.image.name,
                       ontap: (){
                         CustomNavigator.navigateTo(context, FinishingMaterialSubList(material: fMaterial,));
                       }) ;

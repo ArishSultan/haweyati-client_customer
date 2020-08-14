@@ -1,24 +1,60 @@
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/models/dumpstermodel.dart';
-import 'package:haweyati/models/temp-model.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:haweyati/models/finishing-product.dart';
+import 'package:haweyati/models/hive-models/orders/finishing-material_order.dart';
+import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
+import 'package:haweyati/models/hive-models/orders/order_model.dart';
+import 'package:haweyati/models/order-time_and_location.dart';
 import 'package:haweyati/pages/payment/payment-method.dart';
+import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/widgits/appBar.dart';
+import 'package:haweyati/widgits/custom-navigator.dart';
 import 'package:haweyati/widgits/emptyContainer.dart';
 import 'package:haweyati/widgits/haweyati-appbody.dart';
-import 'package:haweyati/widgits/stackButton.dart';
+import 'package:haweyati/widgits/order-location-picker.dart';
+import 'package:hive/hive.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class FinishingOrderDetail extends StatefulWidget {
-  ConstructionService constructionService;
-  FinishingOrderDetail({this.constructionService});
-
+class FinishingOrderConfirmation extends StatefulWidget {
+  FinProduct product;
+  FinishingOrderConfirmation({this.product});
   @override
-  _FinishingOrderDetailState createState() => _FinishingOrderDetailState();
+  _FinishingOrderConfirmationState createState() => _FinishingOrderConfirmationState();
 }
 
-class _FinishingOrderDetailState extends State<FinishingOrderDetail> {
+class _FinishingOrderConfirmationState extends State<FinishingOrderConfirmation> {
+
+  OrderLocation dropOffLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  void addOrder(Order order) async {
+    final box = await Hive.openBox('orders');
+    await box.clear();
+    box.add(order);
+    order.save();
+  }
+
+  init() async {
+    SharedPreferences.getInstance().then((value) {
+      setState(() {
+        dropOffLocation = OrderLocation(
+            cords: LatLng(value.getDouble('latitude'),value.getDouble('latitude')),
+            address: value.getString('address'),
+            city: value.getString('city')
+        );
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,18 +62,55 @@ class _FinishingOrderDetailState extends State<FinishingOrderDetail> {
         appBar: HaweyatiAppBar(context: context,),
         body: HaweyatiAppBody(
           title: "Orders",
-          btnName:tr("Continue"),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => PaymentMethod(
-                  constructionService: widget.constructionService,
-                )));
+          btnName:tr("Place Order"),
+          onTap: () async {
+            //Place finishing material order
+            PaymentResponse paymentResponse = await CustomNavigator.navigateTo(context, SelectPaymentMethod());
+            if(paymentResponse!=null){
+              var finishingMaterialBox = await Hive.openBox('finishing-material-order');
+              var finishingMaterialOrder = await finishingMaterialBox.values.first as FMOrder;
+
+              await addOrder(Order(
+                customer: '5f327c6b49be90233077aa68',
+                city: dropOffLocation.city,
+                paymentType: 'COD',
+                order: OrderDetails(
+                    items: [finishingMaterialOrder],
+                    netTotal: 200
+                ),
+                address: dropOffLocation.address,
+                latitude: dropOffLocation.cords.latitude.toString(),
+                longitude: dropOffLocation.cords.longitude.toString(),
+                service: 'Finishing Material',
+              ));
+
+              var postOrder = await HaweyatiService.post('orders',FormData.fromMap(Order(
+                customer: '5f327c6b49be90233077aa68',
+                city: dropOffLocation.city,
+                paymentType: 'COD',
+                order: OrderDetails(
+                    items: [finishingMaterialOrder],
+                    netTotal: 200
+                ),
+                address: dropOffLocation.address,
+                latitude: dropOffLocation.cords.latitude.toString(),
+                longitude: dropOffLocation.cords.longitude.toString(),
+                service: 'Finishing Material',
+              ).toJson()) );
+
+            }
+
           },
           showButton: true,
-          detail: "Lorem ipsum",
+          detail: "Please confirm your order details",
           child: ListView(
-            padding: EdgeInsets.fromLTRB(15, 30, 15, 100),
+            padding: EdgeInsets.fromLTRB(15, 0, 15, 100),
             children: <Widget>[
+              OrderLocationPicker(
+                onLocationChanged: (OrderLocation location){
+                  location = location;
+                },
+              ),
               EmptyContainer(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -69,12 +142,11 @@ class _FinishingOrderDetailState extends State<FinishingOrderDetail> {
                     ),
                     Row(
                       children: <Widget>[
-                        Image.asset(widget.constructionService.image,width: 60,height: 60,)
-                        ,                        SizedBox(
+                        Image.network(HaweyatiService.convertImgUrl(widget.product.images.name),width: 60,height: 60,),SizedBox(
                           width: 12,
                         ),
                         Text(
-                          widget.constructionService.title,
+                          widget.product.name,
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         )
@@ -114,7 +186,7 @@ class _FinishingOrderDetailState extends State<FinishingOrderDetail> {
                     Row(
                       children: <Widget>[
                         Expanded(
-                          child: Text(widget.constructionService.detail.rate),
+                          child: Text(widget.product.description),
                           flex: 4,
                         ),
                         Expanded(
@@ -186,8 +258,6 @@ class _FinishingOrderDetailState extends State<FinishingOrderDetail> {
                     ),
                     _builddetailRow(
                         text1: "1 June 2020", text2: "3.00 - 6.00 PM")
-
-/////////////////////////////,
                   ],
                 ),
               ),

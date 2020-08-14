@@ -6,6 +6,7 @@ class HaweyatiTextField extends TextFormField {
   HaweyatiTextField({
     IconData icon,
     String label,
+    bool dense=false,
     TextInputType keyboardType,
     BuildContext context,
     TextEditingController controller,
@@ -23,6 +24,7 @@ class HaweyatiTextField extends TextFormField {
     ),
     scrollPadding: EdgeInsets.all(180),
     decoration: InputDecoration(
+      isDense: dense,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
         borderSide: BorderSide(color: Colors.black, width: 5)

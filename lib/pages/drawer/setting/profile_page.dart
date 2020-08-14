@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/pages/drawer/setting/edit-profile.dart';
+import 'package:haweyati/services/haweyati-service.dart';
+import 'package:haweyati/src/utlis/hive-local-data.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
 
@@ -13,6 +15,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    print(HaweyatiData.customer.profile.image);
     return Scaffold(
       appBar:HaweyatiAppBar(showHome: false,showCart: false,),
       body: CustomScrollView(
@@ -34,10 +37,11 @@ class _ProfilePageState extends State<ProfilePage> {
                        ),
                               child: CircleAvatar(
                                 radius: 60,
-                                backgroundImage: AssetImage("assets/images/dumpsterhome.png"),
+                                backgroundImage: HaweyatiData.customer?.profile?.image?.name !=null ? NetworkImage(HaweyatiService.convertImgUrl(HaweyatiData.customer.profile.image.name ))  : AssetImage("assets/images/dumpsterhome.png"),
                               ),
                             ),
                             SizedBox(height: 10,),
+
                           ],
                         ),
 //                        Positioned(
@@ -60,12 +64,16 @@ class _ProfilePageState extends State<ProfilePage> {
           SliverToBoxAdapter(
             child: Column(
               children: <Widget>[
-                Text("Arslan Khan",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 16)),
+                Text(HaweyatiData.customer.profile.name,style: TextStyle(fontWeight:FontWeight.bold,fontSize: 16)),
+                HaweyatiData.customer.status == 'Blocked' ?_profileTile(title:  "${HaweyatiData.customer.status} (${HaweyatiData.customer.message})",icon: Icons.block,color: Colors.redAccent) : SizedBox(),
                 SizedBox(height: 10,),
                 Divider(thickness:1.5,),
-                _profileTile(title: '+113456 786 634',icon: Icons.call,color: Colors.green),
-                _profileTile(title: 'abc@abc.com',icon: Icons.email,color: Colors.purple),
-                _profileTile(title: 'Manchester',icon: Icons.pin_drop,color: Colors.redAccent),
+                Text("Personal Details",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 16)),
+
+                _profileTile(title: HaweyatiData.customer.profile.username,icon: Icons.call,color: Colors.green),
+                _profileTile(title:  HaweyatiData.customer.profile.email,icon: Icons.email,color: Colors.purple),
+                _profileTile(title:  HaweyatiData.customer.location.address,icon: Icons.pin_drop,color: Colors.redAccent),
+//               HaweyatiData.customer.status == 'Blocked' ? _profileTile(title:  HaweyatiData.customer.message,icon: Icons.pin_drop,color: Colors.redAccent) : SizedBox(),
 
               ],
             ),
@@ -73,12 +81,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
         ],
       ),
-      floatingActionButton:FloatingActionButton ( onPressed: (){CustomNavigator.navigateTo(context,EditProfile());},
-        child: Icon(Icons.add,color: Colors.white,),) ,
+      floatingActionButton:FloatingActionButton ( onPressed: () async {await CustomNavigator.navigateTo(context,EditProfile());
+      setState(() {
+
+      });},
+        child: Icon(Icons.edit,color: Colors.white,),) ,
     );
   }
 
-  Widget _profileTile({IconData icon,String title,Color color}){
+  Widget _profileTile({IconData icon,String title,Color color,String subtitle}){
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: color,

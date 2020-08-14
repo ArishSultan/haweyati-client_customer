@@ -5,13 +5,16 @@ import 'package:haweyati/models/available-services_model.dart';
 import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/src/utlis/const.dart';
 
-class ServiceAvailability extends HaweyatiService<AvailableServices> {
+class ServiceAvailability extends HaweyatiService<List<String>> {
+
+  Future<List<String>> getAvailableServices(String city) async {
+    Response res = await dio.get('$apiUrl/suppliers/available/$city');
+    return ((res.data) as List).map((item) => item.toString()).toList();
+  }
+
   @override
-    AvailableServices parse(Map<String, dynamic> item) => AvailableServices.fromJson(item);
-
-
-  Future<AvailableServices> getAvailableServices(LatLng cords) async {
-    return this.getOne('suppliers/available?lat=${cords.latitude}&lng=${cords.longitude}');
+  List<String> parse(Map<String, dynamic> item) {
+    return null;
   }
 
 }

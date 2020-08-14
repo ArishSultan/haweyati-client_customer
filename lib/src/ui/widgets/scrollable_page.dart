@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/widgits/appBar.dart';
@@ -7,20 +6,26 @@ class ScrollablePage extends StatelessWidget {
   final String title;
   final Widget child;
   final String action;
+  final AppBar appBar;
+  final double padding;
   final String subtitle;
+  final double distance;
   final Function onAction;
-  final GlobalKey<ScaffoldState> key;
   final bool showBackgroundImage;
   final bool showButtonBackground;
+  final GlobalKey<ScaffoldState> key;
 
   ScrollablePage({
     this.key,
     this.title,
     this.child,
+    this.appBar,
     this.action,
+    this.padding,
     this.subtitle,
+    this.distance,
     this.onAction,
-    this.showBackgroundImage = false,
+    this.showBackgroundImage = true,
     this.showButtonBackground = false
   });
 
@@ -28,26 +33,27 @@ class ScrollablePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: key,
-      appBar: HaweyatiAppBar(),
+      appBar: this.appBar ?? HaweyatiAppBar( showCart: false,showHome: false,),
+      backgroundColor: Colors.white,
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            alignment: Alignment(0, 1),
-            image: AssetImage("assets/images/pattern.png"),
-          )
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        decoration: showBackgroundImage ? BoxDecoration(
+            image: DecorationImage(
+              alignment: Alignment(0, 1),
+              image: AssetImage("assets/images/pattern.png"),
+            )
+        ) : null,
+        padding: EdgeInsets.symmetric(horizontal: this.padding ?? 20),
         child: CustomScrollView(slivers: <Widget>[
           SliverPadding(
             padding: EdgeInsets.only(top: 30, bottom: 10),
             sliver: SliverToBoxAdapter(child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.bold
-              )
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                )
             )),
           ),
           SliverToBoxAdapter(child: Text(
@@ -56,7 +62,7 @@ class ScrollablePage extends StatelessWidget {
           )),
 
           SliverPadding(
-            padding: const EdgeInsets.only(top: 40),
+            padding: EdgeInsets.only(top: distance ?? 40),
             sliver: child,
           )
         ]),

@@ -1,32 +1,45 @@
+import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:haweyati/auth-pages/signup.dart';
-import 'package:haweyati/models/temp-model.dart';
-import 'package:haweyati/pages/orderDetail/orderPlaced.dart';
+import 'package:haweyati/services/phone-auth-service.dart';
 import 'package:haweyati/src/utlis/const.dart';
+import 'package:haweyati/src/utlis/validators.dart';
 import 'package:haweyati/widgits/appBar.dart';
-import 'package:haweyati/widgits/haweyati-appbody.dart';
-import 'package:haweyati/widgits/haweyati_Textfield.dart';
 
 class VerificationPhoneNumber extends StatefulWidget {
-  ConstructionService constructionService;
-  VerificationPhoneNumber({this.constructionService});
-
+  final String phoneNumber;
+  VerificationPhoneNumber({this.phoneNumber}):assert(phoneNumber!=null);
   @override
   _VerificationPhoneNumberState createState() =>
       _VerificationPhoneNumberState();
 }
 
 class _VerificationPhoneNumberState extends State<VerificationPhoneNumber> {
-  FocusNode _node = FocusNode();
-  TextEditingController phone;
+  FirebasePhoneAuth auth;
+  var formKey = GlobalKey<FormState>();
+  bool autoValidate=false;
+  TextEditingController v1 = TextEditingController();
+  TextEditingController v2 = TextEditingController();
+  TextEditingController v3 = TextEditingController();
+  TextEditingController v4 = TextEditingController();
+  TextEditingController v5 = TextEditingController();
+  TextEditingController v6 = TextEditingController();
+  int time = 50;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    phone = TextEditingController();
+    phoneVerification();
+  }
+
+  phoneVerification() async {
+   auth = FirebasePhoneAuth()..verifyNumber(widget.phoneNumber, context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -39,12 +52,12 @@ class _VerificationPhoneNumberState extends State<VerificationPhoneNumber> {
             Align(
                 alignment: Alignment(0, 0.95),
                 child: GestureDetector(
-                    onTap: () {print(widget.constructionService);
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => OrderPlaced(constructionService: widget.constructionService,)));
+                    onTap: () {
+
                     },
-                    child: Text(
-                      "Please Wait 0:49 ",
+                    child:Text(
+                      time != 0 ?
+                      "Please Wait 0:$time " : 'Resend',
                       style: TextStyle(
                           fontSize: 16, color: Theme.of(context).accentColor),
                     ))),
@@ -80,12 +93,13 @@ class _VerificationPhoneNumberState extends State<VerificationPhoneNumber> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Text("+966500303350"),
+                    Text(widget.phoneNumber),
                     SizedBox(
                       width: 15,
                     ),
                     GestureDetector(
-      onTap: (){Navigator.of(context).pop();},                  child: Text(
+                      onTap: ()=> Navigator.pop(context),
+                        child: Text(
                       "Change",
                       style: TextStyle(color: Theme.of(context).accentColor),
                     ))
@@ -93,15 +107,28 @@ class _VerificationPhoneNumberState extends State<VerificationPhoneNumber> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(70, 15, 70, 100),
-                  child: Row(
-                    children: <Widget>[
-
-           _buildField(_node),
-                      SizedBox(width: 60,)
-                    ,  _buildField(null),SizedBox(width: 60,)         ,  _buildField(null),SizedBox(width: 60,)  ,         _buildField(null, true)
-                    ],
+                  child: Form(
+                    key: formKey,
+                    autovalidate: autoValidate,
+                    child: Row(
+                      children: <Widget>[
+                        _buildField(v1),
+                        _buildField(v2),
+                         _buildField(v3),
+                        _buildField(v4),
+                         _buildField(v5),
+                        _buildField(v6,true)
+                      ],
+                    ),
                   ),
                 ),
+
+                FlatButton(
+                  child: Text('asdasd'),
+                  onPressed: () {
+                    auth.completer.complete();
+                  },
+                )
               ],
             )
           ],
@@ -109,17 +136,26 @@ class _VerificationPhoneNumberState extends State<VerificationPhoneNumber> {
   }
 
 
-  Widget _buildField(FocusNode _node, [bool last = false]){
+  Widget _buildField(TextEditingController controller,[bool last=false]){
     return Expanded(
-        child: TextFormField(keyboardType: TextInputType.phone,
+        child: TextFormField(
           obscureText: true,
+          controller: controller,
+          validator: (value)=> emptyValidator(value, 'code'),
+          onChanged: (val){
+            FocusScope.of(context).nextFocus();
+            if(last) {
+              if (formKey.currentState.validate()){
+                print("Verify OTP and navigate to next page");
+              }else{
+                //set autovalidate to true
+              }
+          }
+          },
           textAlign: TextAlign.center,
           inputFormatters: [
             LengthLimitingTextInputFormatter(1),
           ],
-          onChanged: (String val){
-            FocusScope.of(context).nextFocus();
-            },
           decoration: InputDecoration(
               hintText: "-",
               hintStyle: TextStyle(fontWeight: FontWeight.bold)),

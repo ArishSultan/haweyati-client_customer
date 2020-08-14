@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/temp-model.dart';
-import 'package:haweyati/pages/appHomePage.dart';
 import 'package:haweyati/pages/orderDetail/all-orders.dart';
+import 'package:haweyati/src/ui/pages/home_page.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
 import 'package:haweyati/widgits/stackButton.dart';
 
-class OrderPlaced extends StatefulWidget {
+class OrderPlace extends StatefulWidget {
   ConstructionService constructionService;
-  OrderPlaced({this.constructionService});
+  OrderPlace({this.constructionService});
   @override
-  _OrderPlacedState createState() => _OrderPlacedState();
+  _OrderPlaceState createState() => _OrderPlaceState();
 }
 
-class _OrderPlacedState extends State<OrderPlaced> {
+class _OrderPlaceState extends State<OrderPlace> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

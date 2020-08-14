@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/building-material_model.dart';
 import 'package:haweyati/models/building-material_sublist.dart';
-import 'package:haweyati/pages/building-material/buildingDetrail.dart';
+import 'package:haweyati/pages/building-material/building-detail.dart';
 import 'package:haweyati/services/bm-sublist_service.dart';
 import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/src/utlis/const.dart';
@@ -21,7 +21,7 @@ class BuildingMaterialSubList extends StatefulWidget {
 
 class _BuildingMaterialSubListState extends State<BuildingMaterialSubList> {
 
-  Future<List<BMSubList>> bmSublist;
+  Future<List<BMProduct>> bmSublist;
   var _service = BMSublistService();
 
 
@@ -29,6 +29,7 @@ class _BuildingMaterialSubListState extends State<BuildingMaterialSubList> {
   void initState() {
     super.initState();
     bmSublist =_service.getBMSublist(widget.buildingMaterials.sId);
+    bmSublist.then((value) => print(value));
   }
 
   @override
@@ -44,7 +45,7 @@ class _BuildingMaterialSubListState extends State<BuildingMaterialSubList> {
           child: SimpleFutureBuilder.simpler(
             future: bmSublist,
             context: context,
-            builder: (AsyncSnapshot<List<BMSubList>> snapshot){
+            builder: (AsyncSnapshot<List<BMProduct>> snapshot){
               return ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 itemCount: snapshot.data.length,
@@ -52,7 +53,7 @@ class _BuildingMaterialSubListState extends State<BuildingMaterialSubList> {
                   var bmSubList = snapshot.data[i];
                   return  ContainerDetailList(
                       name: bmSubList.name,
-                      imgpath: bmSubList.images[0].name,
+                      imgpath: bmSubList.image.name,
                       ontap: (){
                         CustomNavigator.navigateTo(context, BuildingDetail(item: bmSubList,));
                       }) ;

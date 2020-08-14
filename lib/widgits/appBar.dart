@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/temp-model.dart';
-import 'package:haweyati/pages/appHomePage.dart';
 import 'package:haweyati/pages/orderDetail/all-orders.dart';
-import 'package:haweyati/pages/orderDetail/orderDetail.dart';
+import 'package:haweyati/src/ui/pages/home_page.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
 
 class HaweyatiAppBar extends AppBar {
@@ -43,9 +42,7 @@ class HaweyatiAppBar extends AppBar {
                       onTap: () {
                         Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
-                                builder: (context) => AppHomePage(
-
-                                    )),
+                                builder: (context) => AppHomePage( )),
                             (Route<dynamic> route) => false);
                       },
                     )

@@ -2,40 +2,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class PlusMinusContainer extends StatefulWidget {
+class QuantitySelector extends StatefulWidget {
+  final String subtitle;
+  final String title;
+  final Function(int) onQuantityChange;
+  final Function(int) onValueChange;
+  final bool canBeZero;
 
-
-  String extra;
-  String dayprice;
-  Function(int) onValueChange;
-
-
-
-  PlusMinusContainer({this.dayprice,this.extra, this.onValueChange});
+  QuantitySelector({this.title,this.subtitle,this.canBeZero=false,this.onValueChange,this.onQuantityChange});
 
   @override
-  _PlusMinusContainerState createState() => _PlusMinusContainerState();
+  _QuantitySelectorState createState() => _QuantitySelectorState();
 }
 
-class _PlusMinusContainerState extends State<PlusMinusContainer> {
+class _QuantitySelectorState extends State<QuantitySelector> {
 
-  int quantity = 0;
+  int quantity = 1;
 
-  _increment(){
-
- setState(() {
-   quantity++;
- });
- widget.onValueChange(quantity);
-
-  }
-  _decrement(){
-
-
-    setState(() {
-      quantity--;
-    });
-    widget.onValueChange(quantity);
+  @override
+  void initState() {
+    super.initState();
+    quantity = widget.canBeZero ? 0 : 1;
   }
 
   @override
@@ -51,27 +38,24 @@ class _PlusMinusContainerState extends State<PlusMinusContainer> {
         padding: const EdgeInsets.all(20),
         child: Row(
           children: <Widget>[
-
           Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, crossAxisAlignment:CrossAxisAlignment.start,children: <Widget>[
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment:CrossAxisAlignment.start,children: <Widget>[
               Text(
-            widget.extra,
+            widget.subtitle,
             style: TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 16),
           ),
             SizedBox(height: 10,),
             Text(
-            widget.dayprice,
+            widget.title,
             style: TextStyle(
                  fontSize: 16),
           ),],
 
           ),
 
-Row(children: <Widget>[
-
-
-
+        Row(children: <Widget>[
   Container(
     width: 30,
     height: 30,
@@ -84,11 +68,18 @@ Row(children: <Widget>[
       Icon(Icons.remove,color: Colors.white,),
       onPressed: () {
 
-
-      if(quantity>0){
-        _decrement();
-
+      if(widget.canBeZero && quantity > 0){
+        setState(() {
+          quantity--;
+          widget.onValueChange(quantity);
+        });
+      }else if(quantity>1){
+        setState(() {
+          quantity--;
+          widget.onValueChange(quantity);
+        });
       }
+
       },
     ),
   )
@@ -121,7 +112,10 @@ Row(children: <Widget>[
       Icon(Icons.add,color: Colors.white,),
       onPressed: () {
 
-        _increment();
+        setState(() {
+          quantity++;
+        });
+        widget.onValueChange(quantity);
 
       },
     ),
@@ -135,12 +129,3 @@ Row(children: <Widget>[
     );
   }
 }
-
-
-
-//IconButton(
-//icon:
-//Icon(Icons.remove),
-//onPressed: () {
-//},
-//),

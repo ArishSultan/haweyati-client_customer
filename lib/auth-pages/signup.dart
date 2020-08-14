@@ -121,8 +121,10 @@ class _SignUpState extends State<SignUp> {
         tooltip: "Login with Email",
         onPressed: () {
           if (_formKey.currentState.validate()) {
+
             Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => PersonalInfo()));
+
           } else {
             setState(() {
               autoValidate = true;

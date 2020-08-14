@@ -1,11 +1,18 @@
-class Option {
+import 'package:hive/hive.dart';
+part 'options_model.g.dart';
+
+@HiveType(typeId: 17)
+class ProductOption extends HiveObject{
+  @HiveField(0)
   String sId;
+  @HiveField(1)
   String optionName;
+  @HiveField(2)
   String optionValues;
 
-  Option({this.sId,this.optionValues, this.optionName});
+  ProductOption({this.sId,this.optionValues, this.optionName});
 
-  Option.fromJson(Map<String, dynamic> json) {
+  ProductOption.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     optionName = json['optionName'];
     optionValues = json['optionValues'];

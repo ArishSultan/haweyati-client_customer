@@ -27,8 +27,9 @@ class _ScaffoldingListingState extends State<ScaffoldingListing> {
           child: ListView(
             children: <Widget>[
               ContainerDetailList(
-                name: "Steel Scaffolding",
+                name: "Stesadel Scaffolding",
                 ontap: () {
+                  print("sadasd");
                   CustomNavigator.navigateTo(context, ScaffoldingOptions(constructionService: new ConstructionService(
                   title: "Steel Scaffolding",
                   image: "assets/images/steelscaffolding.png",

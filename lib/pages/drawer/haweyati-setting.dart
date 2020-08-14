@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/pages/drawer/setting/change-password.dart';
+import 'package:haweyati/src/utlis/hive-local-data.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
 import 'package:app_settings/app_settings.dart';
@@ -18,7 +19,6 @@ class _HaweyatiSettingState extends State<HaweyatiSetting> {
       appBar: HaweyatiAppBar(context: context,showCart: false,showHome: false,),
       body: ListView(
         children: <Widget>[
-
           Text(
             "Settings",
             textAlign: TextAlign.center,
@@ -32,10 +32,10 @@ class _HaweyatiSettingState extends State<HaweyatiSetting> {
             textAlign: TextAlign.center,
           ),
 
-SizedBox(height: 25,),
-          _buildContainer(title: "Profile",onTap: (){
+          SizedBox(height: 25,),
+          HaweyatiData.isSignedIn ? _buildContainer(title: "Profile",onTap: (){
             CustomNavigator.navigateTo(context, ProfilePage());
-          },)
+          },) : SizedBox()
           ,
           _buildContainer(title: "Notification",onTap:
 
@@ -46,7 +46,9 @@ SizedBox(height: 25,),
             });
           },
           ),
-          _buildContainer(title: "Change Password",onTap: (){CustomNavigator.navigateTo(context,ChangePassword());}),
+        HaweyatiData.isSignedIn ?  _buildContainer(title: "Change Password",
+            onTap: (){CustomNavigator.navigateTo(context,ChangePassword());})
+            : SizedBox(),
         ],
         padding: EdgeInsets.fromLTRB(15, 30, 15, 0),
       ),

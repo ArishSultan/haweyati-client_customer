@@ -2,7 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/dumpster_model.dart';
-import 'package:haweyati/pages/dumpster/time-location.dart';
+import 'package:haweyati/models/hive-models/orders/dumpster-order_model.dart';
+import 'package:haweyati/pages/dumpster/dumpster-time-location.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/container-with-add-remove-item.dart';
@@ -21,12 +22,19 @@ class DumpsterServicesDetail extends StatefulWidget {
 class _DumpsterServicesDetailState extends State<DumpsterServicesDetail> {
 
   int extraDay = 0;
-  double price;
+  double extraDayPrice;
 
   @override
   void initState() {
     super.initState();
-    price = widget.dumpsters.pricing[0].extraDayRent;
+    extraDayPrice = widget.dumpsters.pricing[0].extraDayRent;
+  }
+
+  void orderDumpster(DumpsterOrder order) async {
+    final box = await Hive.openBox('dumpster');
+    await box.clear();
+    box.add(order);
+    order.save();
   }
 
 
@@ -36,37 +44,38 @@ class _DumpsterServicesDetailState extends State<DumpsterServicesDetail> {
       appBar: HaweyatiAppBar(context: context,),
       body: HaweyatiAppBody(
         title: "Services Detail",
-        detail: loremIpsum.substring(0,50),
-        btnName: tr("Continue"),onTap: (){
-
-        var box = Hive.box('dumpster');
-        if(extraDay!=0){
-          box.put('extra_days', extraDay);
-          box.put('extra_day_price', price * extraDay);
-        }
-
-        CustomNavigator.navigateTo(context, TimeAndLocation());
-         },
+        detail: widget.dumpsters.description,
+        btnName: tr("Continue"),
+        onTap: () async {
+         await orderDumpster(DumpsterOrder(
+           dumpster: widget.dumpsters,
+             extraDayPrice: extraDayPrice * extraDay,
+             extraDays: extraDay,
+           total: extraDay == 0 ? widget.dumpsters.pricing[0].rent : (extraDayPrice * extraDay) + widget.dumpsters.pricing[0].rent
+         ));
+          CustomNavigator.navigateTo(context, DumpsterTimeAndLocation(dumpster: widget.dumpsters,));
+          },
         showButton: true,
         child: ListView(
           padding: EdgeInsets.symmetric(horizontal: 20),
           children: <Widget>[
             SubtileContainer(
               image: widget.dumpsters.image.name,
-              name: widget.dumpsters.size,
+              name: widget.dumpsters.size + " Yard Dumpster",
               onTap: () {
 
               },
-              subtitle: "${widget.dumpsters.pricing[0].rent} / ${widget.dumpsters.pricing[0].days}",
+              subtitle: "${widget.dumpsters.pricing[0].rent} SR / ${widget.dumpsters.pricing[0].days} days",
             ),
-            PlusMinusContainer(
+            QuantitySelector(
+              canBeZero: true,
               onValueChange: (int val){
                 setState(() {
                   extraDay=val;
                 });
               },
-              extra: "Add Extra Days",
-              dayprice: 'Price: ' + (price * extraDay).toString(),
+              subtitle: "Add Extra Days",
+              title: 'Price: ' + (extraDayPrice * extraDay).toString() + ' SR',
             )
           ],
         ),

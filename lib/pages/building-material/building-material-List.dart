@@ -57,7 +57,7 @@ class _BuildingMaterialListingState extends State<BuildingMaterialListing> {
                   var buildingMaterial = snapshot.data[i];
                   return  ContainerDetailList(
                       name: buildingMaterial.name,
-                      imgpath: buildingMaterial.images[0].name,
+                      imgpath: buildingMaterial.image.name,
                       ontap: (){
                         CustomNavigator.navigateTo(context, BuildingMaterialSubList(buildingMaterials: buildingMaterial,));
                       }) ;

@@ -2,15 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:haweyati/models/finishing-material_category.dart';
-import 'package:haweyati/models/finishing-material_sublist_model.dart';
-import 'package:haweyati/pages/finishing-material/finishing_material_detail.dart';
+import 'package:haweyati/models/finishing-product.dart';
 import 'package:haweyati/services/fn-sublist_service.dart';
 import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/src/utlis/simple-future-builder.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/widgits/haweyati_Textfield.dart';
 import 'package:haweyati/widgits/list-of-items.dart';
+
+import 'finishing_material_detail.dart';
 
 class FinishingMaterialSubList extends StatefulWidget {
  final FinishingMaterial material;
@@ -23,8 +25,11 @@ class FinishingMaterialSubList extends StatefulWidget {
 class _FinishingMaterialSubListState extends State<FinishingMaterialSubList> {
 
 
-  Future<List<FinSubList>> sublist;
+  Future<List<FinProduct>> sublist;
+  bool showSearch = false;
+  int productsLength;
   var _service = FINSublistService();
+  var searchKeyword = TextEditingController();
 
   showAlertDialog(BuildContext context) {
 
@@ -52,11 +57,28 @@ class _FinishingMaterialSubListState extends State<FinishingMaterialSubList> {
     );
   }
 
+  performSearch(){
+    setState(() {
+      sublist = _service.search(searchKeyword.text);
+    });
+  }
+
+  refresh(){
+    setState(() {
+      sublist = _service.getFinSublist(widget.material.sId);
+    });
+  }
+
 
   @override
   void initState() {
     super.initState();
     sublist = _service.getFinSublist(widget.material.sId);
+    sublist.then((value) {
+      setState(() {
+        productsLength = value.length;
+      });
+    });
   }
 
   @override
@@ -73,7 +95,7 @@ class _FinishingMaterialSubListState extends State<FinishingMaterialSubList> {
               children: <Widget>[
                 Container(
                   decoration: BoxDecoration(
-                  image: DecorationImage(image: NetworkImage(HaweyatiService.convertImgUrl(widget.material.images[0].name))), ),
+                  image: DecorationImage(image: NetworkImage(HaweyatiService.convertImgUrl(widget.material.image.name))), ),
                   width: 100,
                   height: 100,
                 ),
@@ -90,33 +112,73 @@ class _FinishingMaterialSubListState extends State<FinishingMaterialSubList> {
             SizedBox(
               height: 20,
             ),
+          showSearch ?  Row(
+              children: [
+                Expanded(
+                  child: CupertinoTextField(
+                    placeholder: 'Search..',
+                    textInputAction: TextInputAction.search,
+                    suffix: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(CupertinoIcons.search,color: Colors.grey,),
+                    ),
+                    onSubmitted: (String val){
+                      if(val.isNotEmpty){
+                        setState(() {
+                          performSearch();
+                        });
+                      }
+                    },
+                    controller: searchKeyword,
+//                    validator: (value){
+//                      return value.isEmpty ? 'Please enter some keyword to search' : null;
+//                    },
+                  ),
+                ),
+              IconButton(
+              onPressed: (){
+                setState(() {
+                  refresh();
+                  showSearch=false;
+                });
+                },
+              icon: Icon(CupertinoIcons.clear_circled_solid),
+              )
+              ],
+            ) :
             Row(
               children: <Widget>[
                 Expanded(
                     flex: 5,
-                    child: Text(
-                      "32 items available",
+                    child: productsLength !=null ? Text(
+                      productsLength!= 0?
+                      "$productsLength items available" : 'No items available',
                       style: boldText,
-                    )),
-                _build(imgPath: "assets/images/grid.png", onTap: () {showAlertDialog(context);}),
-                _build(imgPath: "assets/images/search.png", onTap: () {showAlertDialog(context);})
+                    ): SizedBox()),
+//                _build(imgPath: "assets/images/grid.png", onTap: () {showAlertDialog(context);}),
+                _build(imgPath: "assets/images/search.png", onTap: () {
+                  setState(() {
+                    showSearch=true;
+                  });
+                })
               ],
             ),
             Expanded(
                 child: SimpleFutureBuilder.simpler(
                   context: context,
                   future: sublist,
-                  builder: (AsyncSnapshot<List<FinSubList>> snapshot){
+                  builder: (AsyncSnapshot<List<FinProduct>> snapshot){
                     return ListView.builder(
                       padding: EdgeInsets.all(10),
                       itemCount: snapshot.data.length,
                       itemBuilder: (build,i){
                         var item = snapshot.data[i];
                         return  ContainerDetailList(
-                          imgpath: item.images[0].name,
+                          imgpath: item.images.name,
                           name: item.name,
-//                          ontap: () {
-//                            CustomNavigator.navigateTo(context, FinishingMaterialDetail(constructionService: widget.service,));},
+                          ontap:  () {
+                            CustomNavigator.navigateTo(context, FinishingMaterialDetail(finishingMaterial: item));
+                            },
                         );
                       },
 

@@ -1,29 +1,40 @@
+import 'package:haweyati/models/suppliers_model.dart';
+import 'package:hive/hive.dart';
 import 'bm-pricing.dart';
 import 'images_model.dart';
 import 'pricing_model.dart';
+part 'building-material_sublist.g.dart';
 
-class BMSubList {
-  List<String> suppliers;
+@HiveType(typeId: 10)
+class BMProduct extends HiveObject {
+  @HiveField(0)
+  List<Supplier> suppliers;
+  @HiveField(1)
   String sId;
+  @HiveField(2)
   String name;
+  @HiveField(3)
   String description;
+  @HiveField(4)
   String parent;
+  @HiveField(5)
   List<BMPricing> pricing;
-  List<Images> images;
+  @HiveField(6)
+  Images image;
+  @HiveField(7)
   int iV;
 
-  BMSubList(
+  BMProduct(
       {this.suppliers,
         this.sId,
         this.name,
         this.parent,
         this.description,
         this.pricing,
-        this.images,
+        this.image,
         this.iV});
 
-  BMSubList.fromJson(Map<String, dynamic> json) {
-    suppliers = json['suppliers'].cast<String>();
+  BMProduct.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     name = json['name'];
     description = json['description'];
@@ -34,27 +45,28 @@ class BMSubList {
         pricing.add( BMPricing.fromJson(v));
       });
     }
-    if (json['images'] != null) {
-      images = new List<Images>();
-      json['images'].forEach((v) {
-        images.add(Images.fromJson(v));
+    if (json['suppliers'] != null) {
+      suppliers = List<Supplier>();
+      json['suppliers'].forEach((v) {
+        suppliers.add( Supplier.fromJson(v));
       });
     }
+    image = Images.fromJson(json['image']);
     iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['suppliers'] = this.suppliers;
+    if (this.suppliers != null) {
+      data['suppliers'] = this.suppliers.map((v) => v.toJson()).toList();
+    }
     data['_id'] = this.sId;
     data['name'] = this.name;
     data['description'] = this.description;
+    data['image'] = this.image.toJson();
     data['parent'] = this.parent;
     if (this.pricing != null) {
       data['pricing'] = this.pricing.map((v) => v.toJson()).toList();
-    }
-    if (this.images != null) {
-      data['images'] = this.images.map((v) => v.toJson()).toList();
     }
     data['__v'] = this.iV;
     return data;

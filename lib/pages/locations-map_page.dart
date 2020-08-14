@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'dart:ui' as intl;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,8 +9,10 @@ import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
-import 'package:haweyati/pages/appHomePage.dart';
+import 'package:haweyati/models/hive-models/orders/order_model.dart';
+import 'package:haweyati/models/order-time_and_location.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
+import 'package:haweyati/src/utlis/hive-local-data.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -19,13 +20,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 String apiKey = 'AIzaSyDdNpY6LGWgHqRfTRZsKkVhocYOaER325w';
 
 class MyLocationMapPage extends StatefulWidget {
+  final bool timeAndLocation;
   final bool editMode;
-  MyLocationMapPage({this.editMode=false});
+  MyLocationMapPage({this.editMode=false,this.timeAndLocation=false});
   @override
   State<MyLocationMapPage> createState() => MyLocationMapPageState();
 }
 
 class MyLocationMapPageState extends State<MyLocationMapPage> {
+  String city;
   String userAddress;
   Completer<GoogleMapController> _controller = Completer();
   GoogleMapController controller;
@@ -115,13 +118,7 @@ class MyLocationMapPageState extends State<MyLocationMapPage> {
       setState(()  {
         currentLocation = tempLatLng;
         updateAddress();
-        allMarkers.clear();
-        allMarkers.add(Marker(
-          markerId: MarkerId('0'),
-          position: currentLocation,
-          draggable: true,
-          onDragEnd: onMarkerDragEnd,
-        ));
+        searchAddressField.text = userAddress;
         controller.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(target: currentLocation, zoom: 16.0),
@@ -162,162 +159,165 @@ class MyLocationMapPageState extends State<MyLocationMapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: AppBar(
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Center(
-                child: LocalizationSelector(
-                  selected: EasyLocalization.of(context).locale,
-                  onChanged: (locale) {
-                    setState(() => EasyLocalization.of(context).locale = locale);
-                  },
-                ),
-              ),
-            )
-          ],
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(50),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 10
-              ),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                constraints: BoxConstraints.expand(height: 40),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20)
-                ),
-                child: Row(children: <Widget>[
-                  Icon(Icons.location_on),
-                  Expanded(child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: GestureDetector(
-                      onTap: _getPlacesPredictions,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: <Widget>[
-                          Center(child: Text(
-                            searchAddressField.text.isEmpty ?
-                            'Enter Your Location' : searchAddressField.text
-                          ))
-                        ],
-                      ),
-                    ),
-                  )),
-                  GestureDetector(
-                    onTap:()=> _getCurrentUserLocation(true),
-                    child: Icon(Icons.my_location)
+    return WillPopScope(
+      onWillPop: () async {
+        if(widget.editMode){
+          Navigator.pop(context, OrderLocation(
+              cords: currentLocation,
+              address: userAddress,
+              city: city
+          ));
+        }
+        return true;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            actions: <Widget>[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Center(
+                  child: LocalizationSelector(
+                    selected: EasyLocalization.of(context).locale,
+                    onChanged: (locale) {
+                      setState(() => EasyLocalization.of(context).locale = locale);
+                    },
                   ),
-                ]),
+                ),
               )
-//              CupertinoTextField(
-//                placeholder: "Enter Your Location",
-//                prefix: Padding(
-//                  padding: const EdgeInsets.symmetric(horizontal: 8),
-//                  child: Icon(Icons.location_on, color: Theme.of(context).accentColor),
-//                ),
-//                suffix: Padding(
-//                  padding: const EdgeInsets.symmetric(horizontal: 8),
-//                  child: IconButton(
-//                      icon: Icon(Icons.my_location),
-//                    onPressed: (){
-//                        print('called');
-//                    },
-//                  ),
-//                ),
-//                clearButtonMode: OverlayVisibilityMode.always,
-//                padding: EdgeInsets.symmetric(vertical: 9),
-//                decoration: BoxDecoration(
-//                  color: Colors.white,
-//                  borderRadius: BorderRadius.circular(30)
-//                ),
-//                controller: searchAddressField,
-//              ),
+            ],
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(50),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 10
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  constraints: BoxConstraints.expand(height: 40),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)
+                  ),
+                  child: Row(children: <Widget>[
+                    Icon(Icons.location_on),
+                    Expanded(child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: GestureDetector(
+                        onTap: _getPlacesPredictions,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: <Widget>[
+                            Center(child: Text(
+                              searchAddressField.text.isEmpty ?
+                              'Enter Your Location' : searchAddressField.text
+                            ))
+                          ],
+                        ),
+                      ),
+                    )),
+                    GestureDetector(
+                      onTap:()=> _getCurrentUserLocation(true),
+                      child: Icon(Icons.my_location)
+                    ),
+                  ]),
+                )
+              ),
             ),
           ),
+
+          body: currentLocation!=null ? GoogleMap(
+            onCameraMove: (CameraPosition position) {
+              rawLocation = position.target;
+            },
+            onTap: onMapTapped,
+            zoomControlsEnabled: false,
+            compassEnabled: true,
+            mapType: MapType.normal,
+            myLocationButtonEnabled: false,
+            myLocationEnabled: true,
+            initialCameraPosition: CameraPosition(target: currentLocation, zoom: 15),
+            onMapCreated: (GoogleMapController controller) {
+              _controller.complete(controller);
+              this.controller = controller;
+            },
+            markers: Set.from(allMarkers),
+          )
+              : Center(child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical:8.0),
+                child: Text('Getting your current location..'),
+              ),
+              Text('(Make sure you have your location enabled)',style: TextStyle(color: Colors.grey),)
+            ],
+          ),
         ),
-        
-        body: currentLocation!=null ? GoogleMap(
-          onCameraMove: (CameraPosition position) {
-            rawLocation = position.target;
-          },
-          onTap: onMapTapped,
-          zoomControlsEnabled: false,
-          compassEnabled: true,
-          mapType: MapType.normal,
-          myLocationButtonEnabled: false,
-          myLocationEnabled: true,
-          initialCameraPosition: CameraPosition(target: currentLocation, zoom: 15),
-          onMapCreated: (GoogleMapController controller) {
-            _controller.complete(controller);
-            this.controller = controller;
-          },
-          markers: Set.from(allMarkers),
-        )
-            : Center(child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            CircularProgressIndicator(),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical:8.0),
-              child: Text('Getting your current location..'),
+        bottomNavigationBar: Material(
+          elevation: 10,
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: SizedBox(
+              height: 45,
+              child: FlatButton.icon(
+                shape: StadiumBorder(),
+                textColor: Colors.white,
+                icon: Icon(Icons.location_on),
+                color: Theme.of(context).accentColor,
+                label: Text(tr('Set_Your_Location')),
+                onPressed: currentLocation != null ? () async {
+                  print(city);
+                  if(widget.timeAndLocation){
+                    OrderLocation location = OrderLocation(
+                      cords: currentLocation,
+                      address: userAddress,
+                      city: city
+                    );
+
+                    Navigator.of(context).pop(location);
+                    return;
+                  }
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        content: Row(children: <Widget>[
+                          SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2)
+                          ),
+                          SizedBox(width: 20),
+                          Text('Saving your coordinates ...')
+                        ]),
+                      );
+                    }
+                  );
+
+                  print(prefs);
+                  prefs.setDouble("latitude", currentLocation.latitude);
+                  prefs.setDouble("longitude", currentLocation.longitude);
+                  prefs.setString("address", userAddress);
+                  prefs.setString('city', city);
+                  print(city);
+
+                  HaweyatiData.isSignedIn ? Navigator.of(context).pushNamedAndRemoveUntil('sign-in', (route) => false) :
+
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+                } :  null,
+              ),
             ),
-            Text('(Make sure you have your location enabled)',style: TextStyle(color: Colors.grey),)
-          ],
+          ),
         ),
       ),
-      bottomNavigationBar: userAddress!=null ?  Material(
-        elevation: 10,
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: SizedBox(
-            height: 45,
-            child: FlatButton.icon(
-              shape: StadiumBorder(),
-              textColor: Colors.white,
-              icon: Icon(Icons.location_on),
-              color: Theme.of(context).accentColor,
-              label: Text(tr('Set_Your_Location')),
-              onPressed: () async {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      content: Row(children: <Widget>[
-                        SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2)
-                        ),
-                        SizedBox(width: 20),
-                        Text('Saving your coordinates ...')
-                      ]),
-                    );
-                  }
-                );
-
-                print(prefs);
-                prefs.setDouble("latitude", currentLocation.latitude);
-                prefs.setDouble("longitude", currentLocation.longitude);
-                prefs.setString("address", userAddress);
-
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
-              },
-            ),
-          ),
-        ),
-      ) : SizedBox(),
     );
   }
 
   Future<String> findAddress(LatLng cords) async{
-
     var addresses = await Geocoder.google(apiKey).findAddressesFromCoordinates(Coordinates(cords.latitude,cords.longitude));
     String formattedAddress = "";
     if (addresses.first.addressLine.contains(",")) {
@@ -332,6 +332,7 @@ class MyLocationMapPageState extends State<MyLocationMapPage> {
     } else {
       formattedAddress = addresses.first.addressLine;
     }
+    city = addresses.first.locality;
     return formattedAddress;
   }
 

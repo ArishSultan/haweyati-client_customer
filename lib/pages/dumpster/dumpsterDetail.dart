@@ -1,38 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/dumpster_model.dart';
-import 'package:haweyati/models/pricing_model.dart';
-import 'package:haweyati/models/temp-model.dart';
 import 'package:haweyati/pages/dumpster/dumpsterServicesdetail.dart';
 import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/widgits/appBar.dart';
+import 'package:haweyati/widgits/custom-navigator.dart';
 import 'package:haweyati/widgits/stackButton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ServicesItemDetail extends StatefulWidget {
-  final Dumpsters dumpster;
-  ServicesItemDetail({this.dumpster});
+class DumpsterItemDetail extends StatefulWidget {
+  final Dumpster dumpster;
+  DumpsterItemDetail({this.dumpster});
   @override
-  _ServicesItemDetailState createState() => _ServicesItemDetailState();
+  _DumpsterItemDetailState createState() => _DumpsterItemDetailState();
 }
 
-class _ServicesItemDetailState extends State<ServicesItemDetail> {
+class _DumpsterItemDetailState extends State<DumpsterItemDetail> {
+  Dumpster dumpster;
   SharedPreferences prefs;
-  Pricing pricing;
   @override
   void initState() {
     super.initState();
+    dumpster = widget.dumpster;
     initDetail();
   }
 
   initDetail() async {
     var prefs = await SharedPreferences.getInstance();
-    widget.dumpster.pricing.forEach((element) {
-      if(element.city== prefs.getString('city')){
+    for (var price in dumpster.pricing) {
+      if(price.city == prefs.getString('city')){
         setState(() {
-          pricing = element;
+          dumpster.pricing = [
+            price
+          ];
         });
+        break;
       }
-    });
+    }
   }
 
   @override
@@ -50,47 +53,44 @@ class _ServicesItemDetailState extends State<ServicesItemDetail> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   height: 250,
-                  child: (Image.network(HaweyatiService.convertImgUrl(widget.dumpster.images[0].name),fit: BoxFit.cover,)),
+                  child: (Image.network(HaweyatiService.convertImgUrl(dumpster.image.name),fit: BoxFit.cover,)),
                 ),
                 SizedBox(
                   height: 20,
                 ),
                 Text(
-                  widget.dumpster.size,
+                  dumpster.size,
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
                 SizedBox(
                   height: 15,
                 ),
-                Row(
+               dumpster.pricing!=null ? Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      pricing?.rent.toString(),
+                      dumpster.pricing[0]?.rent.toString(),
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(
                       width: 10,
                     ),
                     Text(
-                      pricing?.days.toString(),
+                      dumpster.pricing[0]?.days.toString(),
                       style: TextStyle(color: Colors.black54),
                     )
                   ],
-                ),
+                ) : SizedBox(),
                 SizedBox(
                   height: 20,
                 ),
-                Text(widget.dumpster.description),
+                Text(dumpster.description),
               ],
             ),
           ),
           StackButton(
             onTap: () {
-//              Navigator.of(context).push(MaterialPageRoute(
-//                  builder: (context) => DumpsterServicesDetail(constructionService: widget.serviceDetail,
-//
-//                      )));
+              CustomNavigator.navigateTo(context, DumpsterServicesDetail(dumpsters: dumpster,));
             },
             buttonName: "Rent Now",
           )

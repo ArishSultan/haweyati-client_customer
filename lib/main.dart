@@ -1,23 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:haweyati/src/app.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/widgets.dart';
+import 'package:haweyati/models/hive-models/customer/customer-model.dart';
+import 'package:haweyati/models/hive-models/notifications_model.dart';
+import 'package:haweyati/src/app.dart';
+import 'package:haweyati/src/utlis/hive-local-data.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await HaweyatiData.init();
 
-void main() => runApp(
-    EasyLocalization(
-    supportedLocales: [Locale('ar'),Locale('en'),Locale('ur'),],
-    path: 'assets/translations', // <-- change patch to your
-    fallbackLocale: Locale('en'),
-    child: HaweyatiApp()));
-
-/*
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(home: Login(),
-debugShowCheckedModeBanner: false,
-    );
-  }
-}*/
+  runApp(EasyLocalization(
+      supportedLocales: [const Locale('ar'), const Locale('en')],
+      fallbackLocale: const Locale('en'),
+      path: 'assets/translations',
+      child: HaweyatiApp((await SharedPreferences.getInstance()).getBool('firstTime') ?? true)
+  ));
+}

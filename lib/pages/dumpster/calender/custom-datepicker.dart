@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/utlis/date-formatter.dart';
 import 'package:haweyati/widgits/emptyContainer.dart';
 
 class DatePickerField extends StatefulWidget {
@@ -12,29 +12,27 @@ class DatePickerField extends StatefulWidget {
   @override createState() => _DatePickerFieldState();
 
   static String formattedDate(DateTime date)
-    => date.day.toString() + "\t-\t" + ["January", "Feburary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][date.month-1] + "\t-\t" + date.year.toString();
+    => date.day.toString() + "\t-\t" + ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][date.month-1] + "\t-\t" + date.year.toString();
 }
 
 class _DatePickerFieldState extends State<DatePickerField> {
-  var _textFieldController = TextEditingController();
+  var _textFieldController = TextEditingController.fromValue(TextEditingValue(text: formattedDate(DateTime.now())));
+
+  @override initState() {
+    super.initState();
+//    _textFieldController.text = DatePickerField.formattedDate(widget.date);
+//    widget.onChanged(widget.date);
+  }
 
   @override build(context) => GestureDetector(
     onTap: (){
-      showDatePicker(initialDatePickerMode: DatePickerMode.day,
+      showDatePicker(
           context: context,
           lastDate: DateTime(3000),
           firstDate: DateTime.now(),
           initialDate: DateTime.now(),
 
-          builder: (context, child) => Theme(data: ThemeData.dark(), child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 500,
-                child: child
-              ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.center,
-          ))
+          builder: (context, child) => Theme(data: ThemeData.dark(), child: child,)
       ).then((date) {
         setState(() {
           if (date != null) this._textFieldController.text = DatePickerField.formattedDate(date); widget.onChanged(date);
@@ -48,7 +46,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(_textFieldController.text.isEmpty ? "Select Date" : _textFieldController.text),
-            Icon(Icons.date_range, color: Colors.grey.shade700),
+            Expanded(child: Icon(Icons.date_range,color: Theme.of(context).accentColor,)),
           ],
         ),
       ),
