@@ -63,23 +63,16 @@ class _LocationState extends State<Location> {
                     ),
                     style: TextStyle(fontSize: 12),
                   )
-//                            Text(
-//                            )
                       )),
-Padding(
-  padding: const EdgeInsets.only(top: 10),
-  child:   Text(tr(              "Learn_More"),style: TextStyle(color: Theme.of(context).accentColor,fontSize: 12)),
-)
-
-
-
-            ]),
-            actions: <Widget>[
-              GestureDetector(
-                  //splashColor: Theme.of(context).accentColor,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child:   Text(tr("Learn_More"),style: TextStyle(color: Theme.of(context).accentColor,
+                            fontSize: 12)),
+                      )
+              ]),
+              actions: <Widget>[
+                GestureDetector(
                   onTap: () {
-                    //              AppSettings.openLocationSettings();
-
                     Navigator.of(context).pop();
                   },
                   child: Text(
@@ -92,7 +85,6 @@ Padding(
                 width: 25,
               ),
               GestureDetector(
-                  //   splashColor: Theme.of(context).accentColor,
                   onTap: () {
                     AppSettings.openLocationSettings().whenComplete(() {
                       Navigator.of(context).pop();
@@ -160,15 +152,13 @@ Padding(
 //                if (await Geolocator().checkGeolocationPermissionStatus() ==
 //                    GeolocationStatus.granted) {
             //  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>MyLocationMapPage()));
-                  CustomNavigator.navigateTo(context, MyLocationMapPage());
+//                  CustomNavigator.navigateTo(context, MyLocationMapPage());
 //                } else {
 //                    _showDialog();
 //                  _/showAlert();
 //                }
               } else {
                 _showAlert();
-
-                //      _showDialog();
                 print("Location is turned off");
               }
             },

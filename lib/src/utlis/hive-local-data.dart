@@ -60,7 +60,7 @@ class HaweyatiData {
     await customer.save();
   }
 
-  static bool get isSignedIn => _auth.isNotEmpty;
+  static bool get isSignedIn => _auth.values.isNotEmpty;
 
   static Customer get customer => _auth.values?.first;
 

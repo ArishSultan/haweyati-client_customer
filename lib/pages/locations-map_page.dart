@@ -304,6 +304,8 @@ class MyLocationMapPageState extends State<MyLocationMapPage> {
                   prefs.setString('city', city);
                   print(city);
 
+
+
                   HaweyatiData.isSignedIn ? Navigator.of(context).pushNamedAndRemoveUntil('sign-in', (route) => false) :
 
                   Navigator.of(context)

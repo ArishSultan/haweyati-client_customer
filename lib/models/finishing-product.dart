@@ -79,7 +79,7 @@ class FinProduct extends HiveObject{
     data['name'] = this.name;
     data['description'] = this.description;
     data['parent'] = this.parent;
-    data['variants'] = this.variants;
+    data['varient'] = this.variants;
     if (this.options != null) {
       data['options'] = this.options.map((v) => v.toJson()).toList();
     }

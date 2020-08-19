@@ -1,4 +1,6 @@
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:haweyati/pages/locations-map_page.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
@@ -11,6 +13,25 @@ class PreLocationPage extends StatefulWidget {
 }
 
 class _PreLocationPageState extends State<PreLocationPage> {
+
+  bool isLocationEnabled;
+
+   checkLocationEnabledStatus() async {
+//    GeolocationStatus geolocationStatus = await Geolocator().checkGeolocationPermissionStatus();
+//    print(geolocationStatus);
+    if (await Geolocator().isLocationServiceEnabled()) {
+      isLocationEnabled = true;
+    } else {
+      isLocationEnabled = false;
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLocationEnabledStatus();
+  }
+
   @override
   Widget build(BuildContext context) {
     return NoScrollPage(
@@ -38,7 +59,16 @@ class _PreLocationPageState extends State<PreLocationPage> {
           ],
         ),
       ),
-      onAction: () => CustomNavigator.navigateTo(context, MyLocationMapPage()),
+      onAction: () async {
+
+       await checkLocationEnabledStatus();
+        if(isLocationEnabled!=null && isLocationEnabled){
+          CustomNavigator.navigateTo(context, MyLocationMapPage());
+        }
+        else {
+          await AppSettings.openLocationSettings();
+        }
+      },
       action: tr('Set_Your_Location'),
     );
   }

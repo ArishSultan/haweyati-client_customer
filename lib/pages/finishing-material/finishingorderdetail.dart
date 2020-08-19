@@ -11,6 +11,7 @@ import 'package:haweyati/models/order-time_and_location.dart';
 import 'package:haweyati/pages/payment/payment-method.dart';
 import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/src/utlis/const.dart';
+import 'package:haweyati/src/utlis/hive-local-data.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/custom-navigator.dart';
 import 'package:haweyati/widgits/emptyContainer.dart';
@@ -71,7 +72,7 @@ class _FinishingOrderConfirmationState extends State<FinishingOrderConfirmation>
               var finishingMaterialOrder = await finishingMaterialBox.values.first as FMOrder;
 
               await addOrder(Order(
-                customer: '5f327c6b49be90233077aa68',
+                customer: HaweyatiData.customer.id,
                 city: dropOffLocation.city,
                 paymentType: 'COD',
                 order: OrderDetails(
@@ -85,7 +86,7 @@ class _FinishingOrderConfirmationState extends State<FinishingOrderConfirmation>
               ));
 
               var postOrder = await HaweyatiService.post('orders',FormData.fromMap(Order(
-                customer: '5f327c6b49be90233077aa68',
+                customer: HaweyatiData.customer.id,
                 city: dropOffLocation.city,
                 paymentType: 'COD',
                 order: OrderDetails(
