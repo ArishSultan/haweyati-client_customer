@@ -3,27 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haweyati/models/hive-models/customer/customer-model.dart';
 import 'package:haweyati/models/hive-models/customer/profile_model.dart';
-import 'package:haweyati/models/hive-models/orders/location_model.dart';
-import 'package:haweyati/models/user-location_model.dart';
+import 'package:haweyati/src/models/location_model.dart';
+import 'package:haweyati/models/order-time_and_location.dart';
 import 'package:haweyati/pages/locations-map_page.dart';
 import 'package:haweyati/services/auth-service.dart';
 import 'package:haweyati/services/haweyati-service.dart';
-import 'package:haweyati/src/ui/pages/home_page.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/waiting-dialog.dart';
-import 'package:haweyati/src/utlis/hive-local-data.dart';
-import 'package:haweyati/src/utlis/local-data.dart';
 import 'package:haweyati/src/utlis/show-snackbar.dart';
 import 'package:haweyati/src/utlis/validators.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/widgits/emptyContainer.dart';
 import 'package:haweyati/widgits/haweyati_Textfield.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomerRegistration extends StatefulWidget {
+  final String contact;
   final bool fromOrderPage;
-  CustomerRegistration({this.fromOrderPage});
+  CustomerRegistration({this.fromOrderPage,this.contact});
   @override
   _CustomerRegistrationState createState() => _CustomerRegistrationState();
 }
@@ -34,27 +32,29 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
   TextEditingController contact =TextEditingController();
   TextEditingController email =TextEditingController();
   TextEditingController password =TextEditingController();
+  TextEditingController confirmPassword =TextEditingController();
   SharedPreferences prefs;
-  UserLocation userLocation;
+  // UserLocation userLocation;
   bool autoValidate = false;
   var scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    contact.text = widget.contact;
     initMap();
   }
 
   initMap() async {
     prefs = await SharedPreferences.getInstance();
     setState(() {
-      userLocation = UserLocation(
-        city: prefs.getString('city'),
-        address: prefs.getString('address'),
-        cords: LatLng(
-            prefs.getDouble('latitude'), prefs.getDouble('longitude')
-        ),
-      );
+      // userLocation = UserLocation(
+      //   city: prefs.getString('city'),
+      //   address: prefs.getString('address'),
+      //   cords: LatLng(
+      //       prefs.getDouble('latitude'), prefs.getDouble('longitude')
+      //   ),
+      // );
     });
   }
 
@@ -63,7 +63,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: HaweyatiAppBar(context,hideCart:true,hideHome: true,),
+      appBar: HaweyatiAppBar(hideCart:true,hideHome: true,),
       body: SingleChildScrollView(padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
         child: Form(
           key: formKey,
@@ -77,14 +77,32 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
             validator: (value) => emptyValidator(value, 'name'),
           ),
           SizedBox(height: 15,),
-          HaweyatiTextField(controller: email,label: "Email",keyboardType: TextInputType.emailAddress,
-            validator: (value) => emailValidator(value),
+//          HaweyatiTextField(controller: email,label: "Email",keyboardType: TextInputType.emailAddress,
+//            validator: (value) => emailValidator(value),
+//          ),
+//          SizedBox(height: 15,),
+          AbsorbPointer(
+            absorbing: true,
+            child: HaweyatiTextField(controller: contact,
+                label: "Contact",
+                keyboardType: TextInputType.number),
           ),
-          SizedBox(height: 15,),
-          HaweyatiTextField(controller: contact,label: "Contact",keyboardType: TextInputType.number),
+
           SizedBox(height: 15,),
           HaweyatiPasswordField(controller: password,label: "Password",validator:(value)=> passwordValidator(value),),
-          EmptyContainer(
+            SizedBox(height: 15,),
+            HaweyatiPasswordField(controller: confirmPassword,label: "Confirm Password",
+              validator:(value){
+                if(value.isEmpty){
+                  return 'Please confirm password';
+                }
+                if(password.text != confirmPassword.text){
+                  return "Passwords don't match";
+                }
+                return null;
+              },
+            ),
+            EmptyContainer(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,13 +115,22 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                     ),
                     FlatButton.icon(
                         onPressed: () async {
-                          UserLocation location = await  Navigator.of(context).push(MaterialPageRoute(
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          OrderLocation location = await  Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) => MyLocationMapPage(
                                 editMode: true,
                               )));
-                          setState(() {
-                            userLocation = location;
-                          });
+                          if(location!=null){
+                            print(location);
+                            setState(() {
+                              // userLocation = UserLocation(
+                              //     cords: location.cords,
+                              //     address: location.address
+                              // );
+                            });
+                          }
+
                         },
                         icon: Icon(
                           Icons.edit,
@@ -126,12 +153,12 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                       Icons.location_on,
                       color: Theme.of(context).accentColor,
                     ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(prefs?.getString('address') ?? ''),
-                      ),
-                    )
+                    // Expanded(
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.only(left: 10),
+                    //     child: Text(userLocation?.address ?? ''),
+                    //   ),
+                    // )
                   ],
                 ),
               ],
@@ -151,9 +178,9 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
 
                 FormData data = FormData.fromMap({
                   'name' : name.text,
-                  'contact' : contact.text,
+                  'contact' : widget?.contact,
                   'scope' : 'customer',
-                  'email' : email.text,
+//                  'email' : email.text,
                   'password' : password.text,
                   'latitude': prefs.getDouble('latitude'),
                   'longitude': prefs.getDouble('longitude'),
@@ -169,20 +196,14 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                   var res = await HaweyatiService.post(
                       'customers', data);
                   try {
-                      HaweyatiData.signIn(Customer.fromJson(res.data));
-                      Navigator.pop(context);
-                      if(widget.fromOrderPage){
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      } else {
-                        CustomNavigator.pushReplacement(context, AppHomePage());
-                      }
+                      // HaweyatiData.signIn(Customer.fromJson(res.data));
+//                      Navigator.pop(context);
+//                         CustomNavigator.pushReplacement(context, AppHomePage());
                   } catch (e){
+                    print(e);
                     Navigator.pop(context);
                     showSnackbar(scaffoldKey, res.toString(),true);
                   }
-
-
               }
               else {
                 setState(() {

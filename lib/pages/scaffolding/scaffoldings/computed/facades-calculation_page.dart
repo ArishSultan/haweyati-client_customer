@@ -3,24 +3,24 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/simple-form.dart';
 import 'package:haweyati/src/ui/widgets/no-scroll_page.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
-import '../../scaffoldinserviceDetail.dart';
+import '../../scaffolding-items-list.dart';
 
 class FacadesCalculationPage extends StatelessWidget {
-  final _faces = new TextEditingController();
-  final _height = new TextEditingController();
-  final _length = new TextEditingController();
+  final _faces =  TextEditingController();
+  final _height = TextEditingController();
+  final _length = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return SimpleForm(
-      autoValidate: false,
+      // autoValidate: false,
       onSubmit: () {
         CustomNavigator.navigateTo(context, ScaffoldingServicesDetail());
       },
-      builder: (context, submit) => NoScrollPage(
-        appBar: HaweyatiAppBar(context,progress: .4),
+      child: NoScrollPage(
+        appBar: HaweyatiAppBar(progress: .4),
         body: Theme(
           data: ThemeData(
             accentColor: Theme.of(context).accentColor,
@@ -68,7 +68,7 @@ class FacadesCalculationPage extends StatelessWidget {
           ),
         ),
         action: tr('Continue'),
-        onAction: submit,
+        // onAction: submit,
       ),
     );
   }

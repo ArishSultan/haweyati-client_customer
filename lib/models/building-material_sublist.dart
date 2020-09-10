@@ -1,9 +1,8 @@
 import 'package:haweyati/models/suppliers_model.dart';
 import 'package:hive/hive.dart';
 import 'bm-pricing.dart';
-import 'images_model.dart';
-import 'pricing_model.dart';
-part 'building-material_sublist.g.dart';
+import '../src/models/image_model.dart';
+// part 'building-material_sublist.g.dart';
 
 @HiveType(typeId: 10)
 class BMProduct extends HiveObject {
@@ -20,7 +19,7 @@ class BMProduct extends HiveObject {
   @HiveField(5)
   List<BMPricing> pricing;
   @HiveField(6)
-  Images image;
+  ImageModel image;
   @HiveField(7)
   int iV;
 
@@ -51,8 +50,7 @@ class BMProduct extends HiveObject {
         suppliers.add( Supplier.fromJson(v));
       });
     }
-    image = Images.fromJson(json['image']);
-    iV = json['__v'];
+    image = ImageModel.fromJson(json['image']);
   }
 
   Map<String, dynamic> toJson() {
@@ -63,7 +61,7 @@ class BMProduct extends HiveObject {
     data['_id'] = this.sId;
     data['name'] = this.name;
     data['description'] = this.description;
-    data['image'] = this.image.toJson();
+    data['image'] = this.image.serialize();
     data['parent'] = this.parent;
     if (this.pricing != null) {
       data['pricing'] = this.pricing.map((v) => v.toJson()).toList();

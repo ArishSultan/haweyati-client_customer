@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/ui/pages/home_page.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class OrderPlaced extends StatefulWidget {
   final String referenceNo;
@@ -14,7 +13,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: (){
-        CustomNavigator.pushReplacement(context, AppHomePage());
+        // CustomNavigator.pushReplacement(context, AppHomePage());
         return ;
       },
       child: Scaffold(
@@ -22,7 +21,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
             leading: IconButton(
               icon: Icon(Icons.arrow_back),
               onPressed: (){
-                CustomNavigator.pushReplacement(context, AppHomePage());
+                // CustomNavigator.pushReplacement(context, AppHomePage());
               },
             ),
             title: Text('Order Placed'),
@@ -67,8 +66,7 @@ class _OrderPlacedState extends State<OrderPlaced> {
                   ),
                   GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
-//                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> MyOrders()));
+                        // CustomNavigator.pushReplacement(context, AppHomePage());
                       },
                       child: Text(
                         "Home",

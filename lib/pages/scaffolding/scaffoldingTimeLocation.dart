@@ -1,110 +1,80 @@
-
-import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:haweyati/pages/dumpster/calender/custom-datepicker.dart';
+import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
+import 'package:haweyati/models/hive-models/orders/scaffolding-item_model.dart';
+import 'package:haweyati/models/order-time_and_location.dart';
+import 'package:haweyati/src/ui/widgets/date-picker-field.dart';
 import 'package:haweyati/pages/scaffolding/order.dart';
-import 'package:haweyati/src/utlis/local-data.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
-
-
-import 'package:image_picker/image_picker.dart';
+import 'package:haweyati/services/time-slots_service.dart';
+import 'package:haweyati/src/utlis/simple-future-builder.dart';
+import 'package:haweyati/widgits/order-location-picker.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/temp-model.dart';
-import 'package:haweyati/pages/orderDetail/orderDetail.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/widgits/appBar.dart';
-import 'package:haweyati/widgits/emptyContainer.dart';
 import 'package:haweyati/widgits/haweyati-appbody.dart';
 
-import '../locations-map_page.dart';
-
 class ScaffoldingTimeAndLocation extends StatefulWidget {
-  ConstructionService constructionService;
-  ScaffoldingTimeAndLocation({this.constructionService});
+  final OrderDetail orderDetail;
+  final List<ScaffoldingItemModel> order;
+  final ConstructionService constructionService;
+  ScaffoldingTimeAndLocation({this.constructionService,this.order,this.orderDetail});
   @override
   _ScaffoldingTimeAndLocationState createState() => _ScaffoldingTimeAndLocationState();
 }
 
 class _ScaffoldingTimeAndLocationState extends State<ScaffoldingTimeAndLocation> {
-//  File _image;
-
-  DateTime dateTime;
+  DateTime dateTime = DateTime.now();
+  Future<List<String>> timeSlots;
   var scaffoldKey = GlobalKey<ScaffoldState>();
-
+  OrderLocation dropOffLocation;
   String start = "...";
-  TimeOfDay _preferredTime;
+  bool scaffoldingSwitch =false;
 
-
-  bool val =false;
-
-
-  onSwtich(bool newVal){
-
+  onSwitchValueChange(bool newVal){
     setState(() {
-      val =newVal;
+      scaffoldingSwitch =newVal;
     });
   }
 
 
-  static List<String> timeIntervals = ['6:00am-9:00am', '9:00am-12:00pm' ,'12:pm-3:00pm', '6:00pm-9:00pm', '9:00pm-12:00am'];
-  String selectedInterval = timeIntervals[0];
+  String selectedInterval;
+
+  Future<List<String>> fetchTimeSlots([bool flag=true]) async {
+    // timeSlots = TimeSlotsService().getAvailableTimeSlots(3,flag);
+    // timeSlots.then((value) {
+    //   selectedInterval = value[0];
+    // });
+    return timeSlots;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTimeSlots();
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
-key: scaffoldKey,      appBar: HaweyatiAppBar(context: context,),
+      key: scaffoldKey,
+      appBar: HaweyatiAppBar(context: context,),
       body: HaweyatiAppBody(
         title: "Time & Location",
         detail: loremIpsum.substring(0, 40),
         child: ListView(
           padding: EdgeInsets.fromLTRB(20, 10, 20, 100),
-          children: <Widget>[  EmptyContainer(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Text(
-                      "Drop off Location",
-                      style: boldText,
-                    ),
-                    FlatButton.icon(
-                        onPressed: () {
-                          CustomNavigator.navigateTo(
-                              context, MyLocationMapPage());
-                        },
-                        icon: Icon(
-                          Icons.edit,
-                          color: Theme.of(context).accentColor,
-                        ),
-                        label: Text(
-                          "Edit",
-                          style:
-                          TextStyle(color: Theme.of(context).accentColor),
-                        ))
-                  ],
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Row(
-                  children: <Widget>[
-                    Icon(
-                      Icons.location_on,
-                      color: Theme.of(context).accentColor,
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(loremIpsum.substring(0, 40)),
-                      ),
-                    )
-                  ],
-                ),
-              ],
-            ),
+          children: <Widget>[  Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              OrderLocationPicker(
+                onLocationChanged: (OrderLocation location) {
+                  dropOffLocation = location;
+                },
+              ),
+            ],
           ),
             SizedBox(
               height: 20,
@@ -113,10 +83,18 @@ key: scaffoldKey,      appBar: HaweyatiAppBar(context: context,),
                 dropoffdate: "Drop-off Date", dropofftime: "Drop-off Time"),
             Row(
               children: <Widget>[
-
                 Expanded(
                   child: DatePickerField(
-                    onChanged: (date) => dateTime = date,
+                    // onChanged: (date) async {
+                    //   if(date!=null){
+                    //     dateTime = date;
+                    //     print(date?.day);
+                    //     timeSlots = TimeSlotsService().getAvailableTimeSlots(3,date.day == DateTime.now().day);
+                    //     await timeSlots;
+                    //     setState(() {
+                    //     });
+                    //   }
+                    // } ,
                   ),
                 ),
                 SizedBox(
@@ -124,25 +102,32 @@ key: scaffoldKey,      appBar: HaweyatiAppBar(context: context,),
                 ),
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                      padding: EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(color:Color(0xfff2f2f2f2),
-                        borderRadius: BorderRadius.circular(15)),
+                          borderRadius: BorderRadius.circular(15)),
                       child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
-                        DropdownButton<String>(
-                          underline: SizedBox(),
-                          value: selectedInterval,
-                          items: timeIntervals.map((String value) {
-                            return new DropdownMenuItem<String>(
-                              value: value,
-                              child: SizedBox(
-                                width: 150,
-                                child: Text('$value', textAlign: TextAlign.center)
-                              ),
+                        SimpleFutureBuilder.simpler(
+                          context : context,
+                          future: timeSlots,
+                          builder: (AsyncSnapshot<List<String>> timeSlots){
+                            return DropdownButton<String>(
+                              underline: SizedBox(),
+                              value: selectedInterval,
+                              items: timeSlots.data.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left:14.0),
+                                    child: Text('$value', textAlign: TextAlign.center),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (_) {
+                                setState(() {
+                                  selectedInterval = _;
+                                });
+                              },
                             );
-                          }).toList(),
-                          onChanged: (_) {setState(() {
-                            selectedInterval = _;
-                          });
                           },
                         ),
                       ],)
@@ -153,8 +138,8 @@ key: scaffoldKey,      appBar: HaweyatiAppBar(context: context,),
 
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: <Widget>[
               Text("Scaffolding Fixing",style: TextStyle(fontWeight: FontWeight.bold),),
-              Switch(value: val, onChanged: (newVal){
-                onSwtich(newVal);
+              Switch(value: scaffoldingSwitch, onChanged: (newVal){
+                onSwitchValueChange(newVal);
               })
             ],),
 
@@ -171,12 +156,14 @@ key: scaffoldKey,      appBar: HaweyatiAppBar(context: context,),
             return;
           }
 
-
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ScaffoldingOrderDetail(
-time: selectedInterval,
+              builder: (context) => ScaffoldingOrderConfirmation(
+                  time: selectedInterval,
+                order: widget.order,
+                subService: 'Single Scaffolding',
+                location: dropOffLocation,
                 date: dateTime,
-                constructionService: widget.constructionService,
+
               )));
           },
         btnName: tr("Continue"),
@@ -213,16 +200,4 @@ time: selectedInterval,
     );
   }
 
-  Widget _buildRowwithDetail({Widget child1, Widget child2}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        Expanded(flex: 2, child: EmptyContainer(child: child1)),
-        SizedBox(
-          width: 10,
-        ),
-        Expanded(flex: 2, child: EmptyContainer(child: child2)),
-      ],
-    );
-  }
 }

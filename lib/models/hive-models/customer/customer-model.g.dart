@@ -17,7 +17,7 @@ class CustomerAdapter extends TypeAdapter<Customer> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Customer(
-      location: fields[2] as HiveLocation,
+      location: fields[2] as Location,
       id: fields[0] as String,
       token: fields[3] as String,
       message: fields[4] as String,

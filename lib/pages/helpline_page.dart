@@ -1,14 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:haweyati/pages/chat/chat-page.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/widgits/appBar.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
 import 'package:haweyati/widgits/no-scroll_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'chat/chat-listing-page.dart';
 class HelplinePage extends StatefulWidget {
   @override
   _HelplinePageState createState() => _HelplinePageState();
@@ -57,7 +53,7 @@ class _HelplinePageState extends State<HelplinePage> {
     return NoScrollPage(
       appBar: HaweyatiAppBar(showHome: false,showCart: false,),
 
-      icon: Image.asset('assets/images/icons/call-dial.png', width: 20),
+      icon: Image.asset('assets/images/call-dial.png', width: 20),
 
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -124,15 +120,9 @@ class _HelplinePageState extends State<HelplinePage> {
       onAction: _available ?
         () {
           _checkAvailability();
-//          if(_available){
-//
-//            launchWhatsApp(phone:" +923472363720", message: "Hello");
-//          }
-
           if(_available){
-            CustomNavigator.navigateTo(context, ChatViewPage());
+            launchWhatsApp(phone:" +923472363720", message: "Hello");
           }
-//          if (_available) launch("tel:+923472363720");
         }:
         null,
     );

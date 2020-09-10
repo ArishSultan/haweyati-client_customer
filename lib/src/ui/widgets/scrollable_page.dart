@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/widgits/appBar.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
 
 class ScrollablePage extends StatelessWidget {
   final String title;
   final Widget child;
   final String action;
-  final AppBar appBar;
+  final PreferredSizeWidget appBar;
   final double padding;
   final String subtitle;
   final double distance;
@@ -33,27 +33,27 @@ class ScrollablePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: key,
-      appBar: this.appBar ?? HaweyatiAppBar( showCart: false,showHome: false,),
+      appBar: this.appBar ?? HaweyatiAppBar(hideHome: true, hideCart: true),
       backgroundColor: Colors.white,
       body: Container(
         decoration: showBackgroundImage ? BoxDecoration(
-            image: DecorationImage(
-              alignment: Alignment(0, 1),
-              image: AssetImage("assets/images/pattern.png"),
-            )
+          image: DecorationImage(
+            alignment: Alignment(0, 1),
+            image: AssetImage("assets/images/pattern.png"),
+          )
         ) : null,
         padding: EdgeInsets.symmetric(horizontal: this.padding ?? 20),
         child: CustomScrollView(slivers: <Widget>[
           SliverPadding(
             padding: EdgeInsets.only(top: 30, bottom: 10),
             sliver: SliverToBoxAdapter(child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold
-                )
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold
+              )
             )),
           ),
           SliverToBoxAdapter(child: Text(

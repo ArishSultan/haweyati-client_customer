@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/hive-models/customer/customer-model.dart';
 import 'package:haweyati/models/hive-models/orders/transaction_model.dart';
@@ -5,9 +7,8 @@ import 'package:haweyati/services/auth-service.dart';
 import 'package:haweyati/services/payment-service.dart';
 import 'package:haweyati/src/ui/widgets/loading-dialog.dart';
 import 'package:haweyati/src/utlis/const.dart';
-import 'package:haweyati/src/utlis/hive-local-data.dart';
 import 'package:haweyati/widgits/appBar.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/widgits/haweyati-appbody.dart';
 import 'package:haweyati/widgits/message-dialog.dart';
 import 'package:hive/hive.dart';
@@ -27,7 +28,7 @@ class _SelectPaymentMethodState extends State<SelectPaymentMethod> {
 
   Future<bool> checkBlockedStatus() async {
     openLoadingDialog(context, 'Please wait...');
-    Customer cus = await AuthService().getCustomer(HaweyatiData.customer.profile.contact);
+    Customer cus = await AuthService().getCustomer(''/*HaweyatiData.customer.profile.contact*/);
     if(cus.status=='Blocked') {
       print('customer is blocked');
       Navigator.pop(context);
@@ -109,10 +110,11 @@ class _SelectPaymentMethodState extends State<SelectPaymentMethod> {
         child: ListView(
           padding: EdgeInsets.fromLTRB(15, 30, 15, 30),
           children: <Widget>[
-            _buildPaymentContainer(
-                imgPath: "assets/images/mada.png", onTap: () => setState(() => _selectedIndex = 0), text: "Mada", index: 0),
-            _buildPaymentContainer(
-                imgPath: "assets/images/apple-pay.png", onTap: () => setState(() => _selectedIndex = 1), text: "Apple", index: 1),
+            // _buildPaymentContainer(
+            //     imgPath: "assets/images/mada.png", onTap: () => setState(() => _selectedIndex = 0), text: "Mada", index: 0),
+          Platform.isIOS ?  _buildPaymentContainer(
+                imgPath: "assets/images/apple-pay.png", onTap: () => setState(() => _selectedIndex = 1), text: "Apple", index: 1)
+            : SizedBox() ,
             _buildPaymentContainer(
                 imgPath: "assets/images/credit-card.png", onTap: () => setState(() => _selectedIndex = 2), text: "Credit Card ", index: 2),
             _buildPaymentContainer(

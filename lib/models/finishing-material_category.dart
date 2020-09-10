@@ -1,10 +1,10 @@
-import 'images_model.dart';
+import '../src/models/image_model.dart';
 
 class FinishingMaterial {
   String sId;
   String name;
   String description;
-  Images image;
+  ImageModel image;
   int iV;
 
   FinishingMaterial(
@@ -14,7 +14,7 @@ class FinishingMaterial {
     sId = json['_id'];
     name = json['name'];
     description = json['description'];
-    image = Images.fromJson(json['image']);
+    image = ImageModel.fromJson(json['image']);
     iV = json['__v'];
   }
 

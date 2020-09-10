@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/ui/pages/location/pre-location_page.dart';
+import 'package:haweyati/src/ui/views/dotted-background_view.dart';
+import 'package:haweyati/src/utils/app-data.dart';
+import 'package:haweyati/src/utils/const.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FeaturesPage extends StatefulWidget {
   @override
@@ -18,66 +18,61 @@ class _FeaturesPageState extends State<FeaturesPage> {
   void initState() {
     super.initState();
 
-    SharedPreferences.getInstance().then((value) {
-      final firstTime = value.getBool("firstTime") ?? true;
-      if (!firstTime) Navigator.of(context).pushReplacementNamed('/');
-    });
-
+    AppData.instance().burnFuse();
     _controller = PageController(initialPage: 0);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          titleSpacing: 5,
-          automaticallyImplyLeading: false,
-          title: Row(children: <Widget>[
-            LocalizationSelector(
-              selected: EasyLocalization.of(context).locale,
-              onChanged: (locale) {
-                setState(() => EasyLocalization.of(context).locale = locale);
-              }
-            ),
-            Expanded(child: Padding(
-              padding: const EdgeInsets.only(top:20.0),
-              child: Image.asset("assets/images/haweyati_logo.png",scale: 6,),
-            ),)
-          ]),
-          actions: <Widget>[
-            _currentPage != 3? SizedBox(
-              width: 70,
-              child: FlatButton(
-                textColor: Colors.white,
-                child: Text(tr("skip")),
-                onPressed: () =>  CustomNavigator.navigateTo(context, PreLocationPage()) // Navigator.of(context).pushNamed('/pre-location')
-              ),
-            ): Container(width: 70)
-          ],
-        ),
+    return Scaffold(
+      extendBody: true,
+      appBar: AppBar(
+        centerTitle: true,
+        titleSpacing: 5,
+        automaticallyImplyLeading: false,
+        title: Row(children: <Widget>[
+          LocalizationSelector(
+            selected: EasyLocalization.of(context).locale,
+            onChanged: (locale) {
+              setState(() => EasyLocalization.of(context).locale = locale);
+            }
+          ),
+          Expanded(child: Image.asset(AppLogo, width: 40, height: 40))
+        ]),
+        actions: <Widget>[
+          _currentPage != 3? SizedBox(
+            width: 70,
+            child: FlatButton(
+              textColor: Colors.white,
+              child: Text(tr('skip')),
+              onPressed: () => Navigator.of(context).pushNamed('/pre-location')
+            )
+          ): Container(width: 70)
+        ],
+      ),
 
-        body: PageView(
+      body: DottedBackgroundView(
+        padding: const EdgeInsets.only(bottom: 56),
+        child: PageView(
           children: <Widget>[
             _FeatureView(
-              title: tr("Our_Services"),
               image: '1',
+              title: tr('Our_Services'),
               detail: tr('services_detail')
             ),
             _FeatureView(
-              title: tr("Our_product"),
               image: '2',
+              title: tr('Our_product'),
               detail: tr('product_detail')
             ),
             _FeatureView(
-              title: tr("Truck"),
               image: '3',
+              title: tr('Truck'),
               detail: tr('truck_detail')
             ),
             _FeatureView(
-              title: tr("Payment"),
               image: '4',
+              title: tr('Payment'),
               detail: tr('payment_detail')
             ),
           ],
@@ -88,51 +83,52 @@ class _FeaturesPageState extends State<FeaturesPage> {
             });
           },
         ),
+      ),
 
-        floatingActionButton: GestureDetector(
-          onTap: () {
-            print(_currentPage);
-            if (_currentPage != 3)
-              _controller.nextPage(duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
-            else Navigator.of(context).pushNamed('/pre-location');
-          },
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-
-            width: _currentPage == 3? 138 :60,
-            height: _currentPage == 3? 45 :60,
-            decoration: BoxDecoration(
-              color: Theme.of(context).accentColor,
-              borderRadius: BorderRadius.circular(_currentPage == 3? 23: 35)
-            ),
-            child: _currentPage == 3? Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 17),
-              child: Row(children: <Widget>[
-                Expanded(
-                  flex: 10,
-                  child: Text("Get Started", style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold
-                  ), overflow: TextOverflow.ellipsis),
-                ),
-                Expanded(flex: 1, child: Container()),
-                Image.asset("assets/images/icons/next-feature.png", width: 20)
-              ]),
-            ): Center(child: Image.asset("assets/images/icons/next-feature.png", width: 30)),
-          )
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        bottomNavigationBar: SizedBox(
-          height: 56,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 13),
-            child: Row(children: <Widget>[
-              _FeatureViewIndicator(_currentPage == 0),
-              _FeatureViewIndicator(_currentPage == 1),
-              _FeatureViewIndicator(_currentPage == 2),
-              _FeatureViewIndicator(_currentPage == 3)
-            ], crossAxisAlignment: CrossAxisAlignment.start),
+      floatingActionButton: GestureDetector(
+        onTap: () {
+          if (_currentPage != 3)
+            _controller.nextPage(
+              curve: Curves.easeInOut,
+              duration: Duration(milliseconds: 300)
+            );
+          else Navigator.of(context).pushNamed('/pre-location');
+        },
+        child: AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          width: _currentPage == 3? 138 :60,
+          height: _currentPage == 3? 45 :60,
+          decoration: BoxDecoration(
+            color: Theme.of(context).accentColor,
+            borderRadius: BorderRadius.circular(_currentPage == 3? 23: 35)
           ),
+          child: _currentPage == 3? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 17),
+            child: Row(children: <Widget>[
+              Expanded(
+                flex: 10,
+                child: Text("Get Started", style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold
+                ), overflow: TextOverflow.ellipsis),
+              ),
+              Expanded(flex: 1, child: Container()),
+              Image.asset(NextFeatureIcon, width: 20)
+            ]),
+          ): Center(child: Image.asset(NextFeatureIcon, width: 30)),
+        )
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      bottomNavigationBar: SizedBox(
+        height: 56,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 13),
+          child: Row(children: <Widget>[
+            _FeatureViewIndicator(_currentPage == 0),
+            _FeatureViewIndicator(_currentPage == 1),
+            _FeatureViewIndicator(_currentPage == 2),
+            _FeatureViewIndicator(_currentPage == 3)
+          ], crossAxisAlignment: CrossAxisAlignment.start),
         ),
       ),
     );
@@ -154,7 +150,7 @@ class _FeatureView extends Column {
     Expanded(child: Center(
       child: Transform.scale(
         scale: 0.8,
-        child: Image.asset("assets/images/welcome-page/feature-$image.png")
+        child: Image.asset('assets/images/welcome-page/feature-$image.png')
       )
     )),
     Padding(
@@ -178,7 +174,7 @@ class _FeatureViewIndicator extends Container {
     margin: const EdgeInsets.only(left: 5),
     decoration: BoxDecoration(
       shape: BoxShape.circle,
-      color: selected ? Color(0xff313f53) : Colors.grey.shade300
+      color: selected ? Color(0xFF313F53) : Colors.grey.shade300
     )
   );
 }

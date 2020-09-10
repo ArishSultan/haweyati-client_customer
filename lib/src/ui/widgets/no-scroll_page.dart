@@ -5,6 +5,7 @@ class NoScrollPage extends StatelessWidget {
   final Widget body;
   final Widget appBar;
   final String action;
+  final bool extendBody;
   final Function onAction;
 
   NoScrollPage({
@@ -13,6 +14,7 @@ class NoScrollPage extends StatelessWidget {
     this.appBar,
     this.action,
     this.onAction,
+    this.extendBody = false
   });
 
   @override
@@ -20,6 +22,8 @@ class NoScrollPage extends StatelessWidget {
     return Scaffold(
       body: body,
       appBar: appBar,
+      extendBody: extendBody,
+      backgroundColor: Colors.white,
       bottomNavigationBar: _resolveButton(context, icon, action, onAction),
     );
   }

@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/pages/scaffolding/scaffolding-items-list.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/no-scroll_page.dart';
 import 'package:haweyati/src/ui/widgets/simple-form.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class CeilingCalculationPage extends StatelessWidget {
   final _width = new TextEditingController();
@@ -12,13 +14,12 @@ class CeilingCalculationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleForm(
-      autoValidate: false,
+      // autoValidate: false,
       onSubmit: () {
-        print('here');
-//        Navigator.of(context).pushNamed('');
+        CustomNavigator.navigateTo(context, ScaffoldingServicesDetail());
       },
-      builder: (context, submit) => NoScrollPage(
-        appBar: HaweyatiAppBar(context,progress: .4),
+      child: NoScrollPage(
+        appBar: HaweyatiAppBar(progress: .4),
         body: Theme(
           data: ThemeData(
             accentColor: Theme.of(context).accentColor,
@@ -66,7 +67,7 @@ class CeilingCalculationPage extends StatelessWidget {
           ),
         ),
         action: tr('Continue'),
-        onAction: submit,
+        // onAction: submit,
       ),
     );
   }

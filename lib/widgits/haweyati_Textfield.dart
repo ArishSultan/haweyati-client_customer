@@ -1,42 +1,39 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+class HaweyatiTextField extends StatelessWidget {
+  final bool dense;
+  final String label;
+  final IconData icon;
+  final Function(String) onSaved;
+  final Function(String) validator;
+  final TextInputType keyboardType;
+  final TextEditingController controller;
 
-class HaweyatiTextField extends TextFormField {
   HaweyatiTextField({
-    IconData icon,
-    String label,
-    bool dense=false,
-    TextInputType keyboardType,
-    BuildContext context,
-    TextEditingController controller,
-    Function(String) validator
-  })
-      :
-        super(
-    keyboardType: keyboardType,
-    textInputAction: TextInputAction.next,
-    onFieldSubmitted: (v) {
-      FocusScope.of(context).nextFocus();
-    },
-    style: TextStyle(
-      color: Colors.black,
-    ),
-    scrollPadding: EdgeInsets.all(180),
-    decoration: InputDecoration(
-      isDense: dense,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: Colors.black, width: 5)
+    this.label, this.icon, this.onSaved,
+    this.dense = false, this.validator,
+    this.keyboardType, this.controller
+  });
+  
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      keyboardType: keyboardType,
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (v) {
+        FocusScope.of(context).nextFocus();
+      },
+      scrollPadding: EdgeInsets.all(180),
+      decoration: InputDecoration(
+        labelText: label,
       ),
-      labelText: label,
-      contentPadding: EdgeInsets.all(20),
-    ),
-    validator: validator,
-    controller: controller,
-  );
+      onSaved: onSaved,
+      validator: validator,
+      controller: controller,
+    );
+  }
 }
-
 
 class HaweyatiPasswordField extends StatefulWidget {
   final IconData icon;
@@ -45,12 +42,14 @@ class HaweyatiPasswordField extends StatefulWidget {
   final BuildContext context;
   final TextEditingController controller;
   final Function(String) validator;
+  final Function(String) onSaved;
 
   HaweyatiPasswordField({
     this.icon,
     this.label,
     this.keyboardType,
     this.context,
+    this.onSaved,
     this.controller,
     this.validator,
   });
@@ -68,44 +67,18 @@ class _HaweyatiPasswordFieldState extends State<HaweyatiPasswordField> {
       obscureText: _show,
       keyboardType: widget.keyboardType,
       textInputAction: TextInputAction.next,
-      onFieldSubmitted: (v) {
-        FocusScope.of(context).nextFocus();
-      },
-      style: TextStyle(
-        color: Colors.black,
-      ),
       scrollPadding: EdgeInsets.all(180),
       decoration: InputDecoration(
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.black, width: 5)
-          ),
-          labelText: widget.label,
-          focusColor: Theme.of(context).primaryColor,
-          contentPadding: EdgeInsets.all(20),
-          suffix: GestureDetector(
-            child: Text("Show", style: TextStyle(color: Theme.of(context).primaryColor)),
-            onTap: () => setState(() => _show = !_show),
-          )
+        labelText: widget.label,
+        focusColor: Theme.of(context).primaryColor,
+        suffix: GestureDetector(
+          child: Text('Show', style: TextStyle(color: Theme.of(context).primaryColor)),
+          onTap: () => setState(() => _show = !_show),
+        )
       ),
+      onSaved: widget.onSaved,
       validator: widget.validator,
       controller: widget.controller,
     );
   }
 }
-
-
-
-
-
-
-//class HaweyatiTextField extends Padding {
-//  HaweyatiTextField(
-//      )
-//      : super(
-//          padding: EdgeInsets.all(10),
-//          child: TextFormField(
-//
-//          ),
-//        );
-//}

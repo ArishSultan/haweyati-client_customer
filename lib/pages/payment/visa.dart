@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/models/dumpstermodel.dart';
+// import 'package:haweyati/models/dumpstermodel.dart';
 import 'package:haweyati/models/temp-model.dart';
 import 'package:haweyati/pages/phoneNumber.dart';
 import 'package:haweyati/src/app.dart';
@@ -49,7 +49,7 @@ class _VisaCardState extends State<VisaCard> {
                   children: <Widget>[
                     HaweyatiTextField(
                       label: "Name",
-                      context: context,
+                      // context: context,
                       controller: name,
                       validator: (value) {
                         return value.isEmpty ? "Please Enter Name" : null;
@@ -60,7 +60,7 @@ class _VisaCardState extends State<VisaCard> {
                     ),
                     HaweyatiTextField(
                       label: "Card Number",
-                      context: context,
+                      // context: context,
                       controller: name,
                       validator: (value) {
                         return value.isEmpty

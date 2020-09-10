@@ -16,7 +16,7 @@ class LocalizationSelector extends StatelessWidget {
       iconEnabledColor: Colors.white,
       icon: Icon(Icons.language, size: 20),
       underline: Container(),
-      dropdownColor: Theme.of(context).primaryColor,
+      dropdownColor: Color(0xFF313F53),
 
       value: this.selected ?? Locale('ar'),
 
@@ -31,7 +31,10 @@ class LocalizationSelector extends StatelessWidget {
 
         DropdownMenuItem(
           value: Locale('ar'),
-          child: Text('Arabic', style: TextStyle(color: Colors.white, fontSize: 13)),
+          child: Padding(
+            padding: const EdgeInsets.only(right: 5),
+            child: Text('Arabic', style: TextStyle(color: Colors.white, fontSize: 13)),
+          ),
         )
       ],
 
@@ -39,7 +42,6 @@ class LocalizationSelector extends StatelessWidget {
     );
   }
 }
-
 
 //class LocalizationSelector extends StatefulWidget {
 //  final String selected;

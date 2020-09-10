@@ -1,9 +1,9 @@
 import 'package:haweyati/models/options_model.dart';
 import 'package:haweyati/models/suppliers_model.dart';
 import 'package:hive/hive.dart';
-import 'images_model.dart';
+import '../src/models/image_model.dart';
 
-part 'finishing-product.g.dart';
+// part 'finishing-product.g.dart';
 
 @HiveType(typeId: 16)
 class FinProduct extends HiveObject{
@@ -24,7 +24,7 @@ class FinProduct extends HiveObject{
   @HiveField(7)
   List<Map<String,dynamic>> variants;
   @HiveField(8)
-  Images images;
+  ImageModel images;
   @HiveField(9)
   int iV;
 
@@ -44,7 +44,7 @@ class FinProduct extends HiveObject{
 //    print(json);
     sId = json['_id'];
     name = json['name'];
-    price = double.parse(json['price'].toString());
+    price = json['price'] !=null ? double.parse(json['price'].toString()) : null;
     description = json['description'];
     parent = json['parent'];
     if (json['options'] != null) {
@@ -59,7 +59,7 @@ class FinProduct extends HiveObject{
         suppliers.add( Supplier.fromJson(v));
       });
     }
-    variants = json['varient'].cast<Map<String,dynamic>>();
+    variants = json['varient']!=null ? json['varient'].cast<Map<String,dynamic>>() : null;
 //    if (json['varient'] != null) {
 //      variants = List<Variant>();
 //      json['varient'].forEach((v) {
@@ -67,9 +67,8 @@ class FinProduct extends HiveObject{
 //      });
 //    }
     if (json['image'] != null) {
-      images = Images.fromJson(json['image']);
+      images = ImageModel.fromJson(json['image']);
     }
-    iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
@@ -90,7 +89,7 @@ class FinProduct extends HiveObject{
 //      data['varient'] = this.options.map((v) => v.toJson()).toList();
 //    }
     if (this.images != null) {
-      data['image'] = this.images.toJson();
+      data['image'] = this.images.serialize();
     }
     data['__v'] = this.iV;
     return data;

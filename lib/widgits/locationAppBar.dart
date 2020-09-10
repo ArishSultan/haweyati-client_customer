@@ -9,7 +9,7 @@ class LocationAppBar extends AppBar{
       title: Padding(
         padding: const EdgeInsets.all(18.0),
         child: Image.asset(
-          "assets/images/haweyati_logo1.png",
+          "assets/images/app-logo.png",
           width: 40,
           height: 40,
         ),

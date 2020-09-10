@@ -19,7 +19,7 @@ class ServiceListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -27,7 +27,7 @@ class ServiceListItem extends StatelessWidget {
           BoxShadow(
             blurRadius: 10,
             spreadRadius: 1,
-            color: Colors.grey.shade300
+            color: Colors.grey.shade100
           )
         ],
         borderRadius: BorderRadius.circular(10),

@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/person_model.dart';
 import 'package:haweyati/services/haweyati-service.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebasePhoneAuth{

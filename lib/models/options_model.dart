@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-part 'options_model.g.dart';
+// part 'options_model.g.dart';
 
 @HiveType(typeId: 17)
 class ProductOption extends HiveObject{

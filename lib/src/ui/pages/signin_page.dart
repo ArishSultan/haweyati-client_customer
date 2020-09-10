@@ -1,170 +1,89 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/models/hive-models/customer/customer-model.dart';
-import 'package:haweyati/services/auth-service.dart';
-import 'package:haweyati/services/haweyati-service.dart';
-import 'package:haweyati/src/ui/pages/customer-registration_page.dart';
-import 'package:haweyati/src/ui/pages/home_page.dart';
-import 'package:haweyati/src/ui/widgets/waiting-dialog.dart';
-import 'package:haweyati/src/utlis/hive-local-data.dart';
-import 'package:haweyati/widgits/appBar.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/src/common/models/serializable.dart';
+import 'package:haweyati/src/common/services/jwt-auth_service.dart';
+import 'package:haweyati/src/common/simple-form.dart';
+import 'package:haweyati/src/ui/dialogs/waiting_dialog.dart';
+import 'package:haweyati/src/ui/views/header_view.dart';
+import 'package:haweyati/src/ui/views/scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/utils/const.dart';
 import 'package:haweyati/widgits/haweyati_Textfield.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class SignInPage extends StatefulWidget {
-  final bool fromOrderPage;
-  SignInPage({this.fromOrderPage});
-  @override
-  _SignInPageState createState() => _SignInPageState();
+class _SignInData extends Serializable {
+  String username;
+  String password;
+
+  @override serialize() => {
+    'username': username,
+    'password': password
+  };
 }
 
-class _SignInPageState extends State<SignInPage> {
-  bool loading = false;
-  bool autoValidate = false;
-  var _formKey = GlobalKey<FormState>();
-  var scaffoldKey = GlobalKey<ScaffoldState>();
-
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
+class SignInPage extends StatelessWidget {
+  final _data = _SignInData();
+  final _key = GlobalKey<SimpleFormState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: scaffoldKey,
-      appBar: HaweyatiAppBar(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-      floatingActionButton: FloatingActionButton(
-        elevation: 0,
-        foregroundColor: Colors.white,
-        child: Icon(Icons.arrow_forward),
-        onPressed: () async {
-          FocusScope.of(context).requestFocus(FocusNode());
-          FocusScope.of(context).requestFocus(FocusNode());
-          if (_formKey.currentState.validate()) {
-            showDialog(
-              context: context,
-              builder: (context) => WaitingDialog('Signing In, Please wait ...')
-            );
-            var token;
-            try{
-            var user = await HaweyatiService.post('auth/sign-in', {"username" : email.text , "password" : password.text});
-            token = user.data['access_token'];}
-            catch(e){
-              Navigator.pop(context);
-              scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text("Incorrect username or password"),
-              ));
-              return;
-            }
-
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            prefs.setString('bearer', token);
-
-            Customer profile = await AuthService().getProfile();
-            print(profile);
-            var contact = profile.profile.contact;
-            Customer customer = await AuthService().getCustomer(contact);
-
-
-            if(!customer.profile.scope.contains('customer')){
-              prefs.setString('bearer', null);
-              Navigator.pop(context);
-              scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text("${customer.profile.name} is registered as a ${customer.profile.scope[0]} .Please use supplier/driver app"),
-              ));
-              return;
-            }
-
-
-            await HaweyatiData.signIn(customer);
-            Navigator.pop(context);
-            if(widget.fromOrderPage){
-              Navigator.pop(context);
-            } else {
-              CustomNavigator.pushReplacement(context, AppHomePage());
-            }
-
-          } else {
-            setState(() => autoValidate = true);
-          }
+    return ScrollableView(
+      appBar: const HaweyatiAppBar(hideCart: true, hideHome: true),
+      showBackground: true,
+      child: SimpleForm(
+        key: _key,
+        waitingDialog: WaitingDialog(message: 'Signing in ...'),
+        onSubmit: () async {
+          await JwtAuthService.create().$signIn(_data);
         },
-      ),
 
-      bottomNavigationBar: Container(
-        height: 50,
-        child: Align(
-          alignment: Alignment(0, -1),
-          child: GestureDetector(
-            onTap: () {
-              CustomNavigator.navigateTo(context, CustomerRegistration());
-//              CustomNavigator.navigateTo(context, VerificationPhoneNumber(phoneNumber: '+923012144088',));
-            },
-            child: Text("REGISTER NOW", style: TextStyle(
-              color: Theme.of(context).accentColor
-            )),
+        child: Column(children: [
+          HeaderView(
+            title: 'Sign in',
+            subtitle: 'Enter your Credentials',
           ),
-        ),
-      ),
 
-      body: Form(
-        autovalidate: autoValidate,
-        key: _formKey,
-        child: ConstrainedBox(
-          constraints: BoxConstraints.expand(),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              children: <Widget>[
-                SizedBox(height: 50),
-
-                Text("Sign In", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-                SizedBox(height: 10),
-
-                Text("Please Enter Credentials", style: TextStyle(color: Colors.black54)),
-                SizedBox(height: 40),
-
-                HaweyatiTextField(
-                  keyboardType: TextInputType.emailAddress,
-                  label: "Email or Phone Number",
-                  controller: email,
-                  validator: (value) {
-                    return value.isEmpty ? "Please Enter Email" : null;
-                  },
-                  context: context,
-                ),
-
-                SizedBox(height: 30),
-
-                HaweyatiPasswordField(
-                  label: "Password",
-                  controller: password,
-                  validator: (value) {
-                    return value.isEmpty ? "Please Enter Password" : null;
-                  },
-                  context: context,
-                ),
-
-                SizedBox(height: 15),
-
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: InkWell(
-
-                    onTap: () {
-//                      CustomNavigator.navigateTo(context,PhoneNumber());
-                    },
-                    child: Text("Forgot password?",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Theme.of(context).accentColor,
-                      )
-                    )
-                  ),
-                ),
-              ],
+          Padding(
+            padding: const EdgeInsets.only(bottom: 15),
+            child: HaweyatiTextField(
+              label: 'Your Phone #',
+              controller: TextEditingController(text: '+923376202011'),
+              onSaved: (value) => _data.username = value,
             ),
           ),
-        ),
+
+          HaweyatiPasswordField(
+            label: 'Your Password',
+            context: context,
+            controller: TextEditingController(text: '12345678'),
+            onSaved: (value) => _data.password = value,
+            validator: (value) => value.isEmpty ? 'Provide your Password' : null,
+          )
+        ]),
+      ),
+      bottom: Container(
+        height: 110,
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        child: Stack(children: [
+          Align(
+            alignment: Alignment.center,
+            child: GestureDetector(
+              child: Text('Forgot password?',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).accentColor,
+                )
+              ),
+              onTap: () => Navigator.of(context).pushNamed('/'),
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FloatingActionButton(
+              elevation: 0,
+              child: Image.asset(NextFeatureIcon, width: 30),
+              onPressed: () => _key.currentState.submit()
+            ),
+          )
+        ])
       ),
     );
   }

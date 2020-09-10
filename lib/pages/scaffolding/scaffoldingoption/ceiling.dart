@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/temp-model.dart';
-import 'package:haweyati/pages/scaffolding/scaffoldinserviceDetail.dart';
+import 'package:haweyati/pages/scaffolding/scaffolding-items-list.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/widgits/appBar.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/widgits/haweyati-appbody.dart';
 import 'package:haweyati/widgits/haweyati_Textfield.dart';
 
@@ -48,7 +48,7 @@ class _CeilingState extends State<Ceiling> {
                   validator: (value) {
                     return value.isEmpty ? "Please Enter Length" : null;
                   },
-                  context: context,
+                  // context: context,
                 ),
                 SizedBox(
                   height: 20,
@@ -62,7 +62,7 @@ class _CeilingState extends State<Ceiling> {
                         ? "Please Enter Width"
                         : null;
                   },
-                  context: context,
+                  // context: context,
                 ),
                 SizedBox(
                   height: 20,
@@ -74,7 +74,7 @@ class _CeilingState extends State<Ceiling> {
                   validator: (value) {
                     return value.isEmpty ? "Please Enter Height" : null;
                   },
-                  context: context,
+                  // context: context,
                 ),
               ],
             ),

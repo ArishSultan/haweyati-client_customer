@@ -9,7 +9,7 @@ class PatentedOptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NoScrollPage(
-      appBar: HaweyatiAppBar(context,progress: .3),
+      appBar: HaweyatiAppBar(progress: .3),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
         child: Column(children: [
@@ -27,13 +27,13 @@ class PatentedOptionsPage extends StatelessWidget {
           ),
           Text(loremIpsum.substring(0,60), textAlign: TextAlign.center),
           SizedBox(height: 40),
-          DarkListItem(
+          DarkListTile(
             title: "Facades",
             trailing: Icon(CupertinoIcons.right_chevron),
             onTap: () => Navigator.of(context).pushNamed('/scaffoldings-facades')
           ),
           SizedBox(height: 15),
-          DarkListItem(title: "Manual", trailing: Icon(CupertinoIcons.right_chevron)),
+          DarkListTile(title: "Manual", trailing: Icon(CupertinoIcons.right_chevron)),
         ]),
       ),
     );

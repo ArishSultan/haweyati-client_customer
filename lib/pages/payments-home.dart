@@ -28,7 +28,7 @@ class StripePaymentPageState extends State<StripePaymentPage> {
   payViaNewCard(BuildContext context) async {
     openLoadingDialog(context, 'Please wait');
     var response = await StripeService.payWithNewCard(
-        amount: widget.transaction.paymentAmount.toInt().toString(),
+        amount: widget.transaction?.paymentAmount !=null ? widget.transaction.paymentAmount?.toInt().toString() : '200',
         currency: 'USD'
     );
     Scaffold.of(context).showSnackBar(
@@ -67,10 +67,10 @@ class StripePaymentPageState extends State<StripePaymentPage> {
                   icon = Icon(Icons.add_circle, color: theme.primaryColor);
                   text = Text('Pay via new card');
                   break;
-                case 1:
-                  icon = Icon(Icons.credit_card, color: theme.primaryColor);
-                  text = Text('Pay via existing card');
-                  break;
+                // case 1:
+                //   icon = Icon(Icons.credit_card, color: theme.primaryColor);
+                //   text = Text('Pay via existing card');
+                //   break;
               }
 
               return InkWell(

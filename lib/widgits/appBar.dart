@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/temp-model.dart';
-import 'package:haweyati/pages/orderDetail/all-orders.dart';
-import 'package:haweyati/src/ui/pages/home_page.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/pages/customer-orders/orders-listing.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class HaweyatiAppBar extends AppBar {
   ConstructionService service;
@@ -26,7 +25,7 @@ class HaweyatiAppBar extends AppBar {
             title: Padding(
               padding: const EdgeInsets.all(18.0),
               child: Image.asset(
-                "assets/images/haweyati_logo1.png",
+                "assets/images/app-logo.png",
                 width: 40,
                 height: 40,
               ),
@@ -40,10 +39,10 @@ class HaweyatiAppBar extends AppBar {
                         color: Colors.white,
                       ),
                       onTap: () {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                                builder: (context) => AppHomePage( )),
-                            (Route<dynamic> route) => false);
+                        // Navigator.of(context).pushAndRemoveUntil(
+                            // MaterialPageRoute(
+                            //     builder: (context) => AppHomePage( )),
+                            // (Route<dynamic> route) => false);
                       },
                     )
                   : Container(),

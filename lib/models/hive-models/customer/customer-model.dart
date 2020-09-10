@@ -1,4 +1,4 @@
-import 'package:haweyati/models/hive-models/orders/location_model.dart';
+import 'package:haweyati/src/models/location_model.dart';
 import 'package:hive/hive.dart';
 import 'profile_model.dart';
 part 'customer-model.g.dart';
@@ -10,7 +10,7 @@ class Customer extends HiveObject{
   @HiveField(1)
   Profile profile;
   @HiveField(2)
-  HiveLocation location;
+  Location location;
   @HiveField(3)
   String token;
   @HiveField(4)
@@ -21,10 +21,11 @@ class Customer extends HiveObject{
   Customer({this.location,this.id,this.token,this.message,this.profile,this.status});
 
   Customer.fromJson(Map<String, dynamic> json) {
+    print(json);
     id = json['_id'];
-    profile = Profile.fromJson(json['profile']);
+    profile =  json['profile'] !=null ? Profile.fromJson(json['profile']) : null;
     token = json['token'];
-    location = json['location'] !=null ? HiveLocation.fromJson(json['location']) : null;
+    location = json['location'] !=null ? Location.fromJson(json['location']) : null;
     message = json['message'];
     status = json['status'];
   }
@@ -32,8 +33,8 @@ class Customer extends HiveObject{
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['_id'] = this.id;
-    data['location'] = this.location?.toJson();
-    data['profile'] = this.profile?.toJson();
+    data['location'] = this.location?.serialize();
+    data['profile'] = this.profile?.serialize();
 //    data['token'] = this.token;
     data['status'] = this.token;
     data['message'] = this.message;

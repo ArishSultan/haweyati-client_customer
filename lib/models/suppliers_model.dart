@@ -1,7 +1,7 @@
-import 'package:haweyati/models/hive-models/orders/location_model.dart';
+import 'package:haweyati/src/models/location_model.dart';
 import 'package:hive/hive.dart';
 import 'person_model.dart';
-part 'suppliers_model.g.dart';
+// part 'suppliers_model.g.dart';
 
 @HiveType(typeId: 11)
 class Supplier extends HiveObject {
@@ -16,7 +16,7 @@ class Supplier extends HiveObject {
   @HiveField(4)
   Person person;
   @HiveField(5)
-  HiveLocation location;
+  Location location;
   @HiveField(6)
   int iV;
 
@@ -37,9 +37,8 @@ class Supplier extends HiveObject {
     person =
     json['person'] != null ? new Person.fromJson(json['person']) : null;
     location = json['location'] != null
-        ? new HiveLocation.fromJson(json['location'])
+        ? new Location.fromJson(json['location'])
         : null;
-    iV = json['__v'];
   }
 
   Map<String, dynamic> toJson() {
@@ -52,7 +51,7 @@ class Supplier extends HiveObject {
       data['person'] = this.person.toJson();
     }
     if (this.location != null) {
-      data['location'] = this.location.toJson();
+      data['location'] = this.location.serialize();
     }
     data['__v'] = this.iV;
     return data;

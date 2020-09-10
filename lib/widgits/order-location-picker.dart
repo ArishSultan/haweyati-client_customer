@@ -58,15 +58,18 @@ class _OrderLocationPickerState extends State<OrderLocationPicker> {
               ),
               FlatButton.icon(
                   onPressed: () async {
-                    OrderLocation location = await  Navigator.of(context).push(MaterialPageRoute(
+                    OrderLocation location = await Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => MyLocationMapPage(
                           timeAndLocation: true,
+                          editMode: true,
                         )));
-                    setState(() {
-                      dropOffLocation = location;
-                    });
-                    print(location);
-                    widget.onLocationChanged(location);
+                    if(location!=null){
+                      setState(() {
+                        dropOffLocation = location;
+                      });
+                      print(location);
+                      widget.onLocationChanged(location);
+                    }
                   },
                   icon: Icon(
                     Icons.edit,

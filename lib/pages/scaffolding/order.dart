@@ -1,30 +1,45 @@
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/models/temp-model.dart';
-import 'package:haweyati/pages/dumpster/dumpstersList.dart';
+import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
+import 'package:haweyati/models/hive-models/orders/order_model.dart';
+import 'package:haweyati/models/hive-models/orders/scaffolding-item_model.dart';
+import 'package:haweyati/models/order-time_and_location.dart';
 import 'package:haweyati/pages/payment/payment-method.dart';
+import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/src/utlis/date-formatter.dart';
 import 'package:haweyati/widgits/appBar.dart';
-import 'package:haweyati/widgits/custom-navigator.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/widgits/emptyContainer.dart';
 import 'package:haweyati/widgits/haweyati-appbody.dart';
-import 'package:haweyati/pages/dumpster/dumpstersList.dart';
+import 'package:haweyati/widgits/orderPlaced.dart';
 
-import 'package:haweyati/widgits/service-item-listing.dart';
-
-class ScaffoldingOrderDetail extends StatefulWidget {
-  DateTime date;
-  String time;
-  ConstructionService constructionService;
-  ScaffoldingOrderDetail({this.constructionService,this.date,this.time});
+class ScaffoldingOrderConfirmation extends StatefulWidget {
+  final String subService;
+  final List<ScaffoldingItemModel> order;
+  final DateTime date;
+  final String time;
+  final OrderLocation location;
+  ScaffoldingOrderConfirmation({this.date,this.time,this.location,this.order,this.subService});
 
   @override
-  _ScaffoldingOrderDetailState createState() => _ScaffoldingOrderDetailState();
+  _ScaffoldingOrderConfirmationState createState() => _ScaffoldingOrderConfirmationState();
 }
 
-class _ScaffoldingOrderDetailState extends State<ScaffoldingOrderDetail> {
+class _ScaffoldingOrderConfirmationState extends State<ScaffoldingOrderConfirmation> {
+
+  double totalPrice = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.order.forEach((element) {
+      totalPrice += element.price;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,10 +48,37 @@ class _ScaffoldingOrderDetailState extends State<ScaffoldingOrderDetail> {
         body: HaweyatiAppBody(
           title: "Orders",
           btnName: tr("Continue"),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => SelectPaymentMethod(
-                )));
+          onTap: () async {
+
+            PaymentResponse response = await CustomNavigator.navigateTo(context, SelectPaymentMethod());
+            print(response);
+
+            if(response!=null){
+              // Order order = Order(
+              //   service: 'Scaffolding',
+              //   subService: widget.subService,
+              //   address: widget.location.address,
+              //   latitude: widget.location.cords.latitude.toString(),
+              //   longitude: widget.location.cords.longitude.toString(),
+              //   dropOffDate: widget.date.toIso8601String(),
+              //   dropOffTime: widget.time,
+              //   city: widget.location.city,
+              //   paymentType: response.paymentType,
+              //   paymentIntentId: response.paymentIntentId,
+              //   // customer: HaweyatiData.customer.id,
+              //   _order: OrderDetail(
+              //     netTotal: totalPrice,
+              //     items: widget.order,
+              //   )
+              // );
+
+              // print(order.toJson());
+              //
+              // var postOrder = await HaweyatiService.post('orders',FormData.fromMap(order.toJson()) );
+              // CustomNavigator.navigateTo(context, OrderPlaced(referenceNo: postOrder.state['orderNo'],));
+//
+//              print(order.toJson());
+            }
           },
           showButton: true,
           detail: loremIpsum.substring(0,60,),
@@ -61,8 +103,6 @@ class _ScaffoldingOrderDetailState extends State<ScaffoldingOrderDetail> {
                               Navigator.pop(context);
                               Navigator.pop(context);
                               Navigator.pop(context);
-//                              CustomNavigator.navigateTo(context, DumpsterListing());
-
                             },
                             icon: Icon(
                               Icons.edit,
@@ -77,64 +117,16 @@ class _ScaffoldingOrderDetailState extends State<ScaffoldingOrderDetail> {
                     ),
                     Row(
                       children: <Widget>[
-                        Image.asset(widget.constructionService.image ?? "",width: 60,height: 60,)
+                        Image.asset("assets/images/steelscaffolding.png",width: 60,height: 60,)
                        ??SizedBox() ,                        SizedBox(
                           width: 12,
                         ),
-                        Text(
-                          widget.constructionService.title ?? "",
+                        Text("Steel Scaffolding",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
-                    SizedBox(
-                      height: 12,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            "Price",
-                            style: TextStyle(color: Colors.blueGrey),
-                          ),
-                          flex: 4,
-                        ),
-                        Expanded(
-                          child: Text(
-                            "Quantity",
-                            style: TextStyle(color: Colors.blueGrey),
-                          ),
-                          flex: 3,
-                        ),
-                        Expanded(
-                          child: Text(
-                            "Helper",
-                            style: TextStyle(color: Colors.blueGrey),
-                          ),
-                          flex: 2,
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Text("600 SAR"),
-                          flex: 4,
-                        ),
-                        Expanded(
-                          child: Text("100 piece"),
-                          flex: 3,
-                        ),
-                        Expanded(
-                          child: Text("No"),
-                          flex: 2,
-                        ),
-                      ],
-                    )
                   ],
                 ),
               ),
@@ -176,7 +168,7 @@ class _ScaffoldingOrderDetailState extends State<ScaffoldingOrderDetail> {
                           color: Theme.of(context).accentColor,
                         ),
                         label: Expanded(
-                          child: Text(loremIpsum.substring(0,60),
+                          child: Text(widget.location.address,
                           ),
                         )),
                     SizedBox(
@@ -189,35 +181,24 @@ class _ScaffoldingOrderDetailState extends State<ScaffoldingOrderDetail> {
                     ),
                     _builddetailRow(
                         text1: formattedDate(widget.date), text2: widget.time),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    _buildHeadRow(text1: "Pick-up-Date", text2: "Pick-up-Time"),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    _builddetailRow(text1: formattedDate(widget.date.add(Duration(days: 10))), text2: widget.time)
-
-/////////////////////////////,
                   ],
                 ),
               ),
               SizedBox(
                 height: 30,
               ),
-              Text(
-                widget.constructionService.title ?? "",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
               SizedBox(
                 height: 10,
               ),
-              _buildRow(type: "Price", detail: "345.00 Sar"),
-              _buildRow(type: "Quantity", detail: "1 Piece"),
-              _buildRow(type: "Service Days", detail: "11 Days"),
-              _buildRow(type: "Delivery fee", detail: "50.00 SAR"),SizedBox(height: 8,),
+              Text(
+                "Steel Scaffolding",
+                style: TextStyle(color: Colors.blueGrey),
+              ),
+              for(var item in singleScaffoldingItems)
+                _buildRow(type: item.name, detail: "${item.price} Sar"),
 
-              Row(children: <Widget>[ Text("Total", style: TextStyle(color: Colors.blueGrey),),Text("515.00 SR",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),) ],mainAxisAlignment: MainAxisAlignment.spaceBetween,)            ],
+              Row(children: <Widget>[ Text("Total", style: TextStyle(color: Colors.blueGrey),),
+                Text("${totalPrice} SR",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),) ],mainAxisAlignment: MainAxisAlignment.spaceBetween,)            ],
           ),
         ));
   }

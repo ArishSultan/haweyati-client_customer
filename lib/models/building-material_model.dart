@@ -1,10 +1,10 @@
-import 'images_model.dart';
+import '../src/models/image_model.dart';
 
 class BuildingMaterials {
   String sId;
   String name;
   String description;
-  Images image;
+  ImageModel image;
   int iV;
 
   BuildingMaterials(
@@ -14,7 +14,7 @@ class BuildingMaterials {
     sId = json['_id'];
     name = json['name'];
     description = json['description'];
-    image = Images.fromJson(json['image']);
+    image = ImageModel.fromJson(json['image']);
     iV = json['__v'];
   }
 
