@@ -85,10 +85,10 @@ class _FacadeState extends State<Facade> {
           print("Working");
           if (_formKey.currentState.validate()) {
             print("sfssf");
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ScaffoldingServicesDetail(
-                  constructionService:  widget.constructionService,
-                )));
+            // Navigator.of(context).push(MaterialPageRoute(
+            //     builder: (context) => ScaffoldingServiceDetailPage(
+            //       // constructionService:  widget.constructionService,
+            //     )));
           } else {
             setState(() {
               autoValidate = true;

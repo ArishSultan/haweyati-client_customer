@@ -44,12 +44,7 @@ class BMProduct extends HiveObject {
         pricing.add( BMPricing.fromJson(v));
       });
     }
-    if (json['suppliers'] != null) {
-      suppliers = List<Supplier>();
-      json['suppliers'].forEach((v) {
-        suppliers.add( Supplier.fromJson(v));
-      });
-    }
+
     image = ImageModel.fromJson(json['image']);
   }
 

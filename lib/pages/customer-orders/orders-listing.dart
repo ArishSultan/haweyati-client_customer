@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/hive-models/orders/order_model.dart';
-import 'package:haweyati/src/ui/pages/services/dumpsters/service-detail_page.dart';
+// import 'package:haweyati/src/ui/pages/services/dumpsters/service-detail_page.dart';
 import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/services/order-service.dart';
 import 'package:haweyati/src/utlis/date-formatter.dart';

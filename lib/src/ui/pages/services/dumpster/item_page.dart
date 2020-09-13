@@ -8,7 +8,7 @@ import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/flat-action-button.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
-import 'package:haweyati/src/ui/pages/services/dumpsters/service-detail_page.dart';
+import 'service-detail_page.dart';
 
 class DumpsterItemPage extends StatelessWidget {
   final Dumpster dumpster;

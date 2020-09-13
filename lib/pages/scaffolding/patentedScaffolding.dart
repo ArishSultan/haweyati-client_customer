@@ -40,11 +40,11 @@ class PatentedOptions extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  CustomNavigator.navigateTo(
-                      context,
-                      ScaffoldingServicesDetail(
-                        constructionService: constructionService,
-                      ));
+                  // CustomNavigator.navigateTo(
+                  //     context,
+                      // ScaffoldingServiceDetailPage(
+                        // constructionService: constructionService,
+                      // ));
                 },
                 child: EmptyContainer(
                   child: ListTile(

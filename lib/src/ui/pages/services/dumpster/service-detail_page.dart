@@ -1,20 +1,20 @@
-import 'package:flutter/cupertino.dart';
+import 'time-location_page.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/models/hive-models/orders/dumpster-order_model.dart';
-import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
-import 'package:haweyati/models/hive-models/orders/order_model.dart';
-import 'package:haweyati/src/models/dumpster_model.dart';
-import 'package:haweyati/src/ui/pages/services/dumpsters/time-location_page.dart';
-import 'package:haweyati/services/haweyati-service.dart';
-import 'package:haweyati/src/ui/views/dotted-background_view.dart';
-import 'package:haweyati/src/ui/views/header_view.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:haweyati/src/utils/const.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/counter.dart';
+import 'package:haweyati/src/ui/views/header_view.dart';
+import 'package:haweyati/src/models/dumpster_model.dart';
+import 'package:haweyati/services/haweyati-service.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
 import 'package:haweyati/src/ui/widgets/flat-action-button.dart';
-import 'package:haweyati/src/utils/const.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/ui/views/dotted-background_view.dart';
+import 'package:haweyati/models/hive-models/orders/order_model.dart';
+import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
+import 'package:haweyati/models/hive-models/orders/dumpster-order_model.dart';
 
 class DumpsterServiceDetailPage extends StatelessWidget {
   final Dumpster dumpster;
@@ -88,8 +88,8 @@ class DumpsterServiceDetailPage extends StatelessWidget {
               ], crossAxisAlignment: CrossAxisAlignment.start)),
 
               Counter(
-                initialValue: _item.extraDays,
-                onChange: (count) => _item.extraDays = count
+                initialValue: _item.extraDays.toDouble(),
+                onChange: (count) => _item.extraDays = count.round()
               )
             ])
           ),

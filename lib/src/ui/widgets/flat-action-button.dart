@@ -21,7 +21,8 @@ class FlatActionButton extends StatelessWidget {
           onPressed: onPressed,
           shape: StadiumBorder(),
           textColor: Colors.white,
-          disabledColor: Colors.grey.shade400,
+          disabledTextColor: Colors.white,
+          disabledColor: Color(0x7FFF974D),
           color: Theme.of(context).primaryColor,
           child: icon != null ? Row(children: [
             icon, const SizedBox(width: 8.0), Text(label)

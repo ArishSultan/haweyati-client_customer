@@ -2,12 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Counter extends StatefulWidget {
-  final int minValue;
-  final int maxValue;
-  final int initialValue;
-  final void Function(int count) onChange;
+  final double minValue;
+  final double maxValue;
+  final double increment;
+
+  final bool allowDouble;
+
+  final double initialValue;
+  final void Function(double count) onChange;
 
   Counter({
+    this.increment = 1.0,
+    this.allowDouble = false,
     this.minValue = 0,
     this.maxValue = null,
     this.initialValue = 0,
@@ -19,12 +25,17 @@ class Counter extends StatefulWidget {
 }
 
 class _CounterState extends State<Counter> {
-  int _count = 0;
+  double _count = 0;
 
   @override
   void initState() {
     super.initState();
-    _count = widget.initialValue;
+
+    if (widget.initialValue < widget.minValue) {
+      _count = widget.minValue ;
+    } else {
+      _count = widget.initialValue;
+    }
   }
 
   @override
@@ -38,7 +49,7 @@ class _CounterState extends State<Counter> {
           child: Icon(Icons.remove, color: Colors.white, size: 18),
           onPressed: () {
             if (_count > widget.minValue ?? 0) {
-              setState(() => --_count);
+              setState(() => _count -= widget.increment);
               widget.onChange(_count);
             }
           },
@@ -57,9 +68,12 @@ class _CounterState extends State<Counter> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(4)
         ),
-        child: Center(child: Text(_count.toString(), style: TextStyle(
-          fontFamily: 'Lato'
-        ))),
+        child: Center(child: Text(
+          widget.allowDouble ? _count.toString() : _count.round().toString(),
+          style: TextStyle(
+            fontFamily: 'Lato'
+          ))
+        ),
       ),
 
       SizedBox(
@@ -70,7 +84,7 @@ class _CounterState extends State<Counter> {
           child: Icon(Icons.add, color: Colors.white, size: 18),
           onPressed: () {
             if (_count < (widget.maxValue ?? 1000)) {
-              setState(() => ++_count);
+              setState(() => _count += widget.increment);
               widget.onChange(_count);
             }
           },

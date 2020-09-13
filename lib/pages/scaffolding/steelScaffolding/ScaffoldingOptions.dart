@@ -29,7 +29,7 @@ class ScaffoldingOptions extends StatelessWidget {
               ,
               EmptyContainer( child: ListTile( onTap: (){
 
-                CustomNavigator.navigateTo(context, ScaffoldingServicesDetail(constructionService: constructionService,));
+                // CustomNavigator.navigateTo(context, ScaffoldingServiceDetailPage(constructionService: constructionService,));
                 },title: Text("Manual"),trailing: Icon(Icons.arrow_forward_ios),),),
             ],
 

@@ -10,6 +10,7 @@ class ScrollableView extends Scaffold {
     Widget child,
     Widget bottom,
     List<Widget> children,
+    bool extendBody = true,
     bool showBackground = false,
     CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
     PreferredSizeWidget appBar = const HaweyatiAppBar(),
@@ -17,7 +18,7 @@ class ScrollableView extends Scaffold {
   }): super(
     key: key,
     appBar: appBar,
-    extendBody: true,
+    extendBody: extendBody,
     backgroundColor: Colors.white,
     body: showBackground ? DottedBackgroundView(
       child: SingleChildScrollView(
@@ -37,10 +38,13 @@ class ScrollableView extends Scaffold {
   ScrollableView.sliver({
     Widget bottom,
     List<Widget> children,
-    PreferredSizeWidget appBar = const HaweyatiAppBar()
+    bool showBackground = false,
+    PreferredSizeWidget appBar = const HaweyatiAppBar(),
   }): super(
     appBar: appBar,
-    body: CustomScrollView(slivers: children),
+    body: showBackground ? DottedBackgroundView(
+      child: CustomScrollView(slivers: children)
+    ): CustomScrollView(slivers: children),
     extendBody: bottom is FlatActionButton,
     bottomNavigationBar: bottom
   );

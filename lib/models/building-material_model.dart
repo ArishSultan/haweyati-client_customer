@@ -1,17 +1,17 @@
 import '../src/models/image_model.dart';
 
 class BuildingMaterials {
-  String sId;
+  String id;
   String name;
   String description;
   ImageModel image;
   int iV;
 
   BuildingMaterials(
-      {this.sId, this.name, this.description, this.image, this.iV});
+      {this.id, this.name, this.description, this.image, this.iV});
 
   BuildingMaterials.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
+    id = json['_id'];
     name = json['name'];
     description = json['description'];
     image = ImageModel.fromJson(json['image']);
@@ -20,7 +20,7 @@ class BuildingMaterials {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
+    data['_id'] = this.id;
     data['name'] = this.name;
     data['description'] = this.description;
     data['image'] = this.image;

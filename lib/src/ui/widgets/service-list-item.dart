@@ -19,7 +19,9 @@ class ServiceListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      margin: const EdgeInsets.symmetric(
+        vertical: 10, horizontal: 15
+      ),
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -27,19 +29,20 @@ class ServiceListItem extends StatelessWidget {
           BoxShadow(
             blurRadius: 10,
             spreadRadius: 1,
-            color: Colors.grey.shade100
+            color: Colors.grey.shade300
           )
         ],
         borderRadius: BorderRadius.circular(10),
       ),
 
       child: ListTile(
+        dense: true,
         onTap: onTap,
         leading: this.assetImage ?
           Image.asset(image, width: 60):
           Image.network(HaweyatiService.resolveImage(image), width: 60),
 
-        title: Text(name),
+        title: Text(name, style: TextStyle(fontFamily: 'Helvetica')),
         trailing: Icon(CupertinoIcons.right_chevron),
       ),
     );
