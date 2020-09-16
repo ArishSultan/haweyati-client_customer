@@ -6,11 +6,9 @@ import '../src/models/image_model.dart';
 // part 'finishing-product.g.dart';
 
 @HiveType(typeId: 16)
-class FinProduct extends HiveObject{
-  @HiveField(0)
-  List<Supplier> suppliers;
+class FinishingMaterial extends HiveObject{
   @HiveField(1)
-  String sId;
+  String id;
   @HiveField(2)
   double price;
   @HiveField(3)
@@ -28,9 +26,8 @@ class FinProduct extends HiveObject{
   @HiveField(9)
   int iV;
 
-  FinProduct(
-      {this.suppliers,
-        this.sId,
+  FinishingMaterial(
+      {this.id,
         this.price,
         this.name,
         this.variants,
@@ -40,9 +37,9 @@ class FinProduct extends HiveObject{
         this.images,
         this.iV});
 
-  FinProduct.fromJson(Map<String, dynamic> json) {
+  FinishingMaterial.fromJson(Map<String, dynamic> json) {
 //    print(json);
-    sId = json['_id'];
+    id = json['_id'];
     name = json['name'];
     price = json['price'] !=null ? double.parse(json['price'].toString()) : null;
     description = json['description'];
@@ -51,12 +48,6 @@ class FinProduct extends HiveObject{
       options = List<ProductOption>();
       json['options'].forEach((v) {
         options.add( ProductOption.fromJson(v));
-      });
-    }
-    if (json['suppliers'] != null) {
-      suppliers = List<Supplier>();
-      json['suppliers'].forEach((v) {
-        suppliers.add( Supplier.fromJson(v));
       });
     }
     variants = json['varient']!=null ? json['varient'].cast<Map<String,dynamic>>() : null;
@@ -73,17 +64,13 @@ class FinProduct extends HiveObject{
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['suppliers'] = this.suppliers;
-    data['_id'] = this.sId;
+    data['_id'] = this.id;
     data['name'] = this.name;
     data['description'] = this.description;
     data['parent'] = this.parent;
     data['varient'] = this.variants;
     if (this.options != null) {
       data['options'] = this.options.map((v) => v.toJson()).toList();
-    }
-    if (this.suppliers != null) {
-      data['suppliers'] = this.suppliers.map((v) => v.toJson()).toList();
     }
 //    if (this.variants != null) {
 //      data['varient'] = this.options.map((v) => v.toJson()).toList();

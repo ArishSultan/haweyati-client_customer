@@ -1,11 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:haweyati/models/building-material_sublist.dart';
+import 'package:haweyati/src/models/services/building-material/model.dart';
 import 'package:haweyati/models/hive-models/orders/building-material-order.dart';
-import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
 import 'package:haweyati/models/hive-models/orders/order_model.dart';
 import 'package:haweyati/models/order-time_and_location.dart';
 import 'package:haweyati/src/ui/widgets/date-picker-field.dart';
-import 'package:haweyati/services/time-slots_service.dart';
 import 'package:haweyati/src/utlis/simple-future-builder.dart';
 import 'package:haweyati/widgits/order-location-picker.dart';
 import 'package:hive/hive.dart';
@@ -14,10 +12,10 @@ import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/haweyati-appbody.dart';
 
-import 'building-order-confirmation.dart';
+import '../../../../../pages/service-pages/building-material/building-order-confirmation.dart';
 
 class BuildingTimeAndLocation extends StatefulWidget {
-  final BMProduct bmItem;
+  final BuildingMaterial bmItem;
   BuildingTimeAndLocation({this.bmItem});
   @override
   _BuildingTimeAndLocationState createState() => _BuildingTimeAndLocationState();
@@ -31,7 +29,7 @@ class _BuildingTimeAndLocationState extends State<BuildingTimeAndLocation> {
   String start = "...";
   bool val =false;
 
-  void addOrder(Order order) async {
+  void addOrder(order) async {
     final box = await Hive.openBox('orders');
     await box.clear();
     box.add(order);
@@ -158,7 +156,7 @@ class _BuildingTimeAndLocationState extends State<BuildingTimeAndLocation> {
 
           var box = await Hive.box('bmorder');
           print(box.values);
-          List<BMOrder> bmOrders = box.values.toList().cast<BMOrder>();
+          List bmOrders = box.values.toList()/*.cast<BMOrder>()*/;
 
           double netTotal = 0;
 

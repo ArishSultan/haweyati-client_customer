@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:haweyati/src/ui/pages/locations-map_page.dart';
+import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
 import 'package:hive/hive.dart';
-import 'package:haweyati/models/bm-pricing.dart';
+// import 'package:haweyati/models/bm-pricing.dart';
 import 'package:haweyati/models/hive-models/customer/customer-model.dart';
 import 'package:haweyati/models/hive-models/notifications_model.dart';
 import 'package:haweyati/src/models/location_model.dart';
@@ -17,6 +17,34 @@ import 'package:haweyati/models/hive-models/orders/finishing-material_order.dart
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class AppData {
+  /// Address specific Data
+  String get city;
+  String get address;
+  LatLng get coordinates;
+
+  Location get location;
+  void set location(Location details);
+
+  /// These controls determine weather the
+  /// app has been launched before or not.
+  Future<void> burnFuse();
+  Future<bool> get isFuseBurnt;
+
+  /// User Specific Information.
+  /// ValueListenable<bool> get authentication;
+
+
+  factory AppData.instance() {
+    if (_initiated) {
+      return _instance;
+    } else {
+      throw Error();
+    }
+  }
+
+  static bool _initiated;
+  static _AppDataImpl _instance;
+
   static Future initiate() async {
     await Hive.initFlutter();
 
@@ -25,13 +53,13 @@ abstract class AppData {
       // OrderAdapter(),
       // PersonAdapter(),
       // ImagesAdapter(),
-      FMOrderAdapter(),
-      BMOrderAdapter(),
+      // FMOrderAdapter(),
+      // BMOrderAdapter(),
       // ProfileAdapter(),
       CustomerAdapter(),
       // DumpsterAdapter(),
       // SupplierAdapter(),
-      BMPricingAdapter(),
+      // BMPricingAdapter(),
       // BMProductAdapter(),
       // FinProductAdapter(),
       TransactionAdapter(),
@@ -53,31 +81,6 @@ abstract class AppData {
     _initiated = true;
     _instance = _AppDataImpl();
     await _instance._loadCache();
-  }
-
-  /// Address specific Data
-  String get city;
-  String get address;
-  LatLng get coordinates;
-  void set location(LocationDetails details);
-
-  /// These controls determine weather the
-  /// app has been launched before or not.
-  Future<void> burnFuse();
-  Future<bool> get isFuseBurnt;
-
-  /// User Specific Information.
-  /// ValueListenable<bool> get authentication;
-
-  static bool _initiated;
-  static _AppDataImpl _instance;
-
-  factory AppData.instance() {
-    if (_initiated) {
-      return _instance;
-    } else {
-      throw Error();
-    }
   }
 }
 
@@ -119,8 +122,8 @@ class _AppDataImpl implements AppData {
   @override LatLng get coordinates => _coordinates;
 
   @override
-  void set location(LocationDetails details) {
-    _coordinates = details.coordinates;
+  void set location(Location details) {
+    // _coordinates = /*details.coordinates*/;
     _address = details.address;
     _city = details.city;
 
@@ -132,6 +135,11 @@ class _AppDataImpl implements AppData {
       value.setDouble('longitude', _coordinates.longitude);
     });
   }
+
+  @override
+  Location get location => Location(
+    city: city, address: address, /*coordinates: coordinates*/
+  );
 
 
   // Future<bool> get isFirstRun async =>

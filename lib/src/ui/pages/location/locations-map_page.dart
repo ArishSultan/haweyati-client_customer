@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:haweyati/models/order-time_and_location.dart';
+import 'package:haweyati/src/models/location_model.dart' as l;
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
 import 'package:haweyati/src/ui/widgets/raised-action-button.dart';
@@ -72,17 +73,7 @@ const _mapBounds = const [
   const LatLng(28.157300, 34.630000)
 ];
 
-class LocationDetails {
-  final String city;
-  final String address;
-  final LatLng coordinates;
 
-  const LocationDetails({
-    this.city,
-    this.address,
-    this.coordinates
-  });
-}
 
 class LocationPickerMapPage extends StatefulWidget {
   final LatLng coordinates;
@@ -194,10 +185,11 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
       bottom: RaisedActionButton(
         label: tr('Set_Your_Location'),
         onPressed: _location != null ? () {
-          Navigator.of(context).pop(LocationDetails(
+          Navigator.of(context).pop(l.Location(
             city: _address.locality,
             address: _address.addressLine,
-            coordinates: _location
+            latitude: _location.latitude,
+            longitude: _location.longitude
           ));
         } : null,
 

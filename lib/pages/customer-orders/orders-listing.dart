@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/models/hive-models/orders/order_model.dart';
-// import 'package:haweyati/src/ui/pages/services/dumpsters/service-detail_page.dart';
+// import 'package:haweyati/src/ui/pages/services/dumpsters/service-service-detail_page.dart';
 import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/services/order-service.dart';
 import 'package:haweyati/src/utlis/date-formatter.dart';
@@ -19,7 +19,7 @@ class ViewAllOrders extends StatefulWidget {
 
 class _ViewAllOrdersState extends State<ViewAllOrders> {
 
-  Future<List<Order>> orders = OrdersService().orders();
+  // Future<List<Order>> orders = OrdersService().orders();
 
   Color orderStatusColor(String status){
     switch(status){
@@ -53,7 +53,7 @@ class _ViewAllOrdersState extends State<ViewAllOrders> {
   void initState() {
     super.initState();
 
-    print(orders.then((value) => print(value)));
+    // print(orders.then((value) => print(value)));
   }
 
 
@@ -65,19 +65,19 @@ class _ViewAllOrdersState extends State<ViewAllOrders> {
         children: [
           SimpleFutureBuilder.simpler(
             context: context,
-            future: orders,
-            builder: (AsyncSnapshot<List<Order>> orders){
+            // future: orders,
+            builder: (AsyncSnapshot<List> orders){
               return Expanded(
                 child: ListView.builder(
                   itemCount: orders.data.length,
                   itemBuilder: (context,index){
-                    Order order = orders.data[index];
+                    // Order order = orders.data[index];
                     return GestureDetector(
                       onTap: (){
-                        CustomNavigator.navigateTo(
-                            context, OrderDetailPage(
-                          order: order,
-                        ));
+                        // CustomNavigator.navigateTo(
+                        //     context, OrderDetailPage(
+                        //   order: order,
+                        // ));
                         },
                       child: EmptyContainer(
                         child: Padding(
@@ -90,17 +90,17 @@ class _ViewAllOrdersState extends State<ViewAllOrders> {
                                   // _buildtext("Order Date, ${formattedDate(DateTime.parse(order.createdAt))} ,"
                                   //     " ${TimeOfDay.fromDateTime(DateTime.parse(order.createdAt)).format(context)}"),
 
-                                  Container(decoration: BoxDecoration(
-                                      color:  orderStatusColor(order.status),
-                                      borderRadius: BorderRadius.circular(12)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        order.status,
-                                        textAlign: TextAlign.center,style: TextStyle(fontSize: 10,color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
+                                  // Container(decoration: BoxDecoration(
+                                  //     color:  orderStatusColor(order.status),
+                                  //     borderRadius: BorderRadius.circular(12)),
+                                  //   child: Padding(
+                                  //     padding: const EdgeInsets.all(8.0),
+                                  //     child: Text(
+                                  //       order.status,
+                                  //       textAlign: TextAlign.center,style: TextStyle(fontSize: 10,color: Colors.white),
+                                  //     ),
+                                  //   ),
+                                  // ),
 
 //                            item.buildWidget(context),
                                 ],
@@ -108,7 +108,7 @@ class _ViewAllOrdersState extends State<ViewAllOrders> {
                               ),
 
                               SizedBox(height: 10,),
-                              _buildtext("Order ID - ${order.number}",),
+                              // _buildtext("Order ID - ${order.number}",),
                               SizedBox(
                                 height: 15,
                               ),

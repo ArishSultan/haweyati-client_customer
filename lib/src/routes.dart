@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/common/services/jwt-auth_service.dart';
-import 'package:haweyati/src/ui/pages/locations-map_page.dart';
+import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
 import 'package:haweyati/pages/scaffolding/scaffoldings/computed/ceiling-caculation_page.dart';
 import 'package:haweyati/pages/scaffolding/scaffoldings/computed/facades-calculation_page.dart';
 import 'package:haweyati/src/ui/pages/services/finishing-material/categories-list_page.dart';

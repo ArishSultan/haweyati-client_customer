@@ -5,11 +5,13 @@ import 'package:haweyati/services/haweyati-service.dart';
 class ServiceListItem extends StatelessWidget {
   final String name;
   final String image;
+  final String detail;
   final Function onTap;
   final bool assetImage;
 
   ServiceListItem({
     this.image,
+    this.detail,
     @required this.name,
     @required this.onTap,
     this.assetImage = false,
@@ -43,6 +45,9 @@ class ServiceListItem extends StatelessWidget {
           Image.network(HaweyatiService.resolveImage(image), width: 60),
 
         title: Text(name, style: TextStyle(fontFamily: 'Helvetica')),
+        subtitle: detail != null
+            ? Text(detail, style: TextStyle(color: Colors.grey))
+            : null,
         trailing: Icon(CupertinoIcons.right_chevron),
       ),
     );

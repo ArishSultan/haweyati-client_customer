@@ -7,8 +7,8 @@ import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/emptyContainer.dart';
 
 class OrderDetailPage extends StatefulWidget {
-  final Order order;
-  OrderDetailPage({this.order});
+  // final Order order;
+  // OrderDetailPage({this.order});
   @override
   _OrderDetailPageState createState() => _OrderDetailPageState();
 }
@@ -37,12 +37,12 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   }
 
 
-  Order order;
+  // Order order;
 
   @override
   void initState() {
     super.initState();
-    order = widget.order;
+    // order = widget.order;
   }
 
   @override
@@ -97,26 +97,26 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             children: <Widget>[
               // _buildtext("Order Date, ${formattedDate(DateTime.parse(order.createdAt))} ,"
               //     " ${TimeOfDay.fromDateTime(DateTime.parse(order.createdAt)).format(context)}"),
-              Container(decoration: BoxDecoration(
-                  color: orderStatusColor(order.status),
-                  borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    order.status,
-                    textAlign: TextAlign.center,style: TextStyle(fontSize: 10,
-                      color: Colors.white
-                  ),
-                  ),
-                ),
-              )
+              // Container(decoration: BoxDecoration(
+              //     color: orderStatusColor(order.status),
+              //     borderRadius: BorderRadius.circular(12)),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     child: Text(
+              //       order.status,
+              //       textAlign: TextAlign.center,style: TextStyle(fontSize: 10,
+              //         color: Colors.white
+              //     ),
+              //     ),
+              //   ),
+              // )
             ],
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
           ),
 
           SizedBox(height: 5,),
-          _buildtext("Order ID - ${order.number}",),
-SizedBox(height: 20,),
+//           _buildtext("Order ID - ${order.number}",),
+// SizedBox(height: 20,),
 
 
           EmptyContainer(

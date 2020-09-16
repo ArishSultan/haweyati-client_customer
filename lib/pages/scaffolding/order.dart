@@ -18,7 +18,7 @@ import 'package:haweyati/widgits/orderPlaced.dart';
 
 class ScaffoldingOrderConfirmation extends StatefulWidget {
   final String subService;
-  final List<ScaffoldingItemModel> order;
+  final List order;
   final DateTime date;
   final String time;
   final OrderLocation location;
@@ -194,8 +194,8 @@ class _ScaffoldingOrderConfirmationState extends State<ScaffoldingOrderConfirmat
                 "Steel Scaffolding",
                 style: TextStyle(color: Colors.blueGrey),
               ),
-              for(var item in singleScaffoldingItems)
-                _buildRow(type: item.name, detail: "${item.price} Sar"),
+              // for(var item in singleScaffoldingItems)
+              //   _buildRow(type: item.name, detail: "${item.price} Sar"),
 
               Row(children: <Widget>[ Text("Total", style: TextStyle(color: Colors.blueGrey),),
                 Text("${totalPrice} SR",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),) ],mainAxisAlignment: MainAxisAlignment.spaceBetween,)            ],

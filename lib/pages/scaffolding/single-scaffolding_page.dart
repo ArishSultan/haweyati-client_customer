@@ -27,16 +27,16 @@ class _SingleScaffoldingPageState extends State<SingleScaffoldingPage> {
         detail: loremIpsum.substring(0,50),
         btnName:tr("Rent Now"),
         onTap: (){
-          CustomNavigator.navigateTo(context, ScaffoldingTimeAndLocation(order: [
-            ScaffoldingItemModel(
-              qty: quantity,
-              price: (345 * quantity).toDouble(),
-              name: 'Single Scaffolding',
-
-            )
-          ],
-
-          ));
+          // CustomNavigator.navigateTo(context, ScaffoldingTimeAndLocation(order: [
+          //   ScaffoldingItemModel(
+          //     qty: quantity,
+          //     price: (345 * quantity).toDouble(),
+          //     name: 'Single Scaffolding',
+          //
+          //   )
+          // ],
+          //
+          // ));
         },
         showButton: true,
         child:  ListView(

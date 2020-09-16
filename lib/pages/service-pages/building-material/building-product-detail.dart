@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/models/bm-pricing.dart';
-import 'package:haweyati/models/building-material_sublist.dart';
+import 'package:haweyati/src/models/services/building-material/model.dart';
 import 'package:haweyati/services/haweyati-service.dart';
+import 'package:haweyati/src/models/services/building-material/pricing_model.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/widgits/stackButton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'building-quantity-selection.dart';
+import '../../../src/ui/pages/services/building-material/service-detail_page.dart';
 
 class BuildingDetail extends StatefulWidget {
-  final BMProduct item;
+  final BuildingMaterial item;
   BuildingDetail({this.item});
   @override
   _BuildingDetailState createState() => _BuildingDetailState();
@@ -19,8 +19,8 @@ class BuildingDetail extends StatefulWidget {
 class _BuildingDetailState extends State<BuildingDetail> {
 
   SharedPreferences prefs;
-  BMProduct bmItem;
-  BMPricing pricing;
+  BuildingMaterial bmItem;
+  BuildingMaterialPricing pricing;
   @override
   void initState() {
     super.initState();
@@ -94,8 +94,8 @@ class _BuildingDetailState extends State<BuildingDetail> {
           ),
           StackButton(
             onTap: () {
-              CustomNavigator.navigateTo(
-                  context, BuildingProductDetail(item: bmItem ,));
+              // CustomNavigator.navigateTo(
+              //     context, BuildingProductDetail(item: bmItem ,));
             },
             buttonName: "Buy Now ",
           )

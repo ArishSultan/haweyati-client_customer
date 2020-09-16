@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/models/building-material_sublist.dart';
+import 'package:haweyati/src/models/services/building-material/model.dart';
 import 'package:haweyati/models/hive-models/orders/building-material-order.dart';
 import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
 import 'package:haweyati/models/hive-models/orders/order_model.dart';
@@ -21,7 +21,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class BuildingOrderConfirmation extends StatefulWidget {
-  final BMProduct item;
+  final BuildingMaterial item;
   BuildingOrderConfirmation({this.item});
 
   @override
@@ -46,8 +46,8 @@ class _BuildingOrderConfirmationState extends State<BuildingOrderConfirmation> {
           onTap: () async {
               var orders = await Hive.box('orders');
               var bmOrderBox = await Hive.box('bmorder');
-              var order = await orders.values.first as Order;
-              var bmOrder = await bmOrderBox.values.first as BMOrder;
+              var order = await orders.values.first/* as Order*/;
+              var bmOrder = await bmOrderBox.values.first/* as BMOrder*/;
               // order.customer = HaweyatiData.customer.id;
 
               // print(order._order.netTotal);
@@ -175,7 +175,7 @@ class _BuildingOrderConfirmationState extends State<BuildingOrderConfirmation> {
               ValueListenableBuilder(
                 valueListenable: Hive.box('orders').listenable(),
                 builder: (context,box,widget){
-                  Order order = box.values.first as Order;
+                  var order = box.values.first/* as Order*/;
                   return EmptyContainer(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,

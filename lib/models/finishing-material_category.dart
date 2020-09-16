@@ -1,16 +1,16 @@
 import '../src/models/image_model.dart';
 
-class FinishingMaterial {
+class FinishingMaterialCategory {
   String id;
   String name;
   String description;
   ImageModel image;
   int iV;
 
-  FinishingMaterial(
+  FinishingMaterialCategory(
       {this.id, this.name, this.description, this.image, this.iV});
 
-  FinishingMaterial.fromJson(Map<String, dynamic> json) {
+  FinishingMaterialCategory.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     name = json['name'];
     description = json['description'];

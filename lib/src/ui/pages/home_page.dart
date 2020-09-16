@@ -1,6 +1,7 @@
 import 'dart:ui' as ui;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/common/widgets/badged-widget.dart';
 import 'package:haweyati/src/utils/app-data.dart';
 import 'package:haweyati/src/utils/const.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -25,7 +26,7 @@ class _HomePageState extends State<HomePage> {
       key: _drawerKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        elevation: 0,
+        elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(30),
@@ -76,20 +77,22 @@ class _HomePageState extends State<HomePage> {
                       setState(() {});
                     }
                   },
-                  padding: EdgeInsets.fromLTRB(5, 13, 5, 13),
+                  padding: EdgeInsets.fromLTRB(0, 9, 5, 9),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30)
                   ),
                   controller: TextEditingController(text: _appData.address),
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 14
+                  ),
                   readOnly: true,
                   prefix: Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Icon(
-                      Icons.location_on,
-                      color: Theme.of(context).accentColor,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10
                     ),
+                    child: Image.asset(LocationIcon, height: 19)
                   ),
                 ),
               ),
@@ -229,19 +232,21 @@ class _HomePageState extends State<HomePage> {
 //          )
         ]),
       ),
-      floatingActionButton: SizedBox(
-        width: 65,
-        height: 65,
-        child: FloatingActionButton(
-          elevation: 5,
-          backgroundColor: Colors.white,
-//            onPressed: () {CustomNavigator.navigateTo(context, ViewAllOrders());},
-          child: Image.asset(
-            "assets/images/cart.png",
-            width: 30,
-            height: 30,
-            color: Colors.black,
-          )
+      floatingActionButton: BadgedWidget.numbered(
+        size: 65,
+        child: SizedBox(
+          width: 65,
+          height: 65,
+          child: FloatingActionButton(
+            elevation: 5,
+            backgroundColor: Colors.white,
+            child: Image.asset(
+              "assets/images/cart.png",
+              width: 30,
+              height: 30,
+              color: Colors.black,
+            )
+          ),
         ),
       ),
     );
@@ -262,7 +267,7 @@ class _ListTile extends ListTile {
       Navigator.of(context).pushNamed(navigateTo);
     },
     leading: image != null ? Image.asset(image, width: 20, height: 30): icon,
-    title: Text(title, style: TextStyle(color: Colors.white))
+    title: Text(title, style: TextStyle(color: Colors.white, fontFamily: 'Helvetica'))
   );
 }
 class _ServiceContainerDetail {
@@ -314,8 +319,8 @@ class _ServiceContainer extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed(service.page),
       child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: 120,
+        height: 100,
+        margin: const EdgeInsets.only(bottom: 5),
         decoration: new BoxDecoration(
           image: new DecorationImage(
             image: new AssetImage(service.image),

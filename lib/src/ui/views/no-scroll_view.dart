@@ -6,12 +6,13 @@ class NoScrollView extends Scaffold {
   NoScrollView({
     Widget body,
     Widget bottom,
+    bool extendBody,
     PreferredSizeWidget appBar = const HaweyatiAppBar()
   }): super(
     body: body,
     appBar: appBar,
     backgroundColor: Colors.white,
-    extendBody: bottom is FlatActionButton,
+    extendBody: extendBody ?? bottom is FlatActionButton,
     bottomNavigationBar: bottom
   );
 }

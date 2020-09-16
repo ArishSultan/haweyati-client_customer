@@ -1,9 +1,10 @@
+import 'package:haweyati/src/models/order/order-item_model.dart';
 import 'package:hive/hive.dart';
 import 'image_model.dart';
 import 'rent_model.dart';
 
 @HiveType(typeId: 20)
-class Dumpster extends HiveObject {
+class Dumpster extends Orderable {
   @HiveField(0) String id;
   @HiveField(1) String size;
   @HiveField(2) ImageModel image;
@@ -21,6 +22,10 @@ class Dumpster extends HiveObject {
     this.description
   });
 
+  int get days => pricing.first.days;
+  double get rent => pricing.first.rent;
+  double get extraDayRent => pricing.first.extraDayRent;
+
   Dumpster.fromJson(Map<String, dynamic> json, [bool isOrder = false]) {
     id = json['_id'];
     size = json['size'];
@@ -28,12 +33,12 @@ class Dumpster extends HiveObject {
     description = json['description'];
     image = ImageModel.fromJson(json['image']);
 
-    final _pricing = json['pricing'] as List;
+    final _pricing = json['pricing'];
     if (_pricing != null) {
       if (isOrder) {
         pricing = [Rent.fromJson(json['pricing'])];
       } else {
-        pricing = _pricing
+        pricing = (_pricing as List)
           .map((e) => Rent.fromJson(e))
           .toList(growable: false);
       }
@@ -48,4 +53,6 @@ class Dumpster extends HiveObject {
     'image': image.serialize(),
     'pricing': pricing.map((e) => e.toJson()).toList()[0]
   };
+
+  @override serialize() => toJson();
 }

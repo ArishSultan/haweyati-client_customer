@@ -14,8 +14,8 @@ import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/widgits/haweyati-appbody.dart';
 
 class ScaffoldingTimeAndLocation extends StatefulWidget {
-  final OrderDetail orderDetail;
-  final List<ScaffoldingItemModel> order;
+  final orderDetail;
+  final List order;
   final ConstructionService constructionService;
   ScaffoldingTimeAndLocation({this.constructionService,this.order,this.orderDetail});
   @override

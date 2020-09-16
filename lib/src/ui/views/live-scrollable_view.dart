@@ -7,14 +7,12 @@ class LiveScrollableView<T> extends StatefulWidget {
   final Widget Function(BuildContext context, T data) builder;
 
   LiveScrollableView({
-    @required this.title,
+    this.title,
+    this.subtitle,
     @required this.loader,
-    @required this.builder,
-    @required this.subtitle
-  }): assert(title != null),
-      assert(loader != null),
-      assert(builder != null),
-      assert(subtitle != null);
+    @required this.builder
+  }): assert(loader != null),
+      assert(builder != null);
 
   @override
   _LiveScrollableViewState<T> createState() => _LiveScrollableViewState<T>();
@@ -45,23 +43,25 @@ class _LiveScrollableViewState<T> extends State<LiveScrollableView<T>> {
           },
         ),
 
-      SliverPadding(
-        padding: EdgeInsets.fromLTRB(20, 30, 20, 10),
-        sliver: SliverToBoxAdapter(child: Text(
-          widget.title,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold
-          )
-        )),
-      ),
+      if (widget.title != null)
+        SliverPadding(
+          padding: EdgeInsets.fromLTRB(20, 30, 20, 10),
+          sliver: SliverToBoxAdapter(child: Text(
+            widget.title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.bold
+            )
+          )),
+        ),
 
-      SliverPadding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
-        sliver: SliverToBoxAdapter(child: Text(widget.subtitle, textAlign: TextAlign.center)),
-      ),
+      if (widget.subtitle != null)
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
+          sliver: SliverToBoxAdapter(child: Text(widget.subtitle, textAlign: TextAlign.center)),
+        ),
 
       FutureBuilder<List<T>>(
         future: _future,

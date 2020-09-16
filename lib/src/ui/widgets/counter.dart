@@ -45,14 +45,13 @@ class _CounterState extends State<Counter> {
         width: 23,
         height: 23,
         child: FlatButton(
+          disabledColor: Color(0x7FFF974D),
           padding: const EdgeInsets.all(0),
           child: Icon(Icons.remove, color: Colors.white, size: 18),
-          onPressed: () {
-            if (_count > widget.minValue ?? 0) {
-              setState(() => _count -= widget.increment);
-              widget.onChange(_count);
-            }
-          },
+          onPressed: _count > widget.minValue ? () {
+            setState(() => _count -= widget.increment);
+            widget.onChange(_count);
+          } : null,
           color: Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(25)
@@ -82,12 +81,10 @@ class _CounterState extends State<Counter> {
         child: FlatButton(
           padding: const EdgeInsets.all(0),
           child: Icon(Icons.add, color: Colors.white, size: 18),
-          onPressed: () {
-            if (_count < (widget.maxValue ?? 1000)) {
-              setState(() => _count += widget.increment);
-              widget.onChange(_count);
-            }
-          },
+          onPressed: _count < (widget.maxValue ?? 1000) ? () {
+            setState(() => _count += widget.increment);
+            widget.onChange(_count);
+          } : null,
           color: Theme.of(context).primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(25)

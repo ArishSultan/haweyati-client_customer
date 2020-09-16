@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:haweyati/models/hive-models/orders/scaffolding-item_model.dart';
 
 class ScaffoldingItem extends StatefulWidget {
-  final ScaffoldingItemModel item;
-  final Function(ScaffoldingItemModel) onValueChange;
+  final item;
+  final Function(dynamic) onValueChange;
 
   ScaffoldingItem({this.item, this.onValueChange});
 
@@ -13,7 +13,7 @@ class ScaffoldingItem extends StatefulWidget {
 }
 
 class _ScaffoldingItemState extends State<ScaffoldingItem> {
-  ScaffoldingItemModel item;
+  var item;
 
   _increment() {
     setState(() {

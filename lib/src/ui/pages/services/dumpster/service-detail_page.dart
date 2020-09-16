@@ -1,39 +1,27 @@
-import 'time-location_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/utils/const.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/widgets/counter.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/models/dumpster_model.dart';
 import 'package:haweyati/services/haweyati-service.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
 import 'package:haweyati/src/ui/widgets/flat-action-button.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
-import 'package:haweyati/models/hive-models/orders/order_model.dart';
-import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
-import 'package:haweyati/models/hive-models/orders/dumpster-order_model.dart';
 
 class DumpsterServiceDetailPage extends StatelessWidget {
   final Dumpster dumpster;
-  final Order _order = Order();
+  // final Order _order = Order();
 
   DumpsterServiceDetailPage(this.dumpster) {
-    _order.detail = OrderDetail(
-      items: [DumpsterOrderItem(
-        dumpster: dumpster,
-      )],
-      netTotal: 0
-    );
+  //   _order.detail = OrderDetail(
+  //     items: [DumpsterOrderItem(
+  //       dumpster: dumpster,
+  //     )],
+  //     netTotal: 0
+  //   );
   }
-
-  String get _size => dumpster.size;
-  int get _days => dumpster.pricing.first.days;
-  double get _rent => dumpster.pricing.first.rent;
-  double get _extraDayRent => dumpster.pricing.first.extraDayRent;
-  DumpsterOrderItem get _item => _order.detail.items.first as DumpsterOrderItem;
 
   @override
   Widget build(BuildContext context) {
@@ -54,20 +42,19 @@ class DumpsterServiceDetailPage extends StatelessWidget {
                 padding: const EdgeInsets.only(right: 20),
                 child: Image.network(
                   HaweyatiService.resolveImage(dumpster.image.name),
-                  width: 50,
-                  height: 50,
+                  width: 50, height: 50,
                 ),
               ),
 
               Expanded(child: Column(children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
-                  child: Text('$_size Yard Dumpster', style: TextStyle(
+                  child: Text('${dumpster.size} Yard Dumpster', style: TextStyle(
                     fontWeight: FontWeight.bold, fontFamily: ''
                   )),
                 ),
-                Text('${_rent.round()} SAR/$_days days'),
-              ], crossAxisAlignment: CrossAxisAlignment.start,)),
+                Text('${dumpster.rent.round()} SAR/${dumpster.days} days'),
+              ], crossAxisAlignment: CrossAxisAlignment.start)),
 
               Icon(CupertinoIcons.right_chevron, color: Colors.grey.shade600),
             ])
@@ -84,13 +71,13 @@ class DumpsterServiceDetailPage extends StatelessWidget {
                     fontWeight: FontWeight.bold, fontFamily: ''
                   )),
                 ),
-                Text('${_extraDayRent.round()} SAR/day'),
+                // Text('${_extraDayRent.round()} SAR/day'),
               ], crossAxisAlignment: CrossAxisAlignment.start)),
 
-              Counter(
-                initialValue: _item.extraDays.toDouble(),
-                onChange: (count) => _item.extraDays = count.round()
-              )
+              // Counter(
+              //   initialValue: _item.extraDays.toDouble(),
+              //   onChange: (count) => _item.extraDays = count.round()
+              // )
             ])
           ),
         ]),
@@ -99,7 +86,8 @@ class DumpsterServiceDetailPage extends StatelessWidget {
       bottom: FlatActionButton(
         label: 'Continue',
         onPressed: () {
-          navigateTo(context, DumpsterTimeAndLocationPage(_order));
+          // navigateTo(context, DumpsterTimeAndLocationPage(_order));
+
           // final extraDayPrice = _extraDayRent * _extraDays;
           // final order = DumpsterOrder(
           //   dumpster: dumpster,

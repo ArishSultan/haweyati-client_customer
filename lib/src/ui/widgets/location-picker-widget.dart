@@ -4,11 +4,10 @@ import 'dark-container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/utils/const.dart';
-import 'package:haweyati/src/ui/pages/locations-map_page.dart';
 
 class LocationPickerWidget extends StatefulWidget {
-  final LocationDetails initialValue;
-  final Function(LocationDetails location) onChanged;
+  final /*Location*/ initialValue;
+  final Function(/*Location*/dynamic location) onChanged;
 
   LocationPickerWidget({
     this.initialValue,
@@ -20,7 +19,7 @@ class LocationPickerWidget extends StatefulWidget {
 }
 
 class _LocationPickerWidgetState extends State<LocationPickerWidget> {
-  LocationDetails _address;
+  var _address;
 
   @override
   void initState() {

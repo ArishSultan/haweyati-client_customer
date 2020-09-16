@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-// part 'rent_model.g.dart';
 
 @HiveType(typeId: 21)
 class Rent extends HiveObject {

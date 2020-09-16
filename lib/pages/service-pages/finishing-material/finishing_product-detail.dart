@@ -16,7 +16,7 @@ class TransformedOption{
   TransformedOption({this.name,this.values});
 }
 class FinishingMaterialDetail extends StatefulWidget {
-  final FinProduct finishingMaterial;
+  final FinishingMaterial finishingMaterial;
   FinishingMaterialDetail({this.finishingMaterial});
   @override
   _FinishingMaterialDetailState createState() => _FinishingMaterialDetailState();
@@ -29,9 +29,9 @@ class _FinishingMaterialDetailState extends State<FinishingMaterialDetail> {
   Map<String, dynamic> selected = {};
   List<TransformedOption> transformedOptions = [];
   double price;
-  FMOrder order;
+  var order;
 
-  FinProduct finishingProduct;
+  FinishingMaterial finishingProduct;
   List<ProductOption> options;
 
   @override
@@ -42,7 +42,7 @@ class _FinishingMaterialDetailState extends State<FinishingMaterialDetail> {
     getVariants();
   }
 
-  void orderFM(FMOrder order) async {
+  void orderFM(order) async {
     final box = await Hive.openBox('finishing-material-order');
     await box.clear();
     box.add(order);
@@ -147,13 +147,13 @@ class _FinishingMaterialDetailState extends State<FinishingMaterialDetail> {
                     })),
                     Expanded(flex: 1,
                         child: _buildButton("Buy Now", () async {
-                          await orderFM(FMOrder(
-                            product: finishingProduct,
-                            price: price,
-                            qty: 2,
-                            total: price * 2,
-                            variant: selected,
-                          ));
+                          // await orderFM(FMOrder(
+                          //   product: finishingProduct,
+                          //   price: price,
+                          //   qty: 2,
+                          //   total: price * 2,
+                          //   variant: selected,
+                          // ));
                           CustomNavigator.navigateTo(context, FinishingOrderConfirmation(product: finishingProduct,));
                         }))
                   ],

@@ -1,25 +1,25 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:haweyati/models/hive-models/orders/order_model.dart';
+import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/utils/app-data.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/common/simple-form.dart';
-import 'package:haweyati/src/models/order/order-location_model.dart';
-import 'package:haweyati/src/ui/pages/locations-map_page.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/widgets/drop-off-picker.dart';
-import 'package:haweyati/src/ui/widgets/image-picker-widget.dart';
-import 'package:haweyati/src/ui/widgets/location-picker-widget.dart';
-import 'package:haweyati/src/ui/widgets/raised-action-button.dart';
-import 'package:haweyati/src/utils/app-data.dart';
-import 'package:haweyati/src/utils/const.dart';
-import 'package:flutter/material.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/src/utils/location-adapter.dart';
+import 'package:haweyati/src/ui/widgets/drop-off-picker.dart';
+import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
+import 'package:haweyati/src/ui/widgets/image-picker-widget.dart';
+import 'package:haweyati/src/ui/widgets/raised-action-button.dart';
+import 'package:haweyati/src/ui/widgets/location-picker-widget.dart';
+import 'package:haweyati/src/models/order/order-location_model.dart';
+import 'package:haweyati/models/hive-models/orders/order_model.dart';
 
 import 'order-confirmation_page.dart';
 
 class DumpsterTimeAndLocationPage extends StatelessWidget {
-  final Order _order;
+  final /*Order */_order;
   final _formKey = GlobalKey<SimpleFormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -48,17 +48,17 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
           subtitle: loremIpsum.substring(0, 80),
         ),
 
-        LocationPickerWidget(
-          initialValue: LocationAdapter()
-            .orderLocationToLocationDetails(_order.location),
-          onChanged: (LocationDetails location) {
-            _order.location = RentableOrderLocation.from(
-              LocationAdapter().locationDetailsToOrderLocation(location)
-                ..dropOffTime = _order.location.dropOffTime
-                ..dropOffDate = _order.location.dropOffDate
-            );
-          }
-        ),
+        // LocationPickerWidget(
+        //   initialValue: LocationAdapter()
+        //     .orderLocationToLocationDetails(_order.location),
+        //   onChanged: (Location location) {
+        //     _order.location = RentableOrderLocation.from(
+        //       LocationAdapter().locationDetailsToOrderLocation(location)
+        //         ..dropOffTime = _order.location.dropOffTime
+        //         ..dropOffDate = _order.location.dropOffDate
+        //     );
+        //   }
+        // ),
 
         Padding(
           padding: const EdgeInsets.only(
@@ -113,7 +113,7 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
             ));
           } else {
             print('here');
-            navigateTo(context, DumpsterOrderConfirmationPage(_order));
+            // navigateTo(context, DumpsterOrderConfirmationPage(_order));
           }
         }
       )

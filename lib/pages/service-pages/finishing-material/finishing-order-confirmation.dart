@@ -1,28 +1,24 @@
-import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haweyati/models/finishing-product.dart';
 import 'package:haweyati/models/hive-models/orders/finishing-material_order.dart';
-import 'package:haweyati/models/hive-models/orders/order-details_model.dart';
 import 'package:haweyati/models/hive-models/orders/order_model.dart';
 import 'package:haweyati/models/order-time_and_location.dart';
 import 'package:haweyati/pages/payment/payment-method.dart';
 import 'package:haweyati/services/haweyati-service.dart';
 import 'package:haweyati/src/ui/widgets/loading-dialog.dart';
-import 'package:haweyati/src/utlis/const.dart';
 import 'package:haweyati/widgits/appBar.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/widgits/emptyContainer.dart';
 import 'package:haweyati/widgits/haweyati-appbody.dart';
 import 'package:haweyati/widgits/order-location-picker.dart';
-import 'package:haweyati/widgits/orderPlaced.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FinishingOrderConfirmation extends StatefulWidget {
-  FinProduct product;
+  FinishingMaterial product;
   FinishingOrderConfirmation({this.product});
   @override
   _FinishingOrderConfirmationState createState() => _FinishingOrderConfirmationState();
@@ -38,7 +34,7 @@ class _FinishingOrderConfirmationState extends State<FinishingOrderConfirmation>
     init();
   }
 
-  void addOrder(Order order) async {
+  void addOrder(/*Order*/ order) async {
     final box = await Hive.openBox('orders');
     await box.clear();
     box.add(order);
@@ -68,7 +64,7 @@ class _FinishingOrderConfirmationState extends State<FinishingOrderConfirmation>
           onTap: () async {
             //Place finishing material order
             var finishingMaterialBox = await Hive.openBox('finishing-material-order');
-            var finishingMaterialOrder = await finishingMaterialBox.values.first as FMOrder;
+            var finishingMaterialOrder = await finishingMaterialBox.values.first/* as FMOrder*/;
 
             PaymentResponse paymentResponse = await CustomNavigator.navigateTo(context, SelectPaymentMethod());
             if(paymentResponse!=null){

@@ -1,8 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:haweyati/src/common/models/json_serializable.dart';
 
-// part 'images_model.g.dart';
-
 @HiveType(typeId: 102)
 class ImageModel extends HiveObject implements JsonSerializable {
   @HiveField(0) String id;

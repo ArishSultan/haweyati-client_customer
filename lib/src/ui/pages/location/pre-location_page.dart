@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:haweyati/src/ui/pages/locations-map_page.dart';
+import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:easy_localization/easy_localization.dart';
