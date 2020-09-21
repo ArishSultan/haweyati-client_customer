@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/models/time-slot_model.dart';
+import 'package:haweyati/src/services/time-slots_service.dart';
+import 'package:haweyati/src/ui/widgets/dark-container.dart';
 import 'package:haweyati/src/utils/const.dart';
 import 'package:haweyati/src/utils/date-formatter.dart';
-import 'package:haweyati/src/models/time-slot_model.dart';
-import 'package:haweyati/services/time-slots_service.dart';
-import 'package:haweyati/src/ui/widgets/dark-container.dart';
 
 class DropOffPicker extends StatefulWidget {
   final ServiceType service;
@@ -51,13 +51,18 @@ class _DropOffPickerState extends State<DropOffPicker> {
         _selectedDate = widget.initialDate;
       } else {
         _selectedDate = _firstDate;
-        widget.onDateChanged(_selectedDate);
+
+        if (widget.onDateChanged != null)
+          widget.onDateChanged(_selectedDate);
       }
       _intervals = value.intervals(_selectedDate);
       if (widget.initialTime != null) {
         _selectedTimeSlot = widget.initialTime;
       } else {
         _selectedTimeSlot = _intervals.first;
+
+        if (widget.onTimeChanged != null)
+          widget.onTimeChanged(_selectedTimeSlot);
       }
       _lastDate = _firstDate.add(Duration(hours: 100));
 

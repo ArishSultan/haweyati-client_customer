@@ -1,6 +1,7 @@
-import 'package:hive/hive.dart';
 import 'package:haweyati/src/common/models/json_serializable.dart';
+import 'package:hive/hive.dart';
 
+part 'location_model.g.dart';
 
 @HiveType(typeId: 103)
 class Location extends HiveObject implements JsonSerializable {

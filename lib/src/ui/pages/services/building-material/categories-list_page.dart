@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/utils/const.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
-import 'package:haweyati/src/ui/widgets/service-list-item.dart';
-import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
-import 'package:haweyati/services/building-material_service.dart';
-import 'package:haweyati/src/ui/pages/services/building-material/list_page.dart';
 import 'package:haweyati/src/models/services/building-material/category_model.dart';
+import 'package:haweyati/src/services/building-material_service.dart';
+import 'package:haweyati/src/ui/pages/services/building-material/list_page.dart';
+import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/ui/widgets/service-list-tile.dart';
+import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class BuildingMaterialCategoriesListPage extends StatelessWidget {
   final _service = BuildingMaterialService();

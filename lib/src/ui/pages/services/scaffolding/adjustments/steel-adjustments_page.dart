@@ -1,12 +1,23 @@
 import 'package:flutter/cupertino.dart';
-import 'package:haweyati/src/utils/const.dart';
-import 'package:haweyati/src/ui/widgets/counter.dart';
+import 'package:haweyati/src/ui/pages/services/scaffolding/calculations/ceiling-calculation_page.dart';
+import 'package:haweyati/src/ui/pages/services/scaffolding/calculations/facades-calculation_page.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
+import 'package:haweyati/src/ui/widgets/counter.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
-import 'package:haweyati/src/ui/widgets/raised-action-button.dart';
+import 'package:haweyati/src/utils/const.dart';
 
 class SteelAdjustmentsPage extends StatelessWidget {
+  final _calculations;
+  SteelAdjustmentsPage(this._calculations) {
+    if (_calculations != null) {
+      if (_calculations is FacadesCalculation) {
+      } else if (_calculations is CeilingCalculation) {
+      } else throw 'Un-supported Type was provided';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScrollableView(

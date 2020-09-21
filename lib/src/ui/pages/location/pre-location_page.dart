@@ -1,13 +1,12 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/views/header_view.dart';
-import 'package:easy_localization/easy_localization.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/flat-action-button.dart';
+import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
-import 'package:haweyati/src/utils/app-data.dart';
+import 'package:haweyati/src/ui/views/header_view.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 
 class PreLocationPage extends StatefulWidget {
   @override

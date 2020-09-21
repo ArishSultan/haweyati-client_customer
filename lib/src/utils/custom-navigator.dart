@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class CustomNavigator {
   static navigateTo(context, widget) {
@@ -14,6 +14,8 @@ class CustomNavigator {
 }
 
 Future navigateTo(BuildContext context, Widget widget) {
+  FocusScope.of(context)?.unfocus();
+
   return Navigator.of(context).push(
     CupertinoPageRoute(builder: (context) => widget)
   );

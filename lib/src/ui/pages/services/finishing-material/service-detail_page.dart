@@ -1,357 +1,219 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/models/finishing-product.dart';
-import 'package:haweyati/services/haweyati-service.dart';
-import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
+import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/models/location_model.dart';
+import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
+import 'package:haweyati/src/models/order/order-item_model.dart';
+import 'package:haweyati/src/models/order/order-location_model.dart';
+import 'package:haweyati/src/models/order/order_model.dart';
+import 'package:haweyati/src/models/services/finishing-material/model.dart';
+import 'package:haweyati/src/services/haweyati-service.dart';
+import 'package:haweyati/src/ui/pages/services/finishing-material/order-confirmation_page.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/counter.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
 import 'package:haweyati/src/ui/widgets/location-picker-widget.dart';
-import 'package:haweyati/src/utils/app-data.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
-class FinishingMaterialServiceDetailPage extends StatelessWidget {
+class FinishingMaterialServiceDetailPage extends StatefulWidget {
   final FinishingMaterial item;
   FinishingMaterialServiceDetailPage(this.item);
 
   @override
+  _FinishingMaterialServiceDetailPageState createState() => _FinishingMaterialServiceDetailPageState();
+}
+
+class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialServiceDetailPage> {
+  final _order = Order();
+  final _item = FinishingMaterialOrderItem();
+
+  final _selectedVariants = <String, String>{};
+  final _availableVariants = <String, List<String>>{};
+
+  @override
+  void initState() {
+    super.initState();
+
+    _order.location = OrderLocation()
+      ..update(AppData.instance().location);
+
+    if (widget.item.variants?.isNotEmpty ?? false) {
+      for (final option in widget.item.options) {
+        final values = option.values.split(',');
+        _selectedVariants[option.name] = values[0];
+        _availableVariants[option.name] = values;
+      }
+
+      final element = widget.item.variants?.firstWhere((element) {
+        for (final key in element.keys) {
+          if (key == 'price') continue;
+
+          if (_selectedVariants[key] != element[key]) return false;
+        }
+
+        return true;
+      }, orElse: () => null);
+
+      if (element != null) {
+        _item.price = double.tryParse(element['price']) ?? 0.0;
+      }
+    } else {
+      _item.price = widget.item.price;
+    }
+
+    _item.product = widget.item;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ScrollableView(
-      padding: const EdgeInsets.fromLTRB(15, 25, 15, 70),
+    return ScrollableView.sliver(
+      showBackground: true,
       children: [
-        Row(children: [
-          Container(
-            width: 80, height: 80,
-            decoration: BoxDecoration(
-              color: Color(0xEEFFFFFF),
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                  color: Colors.grey.shade300
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
+          sliver: SliverToBoxAdapter(child: Row(children: [
+            Container(
+              width: 80, height: 80,
+              decoration: BoxDecoration(
+                color: Color(0xEEFFFFFF),
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                    color: Colors.grey.shade300
+                  )
+                ],
+                image: DecorationImage(
+                  image: NetworkImage(HaweyatiService.resolveImage(widget.item.images.name))
                 )
-              ],
-              image: DecorationImage(
-                image: NetworkImage(HaweyatiService.resolveImage(item.images.name))
-              )
+              ),
             ),
-          ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Text(item.name, style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFF313F53),
-              fontWeight: FontWeight.bold
-            )),
-          )
-        ]),
-
-        DarkContainer(
-          height: 80,
-          margin: const EdgeInsets.only(
-            top: 20, bottom: 30
-          ),
-          padding: const EdgeInsets.all(15),
-          child: Row(children: [
-            Column(children: [
-              Text('Quantity', style: TextStyle(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Text(widget.item.name, style: TextStyle(
+                fontSize: 16,
                 color: Color(0xFF313F53),
                 fontWeight: FontWeight.bold
               )),
-              Spacer(),
-              Text('${item.price.round()} SAR', style: TextStyle(
-                color: Color(0xFF313F53)
-              ))
-            ], crossAxisAlignment: CrossAxisAlignment.start),
-            Counter(
-              onChange: (val) {}
             )
-          ], mainAxisAlignment: MainAxisAlignment.spaceBetween),
+          ])),
         ),
 
-        LocationPickerWidget(
-          initialValue: AppData.instance().location,
-          onChanged: (/*Location */location) {
-          },
-          // initialValue: LocationAdapter()
-          //     .orderLocationToLocationDetails(_order.location),
-          // onChanged: (LocationDetails location) {
-          //   _order.location = RentableOrderLocation.from(
-          //       LocationAdapter().locationDetailsToOrderLocation(location)
-          //         ..dropOffTime = _order.location.dropOffTime
-          //         ..dropOffDate = _order.location.dropOffDate
-          //   );
-          // }
+        if (widget.item.variants?.isNotEmpty ?? false)
+          ..._buildVariants(),
+
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          sliver: SliverToBoxAdapter(child: DarkContainer(
+            height: 80,
+            margin: const EdgeInsets.only(
+              top: 20, bottom: 30
+            ),
+            padding: const EdgeInsets.all(15),
+            child: Row(children: [
+              Column(children: [
+                Text('Quantity', style: TextStyle(
+                  color: Color(0xFF313F53),
+                  fontWeight: FontWeight.bold
+                )),
+                Spacer(),
+                Text('${_item.price.toStringAsFixed(2)} SAR', style: TextStyle(
+                  color: Color(0xFF313F53)
+                ))
+              ], crossAxisAlignment: CrossAxisAlignment.start),
+              Counter(
+                initialValue: _item.qty.toDouble(),
+                onChange: (count) => setState(() => _item.qty = count?.round())
+              )
+            ], mainAxisAlignment: MainAxisAlignment.spaceBetween),
+          )),
         ),
-      ]
+
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 15, 20),
+          sliver: SliverToBoxAdapter(child: LocationPickerWidget(
+            initialValue: _order.location,
+            onChanged: (Location location) => _order.location = location
+          )),
+        ),
+      ],
+
+      bottom: RaisedActionButton(
+        label: 'Continue',
+        onPressed: _item.qty > 0 ? () {
+          _item.variants = _selectedVariants;
+
+          _order.items = [OrderItemHolder(
+            item: _item,
+            subtotal: _item.price * _item.qty
+          )];
+
+          navigateTo(context, FinishingMaterialOrderConfirmationPage(_order));
+        } : null
+      ),
     );
   }
-}
 
-// // import 'package:easy_localization/easy_localization.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter/painting.dart';
-// import 'package:haweyati/src/models/services/building-material/model.dart';
-// import 'package:haweyati/models/hive-models/orders/building-material-order.dart';
-// import 'package:haweyati/src/ui/views/dotted-background_view.dart';
-// import 'package:haweyati/src/ui/views/header_view.dart';
-// import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-// import 'package:haweyati/src/ui/widgets/counter.dart';
-// import 'package:haweyati/src/ui/widgets/dark-container.dart';
-// import 'package:haweyati/src/ui/widgets/flat-action-button.dart';
-// import 'package:haweyati/src/utlis/const.dart';
-// // import 'package:haweyati/widgits/appBar.dart';
-// // import 'package:haweyati/widgits/container-with-add-remove-item.dart';
-// // import 'package:haweyati/src/utils/custom-navigator.dart';
-// // import 'package:haweyati/widgits/haweyati-appbody.dart';
-// import 'package:hive/hive.dart';
-//
-// // import 'time-location_page.dart';
-//
-// class FinishingMaterialServiceDetailPage extends StatefulWidget {
-//   final BuildingMaterial item;
-//   FinishingMaterialServiceDetailPage(this.item);
-//
-//   @override
-//   _FinishingMaterialServiceDetailPageState createState() => _FinishingMaterialServiceDetailPageState();
-// }
-//
-// class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialServiceDetailPage> {
-//   int qty20Yard = 0;
-//   int qty12Yard = 0;
-//
-//   void addBuildingOrder(List<BMOrder> bmOrder) async {
-//      var box = await Hive.openBox('bmorder');
-//      await box.clear();
-//      box.addAll(bmOrder);
-//      bmOrder.forEach((element) {element.save();});
-//   }
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return NoScrollView(
-//       body: DottedBackgroundView(
-//         padding: const EdgeInsets.symmetric(
-//           horizontal: 15
-//         ),
-//         child: Column(children: [
-//           HeaderView(
-//             title: 'Product Details',
-//             subtitle: loremIpsum.substring(0, 70),
-//           ),
-//
-//           RichText(
-//             text: TextSpan(
-//               text: 'Small Container,',
-//               style: TextStyle(
-//                 color: Color(0xFF313F53),
-//                 fontSize: 13,
-//                 fontWeight: FontWeight.bold
-//               ),
-//               children: [
-//                 TextSpan(
-//                   text: ' 12 Yards',
-//                   style: TextStyle(
-//                     fontWeight: FontWeight.normal,
-//                     color: Color(0xFF313F53)
-//                   )
-//                 )
-//               ]
-//             ),
-//           ),
-//
-//           DarkContainer(
-//             height: 80,
-//             margin: const EdgeInsets.only(
-//               top: 20, bottom: 30
-//             ),
-//             padding: const EdgeInsets.all(15),
-//             child: Row(children: [
-//               Expanded(
-//                 child: Column(children: [
-//                   Text('Quantity', style: TextStyle(
-//                     color: Color(0xFF313F53),
-//                     fontWeight: FontWeight.bold
-//                   )),
-//                   Spacer(),
-//                   Text('SAR ${widget.item.pricing.first.price12yard.round()}', style: TextStyle(
-//                     color: Color(0xFF313F53),
-//                   )),
-//                 ], crossAxisAlignment: CrossAxisAlignment.start),
-//               ),
-//
-//               Counter(
-//                 onChange: (asd) {},
-//               )
-//             ]),
-//           ),
-//
-//           RichText(
-//             text: TextSpan(
-//               text: 'Big Container,',
-//               style: TextStyle(
-//                 color: Color(0xFF313F53),
-//                 fontSize: 13,
-//                 fontWeight: FontWeight.bold
-//               ),
-//               children: [
-//                 TextSpan(
-//                   text: ' 20 Yards',
-//                   style: TextStyle(
-//                     fontWeight: FontWeight.normal,
-//                     color: Color(0xFF313F53)
-//                   )
-//                 )
-//               ]
-//             ),
-//           ),
-//
-//           DarkContainer(
-//             height: 80,
-//             margin: const EdgeInsets.only(
-//               top: 20, bottom: 30
-//             ),
-//             padding: const EdgeInsets.all(15),
-//             child: Row(children: [
-//               Expanded(
-//                 child: Column(children: [
-//                   Text('Quantity', style: TextStyle(
-//                     color: Color(0xFF313F53),
-//                     fontWeight: FontWeight.bold
-//                   )),
-//                   Spacer(),
-//                   Text('SAR ${widget.item.pricing.first.price20yard.round()}', style: TextStyle(
-//                     color: Color(0xFF313F53),
-//                   )),
-//                 ], crossAxisAlignment: CrossAxisAlignment.start),
-//               ),
-//
-//               Counter(
-//                 onChange: (asd) {},
-//               )
-//             ]),
-//           ),
-//         ], crossAxisAlignment: CrossAxisAlignment.start),
-//       ),
-//
-//       bottom: FlatActionButton(
-//         label: 'Continue',
-//         onPressed: () {
-//           // navigateTo(context, FinishingMaterialTimeAndLocationPage(bmItem: widget.item));
-//         }
-//       ),
-//     );
-//     // return Scaffold(
-//     //   appBar: HaweyatiAppBar(
-//     //     context: context,
-//     //   ),
-//     //   body: HaweyatiAppBody(
-//     //     title: "Product Detail",
-//     //     detail: loremIpsum.substring(0, 90),
-//     //     child: ListView(
-//     //       children: <Widget>[
-//     //         Align(
-//     //             alignment: Alignment.centerLeft,
-//     //             child: RichText(
-//     //               text: TextSpan(
-//     //                   text: "Small Container,",
-//     //                   style: TextStyle(
-//     //                       color: Colors.black,
-//     //                       fontSize: 16,
-//     //                       fontWeight: FontWeight.bold),
-//     //                   children: [
-//     //                     TextSpan(
-//     //                         text: "     12 Yard",
-//     //                         style: TextStyle(
-//     //                           fontSize: 12,
-//     //                         ))
-//     //                   ]),
-//     //             )),
-//     //         SizedBox(
-//     //           height: 10,
-//     //         ),
-//     //         QuantitySelector(
-//     //           canBeZero: true,
-//     //           title: 'Price: ${qty12Yard == 1 ? widget.item.pricing.first.price12yard : widget.item.pricing.first.price12yard * qty12Yard.toDouble()} ',
-//     //           onValueChange: (int val){
-//     //             setState(() {
-//     //               qty12Yard=val;
-//     //             });
-//     //           },
-//     //           subtitle: "Quantity",
-//     //         ),
-//     //         SizedBox(
-//     //           height: 20,
-//     //         ),
-//     //         Align(
-//     //             alignment: Alignment.centerLeft,
-//     //             child: RichText(
-//     //               text: TextSpan(
-//     //                   text: "Big Container,",
-//     //                   style: TextStyle(
-//     //                       color: Colors.black,
-//     //                       fontSize: 16,
-//     //                       fontWeight: FontWeight.bold),
-//     //                   children: [
-//     //                     TextSpan(
-//     //                         text: "     20 Yard",
-//     //                         style: TextStyle(
-//     //                           fontSize: 12,
-//     //                         ))
-//     //                   ]),
-//     //             )),
-//     //         SizedBox(
-//     //           height: 10,
-//     //         ),
-//     //         QuantitySelector(
-//     //           canBeZero: false,
-//     //           title: 'Price: ${qty20Yard == 1 ? widget.item.pricing.first.price20yard :
-//     //           widget.item.pricing.first.price20yard * qty20Yard.toDouble()} ',
-//     //           onValueChange: (int val){
-//     //             setState(() {
-//     //               qty20Yard=val;
-//     //             });
-//     //           },
-//     //           subtitle: "Quantity",
-//     //         ),
-//     //         SizedBox(
-//     //           height: 20,
-//     //         ),
-//     //       ],
-//     //       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-//     //     ),
-//     //     btnName: tr("Continue"),
-//     //     onTap: () async {
-//     //       print(widget.item.toJson());
-//     //
-//     //       List<BMOrder> bmOrders = [];
-//     //       if(qty20Yard!=0){
-//     //         bmOrders.add(BMOrder(
-//     //           product: widget.item,
-//     //             qty: qty20Yard,
-//     //             size: '20 Yard',
-//     //             total: qty20Yard * widget.item.pricing.first.price20yard,
-//     //             price: widget.item.pricing.first.price20yard,
-//     //         ));
-//     //       }
-//     //
-//     //       if(qty12Yard!=0){
-//     //         bmOrders.add(BMOrder(
-//     //           product: widget.item,
-//     //           qty: qty12Yard,
-//     //           size: '12 Yard',
-//     //           total: qty12Yard * widget.item.pricing.first.price12yard,
-//     //           price: widget.item.pricing.first.price12yard,
-//     //         ));
-//     //       }
-//     //
-//     //     await addBuildingOrder(bmOrders);
-//     //         CustomNavigator.navigateTo(context, BuildingTimeAndLocation(bmItem: widget.item,));
-//     //     },
-//     //     showButton: true,
-//     //   ),
-//     // );
-//   }
-// }
+  List<Widget> _buildVariants() {
+    List<Widget> list = [];
+
+    _availableVariants.forEach((key, values) {
+      list.add(SliverPadding(
+        padding: const EdgeInsets.fromLTRB(25, 15, 25, 10),
+        sliver: SliverToBoxAdapter(
+          child: Text(key, style: TextStyle(
+            fontSize: 13,
+            color: Color(0xFF313F53),
+            fontWeight: FontWeight.bold
+          ))
+        ),
+      ));
+
+      list.add(SliverPadding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        sliver: SliverGrid(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: MediaQuery.of(context).size.width / 55
+          ),
+          delegate: SliverChildBuilderDelegate((context, index) {
+            return Row(children: [
+              Radio(
+                visualDensity: VisualDensity.comfortable,
+                value: values[index],
+                groupValue: _selectedVariants[key],
+                onChanged: (val) => _changedVariants(key, val),
+              ),
+              Text(values[index])
+            ]);
+          }, childCount: values.length),
+        ),
+      ));
+    });
+
+    return list;
+  }
+
+  _changedVariants(String key, String value) {
+    _selectedVariants[key] = value;
+
+    final element = widget.item.variants?.firstWhere((element) {
+      for (final key in element.keys) {
+        if (key == 'price') continue;
+
+        if (_selectedVariants[key] != element[key]) return false;
+      }
+
+      return true;
+    }, orElse: () => null);
+
+    if (element != null) {
+      _item.price = double.tryParse(element['price']) ?? 0.0;
+    }
+
+    setState(() {});
+  }
+}

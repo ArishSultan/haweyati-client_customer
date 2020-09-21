@@ -1,9 +1,14 @@
-import 'pricing_model.dart';
+import 'package:haweyati/src/models/image_model.dart';
+import 'package:haweyati/src/models/order/order-item_model.dart';
 import 'package:hive/hive.dart';
-import '../../image_model.dart';
 
-@HiveType(typeId: 10)
-class BuildingMaterial extends HiveObject {
+import 'pricing_model.dart';
+
+part 'model.g.dart';
+
+
+@HiveType(typeId: 21)
+class BuildingMaterial extends HiveObject implements Orderable {
   @HiveField(0) String id;
   @HiveField(1) String name;
   @HiveField(2) String parent;
@@ -48,6 +53,9 @@ class BuildingMaterial extends HiveObject {
 
     'description': this.description,
   };
+
+  @override
+  Map<String, dynamic> serialize() => toJson();
 }
 
 

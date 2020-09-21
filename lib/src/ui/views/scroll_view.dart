@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/widgets/flat-action-button.dart';
+import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 
 class ScrollableView extends Scaffold {
   ScrollableView({

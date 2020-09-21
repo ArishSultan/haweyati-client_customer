@@ -1,27 +1,32 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:haweyati/src/utils/const.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/views/header_view.dart';
-import 'package:haweyati/src/models/dumpster_model.dart';
-import 'package:haweyati/services/haweyati-service.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/dark-container.dart';
-import 'package:haweyati/src/ui/widgets/flat-action-button.dart';
+import 'package:flutter/material.dart';
+import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
+import 'package:haweyati/src/models/order/order-item_model.dart';
+import 'package:haweyati/src/models/order/order_model.dart';
+import 'package:haweyati/src/models/services/dumpster/model.dart';
+import 'package:haweyati/src/services/haweyati-service.dart';
+import 'package:haweyati/src/ui/pages/services/dumpster/time-location_page.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
+import 'package:haweyati/src/ui/views/header_view.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
+import 'package:haweyati/src/ui/widgets/counter.dart';
+import 'package:haweyati/src/ui/widgets/dark-container.dart';
+import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class DumpsterServiceDetailPage extends StatelessWidget {
-  final Dumpster dumpster;
-  // final Order _order = Order();
+  final _order = Order();
+  final Dumpster _dumpster;
 
-  DumpsterServiceDetailPage(this.dumpster) {
-  //   _order.detail = OrderDetail(
-  //     items: [DumpsterOrderItem(
-  //       dumpster: dumpster,
-  //     )],
-  //     netTotal: 0
-  //   );
+  DumpsterServiceDetailPage(this._dumpster) {
+    _order.items = [OrderItemHolder(
+      item: DumpsterOrderItem(product: _dumpster)
+    )];
   }
+
+  DumpsterOrderItem get _orderItem => _order.items.first.item;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +46,7 @@ class DumpsterServiceDetailPage extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 20),
                 child: Image.network(
-                  HaweyatiService.resolveImage(dumpster.image.name),
+                  HaweyatiService.resolveImage(_dumpster.image.name),
                   width: 50, height: 50,
                 ),
               ),
@@ -49,11 +54,14 @@ class DumpsterServiceDetailPage extends StatelessWidget {
               Expanded(child: Column(children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
-                  child: Text('${dumpster.size} Yard Dumpster', style: TextStyle(
+                  child: Text('${_dumpster.size} Yard Dumpster', style: TextStyle(
+                    color: Color(0xFF313F53),
                     fontWeight: FontWeight.bold, fontFamily: ''
                   )),
                 ),
-                Text('${dumpster.rent.round()} SAR/${dumpster.days} days'),
+                Text('${_dumpster.rent.toStringAsFixed(2)} SAR/${_dumpster.days} days', style: TextStyle(
+                  color: Color(0xFF313F53),
+                )),
               ], crossAxisAlignment: CrossAxisAlignment.start)),
 
               Icon(CupertinoIcons.right_chevron, color: Colors.grey.shade600),
@@ -68,16 +76,19 @@ class DumpsterServiceDetailPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Text('Add Extra Days', style: TextStyle(
+                    color: Color(0xFF313F53),
                     fontWeight: FontWeight.bold, fontFamily: ''
                   )),
                 ),
-                // Text('${_extraDayRent.round()} SAR/day'),
+                Text('${_dumpster.extraDayRent.toStringAsFixed(2)} SAR/day', style: TextStyle(
+                  color: Color(0xFF313F53),
+                )),
               ], crossAxisAlignment: CrossAxisAlignment.start)),
 
-              // Counter(
-              //   initialValue: _item.extraDays.toDouble(),
-              //   onChange: (count) => _item.extraDays = count.round()
-              // )
+              Counter(
+                initialValue: _orderItem.extraDays?.toDouble() ?? 0,
+                onChange: (count) => _orderItem.extraDays = count.round()
+              )
             ])
           ),
         ]),
@@ -86,15 +97,11 @@ class DumpsterServiceDetailPage extends StatelessWidget {
       bottom: FlatActionButton(
         label: 'Continue',
         onPressed: () {
-          // navigateTo(context, DumpsterTimeAndLocationPage(_order));
+          _order.items.first.subtotal =
+              _orderItem.extraDaysPrice =
+              _dumpster.extraDayRent * _orderItem.extraDays;
 
-          // final extraDayPrice = _extraDayRent * _extraDays;
-          // final order = DumpsterOrder(
-          //   dumpster: dumpster,
-          //   extraDayPrice: extraDayPrice,
-          //   extraDays: _extraDays,
-          //   total: _rent + extraDayPrice
-          // );
+          navigateTo(context, DumpsterTimeAndLocationPage(_order));
         }
       ),
     );

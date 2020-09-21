@@ -23,6 +23,9 @@ const SettingsIcon = '$_icon/settings.png';
 const StarIconOutlined = '$_icon/star_outlined.png';
 const StarIconFilled = '$_icon/star_filled.png';
 const TermIcon = '$_icon/term.png';
+const CreditCardsIcon = '$_icon/cards.png';
+const CashIcon = '$_icon/cash.png';
+const ApplePayIcon = '$_icon/apple-pay.png';
 
 const _image = 'assets/images';
 const Pattern = '$_image/pattern.png';
@@ -38,6 +41,6 @@ const ScaffoldingServiceImage = '$_image/home-page/scaffolding-bg.png';
 
 /// FeaturesPage Images
 
-String apiUrl = "http://192.168.1.109:4000";
-var boldText =TextStyle(fontWeight: FontWeight.bold);
-String loremIpsum = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+const apiUrl = "http://192.168.100.100:4000";
+const boldText = const TextStyle(fontWeight: FontWeight.bold);
+const loremIpsum = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';

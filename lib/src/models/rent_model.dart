@@ -13,10 +13,10 @@ class Rent extends HiveObject {
   Rent({
     this.id,
     this.city,
-    this.rent,
-    this.days,
-    this.extraDayRent,
-    this.helperPrice
+    this.rent = 0,
+    this.days = 0,
+    this.extraDayRent = 0,
+    this.helperPrice = 0
   });
 
   factory Rent.fromJson(Map<String, dynamic> json) => Rent(

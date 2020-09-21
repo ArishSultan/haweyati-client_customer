@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:haweyati/models/hive-models/customer/customer-model.dart';
 import 'package:haweyati/src/common/services/jwt-auth_service.dart';
+import 'package:haweyati/src/models/user_model.dart';
 import 'package:hive/hive.dart';
 
-class UserStorage extends JwtStorage<Customer> {
-  Customer customer;
+class UserStorage extends JwtStorage<User> {
+  User customer;
 
   @override
   FutureOr<void> clear() async {
@@ -14,7 +14,7 @@ class UserStorage extends JwtStorage<Customer> {
   }
 
   @override
-  FutureOr<Customer> read() {
+  FutureOr<User> read() {
     try {
       return Hive.box('customers').values.first;
     } catch(e) {
@@ -23,7 +23,7 @@ class UserStorage extends JwtStorage<Customer> {
   }
 
   @override
-  FutureOr<void> write(Customer customer) {
+  FutureOr<void> write(User customer) {
     Hive.box('customers').add(customer);
     customer.save();
   }

@@ -1,6 +1,8 @@
 import 'package:haweyati/src/common/models/json_serializable.dart';
 import 'package:hive/hive.dart';
 
+part 'pricing_model.g.dart';
+
 @HiveType(typeId: 15)
 class BuildingMaterialPricing extends HiveObject implements JsonSerializable {
   @HiveField(0) String id;

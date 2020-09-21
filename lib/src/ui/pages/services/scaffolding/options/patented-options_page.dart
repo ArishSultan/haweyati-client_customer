@@ -1,15 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:haweyati/src/ui/pages/services/scaffolding/adjustments/patented-adjustments_page.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/widgets/dark-list-item.dart';
-import 'package:haweyati/src/ui/widgets/no-scroll_page.dart';
+import 'package:haweyati/src/ui/widgets/dark-list-tile.dart';
+import 'package:haweyati/src/utils/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
-import 'package:haweyati/src/utlis/const.dart';
 
-class PatentedOptionsPage extends StatelessWidget {
+class PatentedScaffoldingOptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return NoScrollView(

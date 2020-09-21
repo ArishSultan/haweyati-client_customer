@@ -1,9 +1,10 @@
-import 'package:hive/hive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/common/models/json_serializable.dart';
+import 'package:hive/hive.dart';
 
 abstract class Orderable extends HiveObject implements JsonSerializable {}
 abstract class OrderItem extends HiveObject implements JsonSerializable {
+  @HiveField(0)
   Orderable product;
   OrderItem(this.product);
 

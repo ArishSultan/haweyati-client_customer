@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:haweyati/src/ui/widgets/flat-action-button.dart';
-import 'package:haweyati/src/utils/const.dart';
-import 'package:haweyati/src/ui/widgets/counter.dart';
+import 'package:flutter/material.dart';
+import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
+import 'package:haweyati/src/ui/widgets/counter.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
-import 'package:haweyati/src/ui/views/dotted-background_view.dart';
+import 'package:haweyati/src/utils/const.dart';
 
 class SingleAdjustmentsPage extends StatelessWidget {
   @override

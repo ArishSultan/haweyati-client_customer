@@ -1,14 +1,15 @@
-import 'item_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:haweyati/src/utils/app-data.dart';
-import 'package:haweyati/src/utils/const.dart';
-import 'package:haweyati/src/models/dumpster_model.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
-import 'package:haweyati/services/dumpsters_service.dart';
-import 'package:haweyati/src/ui/widgets/service-list-item.dart';
+import 'package:flutter/material.dart';
+import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/models/services/dumpster/model.dart';
+import 'package:haweyati/src/services/dumpsters_service.dart';
 import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/ui/widgets/service-list-tile.dart';
+import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
+
+import 'item_page.dart';
 
 class DumpstersListPage extends StatelessWidget {
   final _service = DumpstersService();

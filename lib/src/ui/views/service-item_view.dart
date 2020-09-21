@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/services/haweyati-service.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/flat-action-button.dart';
+import 'package:flutter/material.dart';
+import 'package:haweyati/src/services/haweyati-service.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
 
 class ServiceItemView extends NoScrollView {
   final String image;
@@ -12,7 +11,6 @@ class ServiceItemView extends NoScrollView {
   final Widget bottom;
   final TextSpan price;
   final String description;
-
 
   ServiceItemView({
     this.image,
@@ -37,10 +35,11 @@ class ServiceItemView extends NoScrollView {
           ),
 
           Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),
-              child: Text(title, style: TextStyle(
-                  fontWeight: FontWeight.bold, fontSize: 20
-              ))
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 15),
+            child: Text(title, style: TextStyle(
+              color: Color(0xFF313F53),
+              fontWeight: FontWeight.bold, fontSize: 20
+            ))
           ),
 
           Padding(

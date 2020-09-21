@@ -1,14 +1,14 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:haweyati/src/models/services/finishing-material/category_model.dart';
+import 'package:haweyati/src/models/services/finishing-material/model.dart';
+import 'package:haweyati/src/services/fn-sublist_service.dart';
+import 'package:haweyati/src/services/haweyati-service.dart';
 import 'package:haweyati/src/ui/pages/services/finishing-material/item_page.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/models/finishing-product.dart';
-import 'package:haweyati/services/haweyati-service.dart';
-import 'package:haweyati/services/fn-sublist_service.dart';
-import 'package:haweyati/src/ui/widgets/service-list-item.dart';
-import 'package:haweyati/models/finishing-material_category.dart';
+import 'package:haweyati/src/ui/widgets/service-list-tile.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class FinishingMaterialSubList extends StatefulWidget {
@@ -23,50 +23,8 @@ class _FinishingMaterialSubListState extends State<FinishingMaterialSubList> {
   Future<List<FinishingMaterial>> _future;
   
   var _allowRefresh = false;
-  final _service = FINSublistService();
+  final _service = FinishingMaterialsService();
   final _countListenable = ValueNotifier<int>(0);
-
-  // var searchKeyword = TextEditingController();
-  //
-  // showAlertDialog(BuildContext context) {
-  //
-  //   // set up the button
-  //   Widget okButton = FlatButton(
-  //     child: Text("OK"),
-  //     onPressed: () { Navigator.of(context).pop();},
-  //   );
-  //
-  //   // set up the AlertDialog
-  //   AlertDialog alert = AlertDialog(
-  //     title: Text("Warning",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold),),
-  //     content: Text("Server is Required for Performing this Function"),
-  //     actions: [
-  //       okButton,
-  //     ],
-  //   );
-  //
-  //   // show the dialog
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return alert;
-  //     },
-  //   );
-  // }
-  //
-  // performSearch(){
-  //   setState(() {
-  //     sublist = _service.search(searchKeyword.text);
-  //   });
-  // }
-  //
-  // refresh(){
-  //   setState(() {
-  //     sublist = _service.getFinSublist(widget.material.sId);
-  //   });
-  // }
-  //
-  //
 
   @override
   void initState() {

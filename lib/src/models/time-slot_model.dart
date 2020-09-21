@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/common/models/json_serializable.dart';
 
+enum ServiceType {
+  dumpsters,
+  scaffoldings,
+  delivery_vehicles,
+  buildingMaterials,
+  finishing_materials,
+}
+
 class TimeSlot implements JsonSerializable {
   final TimeOfDay to;
   final TimeOfDay from;

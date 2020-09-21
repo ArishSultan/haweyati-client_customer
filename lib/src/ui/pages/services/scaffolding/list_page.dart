@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/utils/const.dart';
-import 'package:haweyati/src/ui/views/header_view.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/service-list-item.dart';
-import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/pages/services/scaffolding/adjustments/single-adjustments_page.dart';
+import 'package:haweyati/src/ui/views/dotted-background_view.dart';
+import 'package:haweyati/src/ui/views/header_view.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/service-list-tile.dart';
+import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class ScaffoldingsListPage extends StatelessWidget {
   @override

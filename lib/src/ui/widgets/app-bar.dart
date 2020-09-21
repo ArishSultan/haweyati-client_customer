@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:haweyati/src/utils/const.dart';
 
 class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
@@ -36,7 +36,10 @@ class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
     Widget _leading;
     if (Navigator.of(context).canPop()) {
       _leading = IconButton(
-        icon: Image.asset(ArrowBackIcon, width: 26, height: 26),
+        icon: Transform.rotate(
+          angle: Localizations.localeOf(context).toString() == 'ar' ? 3.14159 : 0,
+          child: Image.asset(ArrowBackIcon, width: 26, height: 26)
+        ),
         onPressed: Navigator.of(context).pop,
       );
     }

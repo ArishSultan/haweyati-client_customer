@@ -1,12 +1,14 @@
 import 'dart:ui' as ui;
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/common/widgets/badged-widget.dart';
-import 'package:haweyati/src/utils/app-data.dart';
-import 'package:haweyati/src/utils/const.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/routes.dart';
+import 'package:haweyati/src/services/service-availability_service.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
-import 'package:haweyati/services/service-availability_service.dart';
+import 'package:haweyati/src/utils/const.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,7 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _appData = AppData.instance();
-  final _service = ServiceAvailability();
+  final _service = AvailabilityService();
   final _drawerKey = GlobalKey<ScaffoldState>();
 
   Future<List<String>> _availableServices;
@@ -43,7 +45,7 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             icon: Image.asset(CustomerCareIcon, width: 20, height: 20),
-            onPressed: () => Navigator.of(context).pushNamed('/helpline')
+            onPressed: () => Navigator.of(context).pushNamed(HELPLINE_PAGE)
           ),
           IconButton(
             /// TODO: Fix This.
@@ -70,7 +72,7 @@ class _HomePageState extends State<HomePage> {
                 textDirection: ui.TextDirection.ltr,
                 child: CupertinoTextField(
                   onTap: () async {
-                    final location = await Navigator.of(context).pushNamed('/location');
+                    final location = await Navigator.of(context).pushNamed(PRE_LOCATION_PAGE);
 
                     if (location != null) {
                       _appData.location = location;
@@ -286,23 +288,23 @@ class _ServiceContainer extends StatelessWidget {
 
   static const _map = {
     'Construction Dumpster': const _ServiceContainerDetail(
-      page: '/dumpsters-list',
+      page: DUMPSTERS_LIST_PAGE,
       title: 'Construction_Dumpster',
       image: ConstructionDumpsterServiceImage
     ),
     'Scaffolding': const _ServiceContainerDetail(
       title: 'Scaffolding',
-      page: '/scaffoldings-list',
+      page: SCAFFOLDINGS_LIST_PAGE,
       image: ScaffoldingServiceImage
     ),
     'Building Material': const _ServiceContainerDetail(
       title: 'building',
-      page: '/building-materials-list',
+      page: BUILDING_MATERIALS_LIST_PAGE,
       image: BuildingMaterialsServiceImage
     ),
     'Finishing Material': const _ServiceContainerDetail(
       title: 'Finishing_Materials',
-      page: '/finishing-materials-list',
+      page: FINISHING_MATERIALS_LIST_PAGE,
       image: FinishingMaterialsServiceImage
     ),
     'Delivery Vehicle': const _ServiceContainerDetail(
