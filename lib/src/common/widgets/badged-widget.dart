@@ -19,7 +19,7 @@ class BadgedWidget extends StatelessWidget {
   }): this(
     size: size,
     child: child,
-    badge: Positioned(
+    badge: number != 0 ? Positioned(
       top: -3,
       right: 5,
       child: Container(
@@ -39,6 +39,7 @@ class BadgedWidget extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           border: Border.all(
+            width: 2,
             color: Colors.white
           ),
           boxShadow: [BoxShadow(
@@ -50,14 +51,14 @@ class BadgedWidget extends StatelessWidget {
           shape: BoxShape.circle
         ),
       ),
-    ),
+    ) : null,
   );
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
       child,
-      badge
+      if (badge != null) badge
     ], clipBehavior: Clip.none);
   }
 }

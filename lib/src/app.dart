@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/routes.dart';
 
+import 'routes.dart';
+
 class HaweyatiApp extends StatelessWidget {
   final bool status;
   HaweyatiApp(this.status);
@@ -11,7 +13,6 @@ class HaweyatiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(
-        // fontFamily: 'Lato',
         appBarTheme: AppBarTheme(
           color: Color(0xFF313F53),
           iconTheme: IconThemeData(
@@ -34,7 +35,7 @@ class HaweyatiApp extends StatelessWidget {
       child: CupertinoApp(
         routes: routes,
         locale: context.locale,
-        initialRoute: status ? '/' : '/features',
+        initialRoute: status ? HOME_PAGE : FEATURES_PAGE,
         supportedLocales: context.supportedLocales,
         localizationsDelegates: context.localizationDelegates,
       )

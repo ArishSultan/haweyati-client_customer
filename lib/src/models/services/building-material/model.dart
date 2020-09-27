@@ -6,7 +6,6 @@ import 'pricing_model.dart';
 
 part 'model.g.dart';
 
-
 @HiveType(typeId: 21)
 class BuildingMaterial extends HiveObject implements Orderable {
   @HiveField(0) String id;

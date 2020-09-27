@@ -27,6 +27,25 @@ class FinishingMaterial extends Orderable {
     this.description,
   });
 
+  double variantPrice(Map<String, dynamic> variant) {
+    for (final _variant in this.variants) {
+      var flag = true;
+
+      for (final key in _variant.keys) {
+        if (key == 'price') continue;
+        if (variant[key] != _variant[key]) {
+          flag = false;
+          break;
+        }
+      }
+
+      if (flag) return double.tryParse(_variant['price'])
+          ?? int.tryParse(_variant['price']).toDouble() ?? 0.0;
+    }
+
+    return 0.0;
+  }
+
   factory FinishingMaterial.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 

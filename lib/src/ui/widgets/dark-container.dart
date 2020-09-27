@@ -13,6 +13,7 @@ class DarkContainer extends Container {
     height: height,
     margin: margin,
     padding: padding,
+    clipBehavior: Clip.hardEdge,
 
     decoration: BoxDecoration(
       color: Color(0xfff2f2f2f2),

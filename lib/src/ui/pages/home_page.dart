@@ -2,13 +2,22 @@ import 'dart:ui' as ui;
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/common/widgets/badged-widget.dart';
 import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/models/services/finishing-material/model.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/services/service-availability_service.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
 import 'package:haweyati/src/utils/const.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import '../../routes.dart';
+import '../../utils/custom-navigator.dart';
+import '../views/live-scrollable_view.dart';
+import 'cart_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -19,8 +28,14 @@ class _HomePageState extends State<HomePage> {
   final _appData = AppData.instance();
   final _service = AvailabilityService();
   final _drawerKey = GlobalKey<ScaffoldState>();
+  ValueListenable<LazyBox<FinishingMaterial>> _cart;
 
-  Future<List<String>> _availableServices;
+  @override
+  void initState() {
+    super.initState();
+
+    _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,53 +167,33 @@ class _HomePageState extends State<HomePage> {
                   _ListTile(context,
                     image: SettingsIcon,
                     title: tr('Settings'),
-                    navigateTo: '/settings',
+                    navigateTo: SETTINGS_PAGE,
                   ),
                   _ListTile(context,
                     image: AccountIcon,
                     title: tr('Invite_Friends'),
-                    navigateTo: '/share-and-invite',
+                    navigateTo: SHARE_AND_INVITE_PAGE,
                   ),
                   _ListTile(context,
                     image: OrderIcon,
                     title: tr('Rewards'),
-                    navigateTo: '/rewards',
+                    navigateTo: REWARDS_PAGE,
                   ),
                   _ListTile(context,
                     image: TermIcon,
                     title: tr('Terms_Conditions'),
-                    navigateTo: '/terms-and-conditions',
+                    navigateTo: TERMS_AND_CONDITIONS_PAGE,
                   ),
                   _ListTile(context,
                     image: StarIconOutlined,
                     title: tr('Rate App'),
-                    navigateTo: '/rate',
+                    navigateTo: RATE_APP_PAGE,
                   ),
                   _ListTile(context,
                     image: LogoutIcon,
                     title: tr('Logout'),
                     // navigateTo: '/log-out',
                   )
-                 //_buildListTile("assets/images/ride.png", "Your Rides",(){CustomNavigator.navigateTo(context, HaweyatiRewards());}),
-                 // _buildListTile(
-                 //     "", tr(""),(){CustomNavigator.navigateTo(context, HaweyatiSetting());}),
-                 // _buildListTile(
-                 //     "", tr(""),(){CustomNavigator.navigateTo(context, ShareInvite());}),
-                 // _buildListTile("", tr(""),(){CustomNavigator.navigateTo(context, HaweyatiRewards());} ),
-
-                 // _buildListTile(
-                 //     "", tr(""),(){CustomNavigator.navigateTo(context, TermAndCondition());}),
-                 // _buildListTile("assets/images/rate.png", tr("Rate_App"),(){CustomNavigator.navigateTo(context, Rate());}),
-                // HaweyatiData.isSignedIn ? _buildListTile("assets/images/logout.png", tr("Logout"),() {
-                //    HaweyatiData.signOut();
-                //    Navigator.pop(context);
-                //    CustomNavigator.pushReplacement(context, AppHomePage());
-                //  }) : SizedBox(),
-                // HaweyatiData.isSignedIn ? SizedBox() : ListTile(onTap: (){
-                //  CustomNavigator.navigateTo(context, PhoneNumber());
-                //   },
-                //    leading: Icon(Icons.person_add,color: Colors.white,),title:
-                //    Text(tr("Register"),style: TextStyle(color: Colors.white,),),dense: true,)
                ]),
              ))
             ], crossAxisAlignment: CrossAxisAlignment.start),
@@ -207,50 +202,34 @@ class _HomePageState extends State<HomePage> {
       ),
 
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 230, 10, 0),
-        child: CustomScrollView(slivers: <Widget>[
-          CupertinoSliverRefreshControl(
-            onRefresh: () async => this._availableServices,
-          ),
-          SliverToBoxAdapter(child: SizedBox(height: 17)),
-
-          SliverList(delegate: SliverChildListDelegate(
-            _ServiceContainer._map.keys.map((e) => _ServiceContainer(e)).toList()
-          )),
-//          SimpleFutureBuilder.simplerSliver(
-//              showLoading: false,
-//              context: context,
-//              future: this._availableServices,
-//              builder: (AsyncSnapshot<List<String>> snapshot) {
-//                if (snapshot.data.isEmpty) {
-//                  return SliverToBoxAdapter(child: Center(child: Text('No services are available in your region')));
-//                } else {
-//                  return SliverList(delegate: SliverChildBuilderDelegate(
-//                          (context, i) => _ServiceContainer(snapshot.data[i]),
-//                      childCount: snapshot.data.length
-//                  ));
-//                }
-//              }
-//          )
-        ]),
-      ),
-      floatingActionButton: BadgedWidget.numbered(
-        size: 65,
-        child: SizedBox(
-          width: 65,
-          height: 65,
-          child: FloatingActionButton(
-            elevation: 5,
-            backgroundColor: Colors.white,
-            child: Image.asset(
-              "assets/images/cart.png",
-              width: 30,
-              height: 30,
-              color: Colors.black,
-            )
-          ),
+        padding: const EdgeInsets.fromLTRB(
+          10, 230, 10, 0
+        ),
+        child: LiveScrollableView<String>(
+          header: Padding(padding: const EdgeInsets.only(top: 21)),
+          loader: () => _service.getAvailableServices(_appData.city),
+          builder: (context, string) => _ServiceContainer(string)
         ),
       ),
+      floatingActionButton: ValueListenableBuilder(
+        valueListenable: _cart,
+        builder: (context, val, widget) {
+          return BadgedWidget.numbered(
+            size: 65,
+            number: val.length,
+            child: SizedBox(
+              width: 65,
+              height: 65,
+              child: FloatingActionButton(
+                elevation: 5,
+                backgroundColor: Colors.white,
+                onPressed: () => navigateTo(context, CartPage()),
+                child: Image.asset(CartIcon, width: 30, height: 30, color: Colors.black)
+              ),
+            ),
+          );
+        }
+      )
     );
   }
 }
@@ -321,8 +300,8 @@ class _ServiceContainer extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed(service.page),
       child: Container(
-        height: 100,
-        margin: const EdgeInsets.only(bottom: 5),
+        height: 90,
+        margin: const EdgeInsets.only(bottom: 7.5),
         decoration: new BoxDecoration(
           image: new DecorationImage(
             image: new AssetImage(service.image),

@@ -40,7 +40,7 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
 
     if (widget.item.variants?.isNotEmpty ?? false) {
       for (final option in widget.item.options) {
-        final values = option.values.split(',');
+        final values = option.values;
         _selectedVariants[option.name] = values[0];
         _availableVariants[option.name] = values;
       }

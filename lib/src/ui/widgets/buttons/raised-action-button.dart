@@ -10,7 +10,8 @@ class RaisedActionButton extends Material {
     @required this.label,
     this.icon, this.onPressed
   }): assert(label != null), super(
-    elevation: 20,
+    elevation: 10,
+    color: Colors.white,
     child: Padding(
       padding: const EdgeInsets.only(top: 20),
       child: FlatActionButton(

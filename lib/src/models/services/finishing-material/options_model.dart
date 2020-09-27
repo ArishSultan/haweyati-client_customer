@@ -6,7 +6,7 @@ part 'options_model.g.dart';
 class FinishingMaterialOption extends HiveObject {
   @HiveField(0) String id;
   @HiveField(1) String name;
-  @HiveField(2) String values;
+  @HiveField(2) List<String> values;
 
   FinishingMaterialOption({
     this.id,
@@ -20,7 +20,7 @@ class FinishingMaterialOption extends HiveObject {
     return FinishingMaterialOption(
       id: json['_id'],
       name: json['optionName'],
-      values: json['optionValues'],
+      values: json['optionValues'].split(','),
     );
   }
 

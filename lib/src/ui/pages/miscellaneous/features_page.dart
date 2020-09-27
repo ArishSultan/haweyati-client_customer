@@ -5,6 +5,8 @@ import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
 import 'package:haweyati/src/utils/const.dart';
 
+import '../../../routes.dart';
+
 class FeaturesPage extends StatefulWidget {
   @override
   _FeaturesPageState createState() => _FeaturesPageState();
@@ -45,7 +47,7 @@ class _FeaturesPageState extends State<FeaturesPage> {
             child: FlatButton(
               textColor: Colors.white,
               child: Text(tr('skip')),
-              onPressed: () => Navigator.of(context).pushNamed('/pre-location')
+              onPressed: () => Navigator.of(context).pushNamed(PRE_LOCATION_PAGE)
             )
           ): Container(width: 70)
         ],
