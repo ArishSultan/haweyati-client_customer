@@ -15,11 +15,11 @@ class DumpsterOrderItem extends OrderItem {
     this.extraDaysPrice = 0
   }): super(product);
 
-  factory DumpsterOrderItem.fromJson(Map<String, dynamic> json) {
+  static DumpsterOrderItem fromJson(Map<String, dynamic> json) {
     return DumpsterOrderItem(
       product: Dumpster.fromJson(json['product']),
       extraDays: json['extraDays'],
-      extraDaysPrice: json['extraDaysPrice']
+      extraDaysPrice: json['extraDaysPrice']?.toDouble()
     );
   }
 

@@ -63,10 +63,20 @@ class HaweyatiPasswordField extends StatefulWidget {
 
 class _HaweyatiPasswordFieldState extends State<HaweyatiPasswordField> {
   bool _show = true;
+  final _node = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _node.addListener(_listenToFocus);
+  }
+
+  _listenToFocus() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      focusNode: _node,
       obscureText: _show,
       keyboardType: widget.keyboardType,
       textInputAction: TextInputAction.next,
@@ -75,7 +85,11 @@ class _HaweyatiPasswordFieldState extends State<HaweyatiPasswordField> {
         labelText: widget.label,
         focusColor: Theme.of(context).primaryColor,
         suffix: GestureDetector(
-          child: Text('Show', style: TextStyle(color: Theme.of(context).primaryColor)),
+          child: Text('Show', style: TextStyle(
+            color: _node.hasFocus
+              ? Theme.of(context).primaryColor
+              : Colors.grey
+          )),
           onTap: () => setState(() => _show = !_show),
         )
       ),
@@ -83,5 +97,11 @@ class _HaweyatiPasswordFieldState extends State<HaweyatiPasswordField> {
       validator: widget.validator,
       controller: widget.controller,
     );
+  }
+
+  @override
+  void dispose() {
+    _node.removeListener(_listenToFocus);
+    super.dispose();
   }
 }

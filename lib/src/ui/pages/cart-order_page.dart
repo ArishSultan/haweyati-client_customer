@@ -1,14 +1,21 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
+import 'package:haweyati/src/models/order/order-item_model.dart';
+import 'package:haweyati/src/models/order/order-location_model.dart';
+import 'package:haweyati/src/models/order/order_model.dart';
 import 'package:haweyati/src/models/services/finishing-material/model.dart';
 import 'package:haweyati/src/models/services/finishing-material/options_model.dart';
 import 'package:haweyati/src/services/haweyati-service.dart';
+import 'package:haweyati/src/ui/pages/services/finishing-material/order-confirmation_page.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/counter.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class CartOrderPage extends StatefulWidget {
   CartOrderPage(this._items);
@@ -19,12 +26,12 @@ class CartOrderPage extends StatefulWidget {
 }
 
 class _CartOrderPageState extends State<CartOrderPage> {
-  final _flag = false;
   final _count = ValueNotifier(0);
 
   @override
   Widget build(BuildContext context) {
     return NoScrollView(
+      appBar: HaweyatiAppBar(hideHome: true, hideCart: true),
       body: ListView.builder(
         padding: const EdgeInsets.symmetric(
           horizontal: 15, vertical: 10
@@ -60,6 +67,21 @@ class _CartOrderPageState extends State<CartOrderPage> {
   }
 
   _proceed() {
+    final items = widget._items
+      .where((element) => element.qty > 0)
+      .map((element) {
+        return OrderItemHolder(
+          item: element,
+          subtotal: element.qty * element.price
+        );
+      }).toList();
+
+    navigateTo(context, FinishingMaterialOrderConfirmationPage(Order(
+      OrderType.finishingMaterial,
+      items: items,
+      location: OrderLocation()..update(AppData.instance().location),
+      total: items.fold(0, (sum, element) => sum + element.subtotal),
+    ), true));
   }
 }
 
@@ -87,6 +109,9 @@ class _CartOrderItem extends StatefulWidget {
 class __CartOrderItemState extends State<_CartOrderItem> {
   @override
   Widget build(BuildContext context) {
+    widget.item.price = widget.product.price
+      = widget.product.price;
+
     return DarkContainer(
       margin: const EdgeInsets.only(bottom: 15),
       child: _ListTile(widget.item, widget.onChange)
@@ -108,7 +133,9 @@ class __CartOrderItemWithVariantsState extends State<_CartOrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    widget.product.price = widget.product.variantPrice(_selectedVariant);
+    widget.item.variants = _selectedVariant;
+    widget.item.price = widget.product.price
+      = widget.product.variantPrice(_selectedVariant);
 
     return DarkContainer(
       child: Wrap(children: [

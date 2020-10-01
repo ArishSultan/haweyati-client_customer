@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'haweyati-service.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 
 class AvailabilityService extends HaweyatiService<List<String>> {
   Future<List<String>> getAvailableServices(String city) async {

@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/data.dart';
 
 class LocalizationSelector extends StatelessWidget {
-  final Locale selected;
-  final Function onChanged;
+  LocalizationSelector();
 
-  LocalizationSelector({
-    this.selected,
-    this.onChanged
-  });
+  final _appData = AppData.instance();
 
   @override
   Widget build(BuildContext context) {
     return DropdownButton<Locale>(
       isDense: true,
+      underline: Container(),
       iconEnabledColor: Colors.white,
       icon: Icon(Icons.language, size: 20),
-      underline: Container(),
       dropdownColor: Color(0xFF313F53),
 
-      value: this.selected ?? Locale('ar'),
+      value: _appData.currentLocale.value,
 
       items: [
         DropdownMenuItem(
@@ -33,12 +30,19 @@ class LocalizationSelector extends StatelessWidget {
           value: Locale('ar'),
           child: Padding(
             padding: const EdgeInsets.only(right: 5),
-            child: Text('Arabic', style: TextStyle(color: Colors.white, fontSize: 13)),
+            child: Text('عربى', style: TextStyle(color: Colors.white, fontSize: 13)),
           ),
         )
       ],
 
-      onChanged: this.onChanged,
+      onChanged: (val) async {
+        if (_appData.currentLocale.value.languageCode == 'en') {
+          _appData.locale = const Locale('ar');
+        } else {
+          _appData.locale = const Locale('en');
+        }
+
+      }
     );
   }
 }

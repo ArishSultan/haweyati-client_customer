@@ -5,7 +5,7 @@ import 'package:haweyati/src/ui/pages/services/finishing-material/list_page.dart
 import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/service-list-tile.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class FinishingMaterialCategoriesListPage extends StatelessWidget {

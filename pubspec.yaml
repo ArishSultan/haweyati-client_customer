@@ -23,6 +23,8 @@ dependencies:
   shared_preferences:
 
   # l10n related Plugins (Will be removed).
+  flutter_localizations:
+    sdk: flutter
   easy_localization:
 
   # Plugins for Social Authentication
@@ -45,6 +47,8 @@ dependencies:
   cupertino_icons: ^0.1.2
 
 dev_dependencies:
+  intl:
+  intl_translation:
   build_runner: ^1.10.0
   hive_generator: ^0.7.0+2
 

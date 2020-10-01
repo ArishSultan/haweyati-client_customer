@@ -5,15 +5,14 @@ import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
 import 'package:haweyati/src/models/order/order-location_model.dart';
 import 'package:haweyati/src/models/order/order_model.dart';
+import 'package:haweyati/src/models/services/dumpster/model.dart';
 import 'package:haweyati/src/ui/pages/services/dumpster/order-confirmation_page.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
-import 'package:haweyati/src/ui/views/scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
+import 'package:haweyati/src/ui/views/order-progress_view.dart';
 import 'package:haweyati/src/ui/widgets/drop-off-picker.dart';
 import 'package:haweyati/src/ui/widgets/image-picker-widget.dart';
-import 'package:haweyati/src/ui/widgets/location-picker-widget.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/ui/widgets/location-picker.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class DumpsterTimeAndLocationPage extends StatelessWidget {
@@ -32,18 +31,16 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScrollableView(
+    return OrderProgressView(
       key: _scaffoldKey,
-      padding: const EdgeInsets.fromLTRB(15, 0, 15, 100),
-      showBackground: true,
-      appBar: HaweyatiAppBar(progress: .5),
+
       children: [
         HeaderView(
           title: 'Time & Location',
           subtitle: loremIpsum.substring(0, 80),
         ),
 
-        LocationPickerWidget(
+        LocationPicker(
           initialValue: _order.location,
           onChanged: _order.location.update
         ),
@@ -86,22 +83,22 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
         )
       ],
 
-      bottom: RaisedActionButton(
-        label: 'Continue',
-        onPressed: () async {
-          await _formKey.currentState.submit();
+      onContinue: () async {
+        await _formKey.currentState.submit();
 
-          /// Setup Pickup Time and Date for the Dumpster
-          final location = _order.location as RentableOrderLocation;
+        /// Setup Pickup Time and Date for the Dumpster
+        final location = _order.location as RentableOrderLocation;
 
-          location.pickUpTime = location.pickUpTime;
-          location.pickUpDate = location.dropOffDate.add(Duration(
-            days: (_order.items.first.item as DumpsterOrderItem).extraDays
-          ));
+        final item = _order.items.first.item as DumpsterOrderItem;
+        final product = item.product as Dumpster;
 
-          navigateTo(context, DumpsterOrderConfirmationPage(_order));
-        }
-      )
+        location.pickUpTime = location.dropOffTime;
+        location.pickUpDate = location.dropOffDate.add(Duration(
+            days: item.extraDays + product.pricing.first.days
+        ));
+
+        navigateTo(context, DumpsterOrderConfirmationPage(_order));
+      }
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:haweyati/src/models/time-slot_model.dart';
 import 'package:haweyati/src/services/time-slots_service.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/date-formatter.dart';
 
 class DropOffPicker extends StatefulWidget {
@@ -44,7 +44,7 @@ class _DropOffPickerState extends State<DropOffPicker> {
       if (TimeOfDay.fromDateTime(_now) < _timeSlot.to) {
         _firstDate = _now;
       } else {
-        _firstDate = DateTime(_now.year, _now.month, _now.day, _now.hour);
+        _firstDate = DateTime(_now.year, _now.month, _now.day +1, _now.hour);
       }
 
       if (widget.initialDate?.isAfter(_firstDate) ?? false) {

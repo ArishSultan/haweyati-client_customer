@@ -1,3 +1,8 @@
+import 'dart:ui';
+
+import 'package:haweyati/src/common/services/jwt-auth_service.dart';
+import 'package:haweyati/src/models/profile_model.dart';
+import 'package:haweyati/src/models/user_model.dart';
 import 'package:hive/hive.dart';
 import 'models/image_model.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +17,14 @@ import 'package:haweyati/src/models/services/finishing-material/model.dart';
 import 'package:haweyati/src/models/services/finishing-material/options_model.dart';
 
 abstract class AppData {
+  /// Localization Specific Data
+  ValueNotifier<Locale> currentLocale;
+  void set locale(Locale locale);
+
+  /// Authentication Data
+  User get user;
+  bool get isAuthenticated;
+
   /// Address specific Data
   String get city;
   String get address;
@@ -48,12 +61,15 @@ abstract class AppData {
   static Future initiate() async {
     await Hive.initFlutter();
 
+    await Hive.registerAdapter(UserAdapter());
+    await Hive.registerAdapter(ProfileAdapter());
+    await Hive.registerAdapter(LocationAdapter());
     await Hive.registerAdapter(ImageModelAdapter());
     await Hive.registerAdapter(FinishingMaterialAdapter());
     await Hive.registerAdapter(FinishingMaterialOptionAdapter());
 
+    await Hive.openBox<User>('customers');
     await Hive.openLazyBox<FinishingMaterial>('cart');
-    await Hive.openBox('customers');
 
     _initiated = true;
     _instance = _AppDataImpl();
@@ -68,6 +84,10 @@ class _AppDataImpl implements AppData {
 
   Future _loadCache() async {
     final preferences = await SharedPreferences.getInstance();
+
+    currentLocale.value = Locale.fromSubtags(
+      languageCode: preferences.getString('locale')
+    );
 
     _city = preferences.getString('city');
     _address = preferences.getString('address');
@@ -164,4 +184,21 @@ class _AppDataImpl implements AppData {
   @override
   Future<bool> canAddToCart(FinishingMaterial holder) async =>
     !(await Hive.lazyBox<FinishingMaterial>('cart').containsKey(holder.id));
+
+  final _authService = JwtAuthService.create();
+
+  @override User get user => _authService.user;
+  @override bool get isAuthenticated => _authService.isAuthenticated;
+
+  @override
+  ValueNotifier<Locale> currentLocale = ValueNotifier(null);
+
+  @override
+  void set locale(Locale _locale) {
+    SharedPreferences.getInstance().then((value) {
+      value.setString('locale', currentLocale.value.languageCode);
+    });
+
+    currentLocale.value = _locale;
+  }
 }

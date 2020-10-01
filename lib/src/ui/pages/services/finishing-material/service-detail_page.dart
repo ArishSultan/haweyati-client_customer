@@ -9,11 +9,12 @@ import 'package:haweyati/src/models/order/order_model.dart';
 import 'package:haweyati/src/models/services/finishing-material/model.dart';
 import 'package:haweyati/src/services/haweyati-service.dart';
 import 'package:haweyati/src/ui/pages/services/finishing-material/order-confirmation_page.dart';
+import 'package:haweyati/src/ui/views/order-progress_view.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/counter.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
-import 'package:haweyati/src/ui/widgets/location-picker-widget.dart';
+import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class FinishingMaterialServiceDetailPage extends StatefulWidget {
@@ -25,7 +26,7 @@ class FinishingMaterialServiceDetailPage extends StatefulWidget {
 }
 
 class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialServiceDetailPage> {
-  final _order = Order();
+  final _order = Order(OrderType.finishingMaterial);
   final _item = FinishingMaterialOrderItem();
 
   final _selectedVariants = <String, String>{};
@@ -35,6 +36,7 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
   void initState() {
     super.initState();
 
+    _order.customer = AppData.instance().user;
     _order.location = OrderLocation()
       ..update(AppData.instance().location);
 
@@ -67,8 +69,7 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
 
   @override
   Widget build(BuildContext context) {
-    return ScrollableView.sliver(
-      showBackground: true,
+    return OrderProgressView.sliver(
       children: [
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
@@ -76,28 +77,31 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
             Container(
               width: 80, height: 80,
               decoration: BoxDecoration(
-                color: Color(0xEEFFFFFF),
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 10,
-                    spreadRadius: 1,
-                    color: Colors.grey.shade300
+                  color: Color(0xEEFFFFFF),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                        color: Colors.grey.shade300
+                    )
+                  ],
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(HaweyatiService.resolveImage(widget.item.images.name))
                   )
-                ],
-                image: DecorationImage(
-                  image: NetworkImage(HaweyatiService.resolveImage(widget.item.images.name))
-                )
               ),
             ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Text(widget.item.name, style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF313F53),
-                fontWeight: FontWeight.bold
-              )),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Text(widget.item.name, style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF313F53),
+                    fontWeight: FontWeight.bold
+                )),
+              ),
             )
           ])),
         ),
@@ -110,23 +114,23 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
           sliver: SliverToBoxAdapter(child: DarkContainer(
             height: 80,
             margin: const EdgeInsets.only(
-              top: 20, bottom: 30
+                top: 20, bottom: 30
             ),
             padding: const EdgeInsets.all(15),
             child: Row(children: [
               Column(children: [
                 Text('Quantity', style: TextStyle(
-                  color: Color(0xFF313F53),
-                  fontWeight: FontWeight.bold
+                    color: Color(0xFF313F53),
+                    fontWeight: FontWeight.bold
                 )),
                 Spacer(),
                 Text('${_item.price.toStringAsFixed(2)} SAR', style: TextStyle(
-                  color: Color(0xFF313F53)
+                    color: Color(0xFF313F53)
                 ))
               ], crossAxisAlignment: CrossAxisAlignment.start),
               Counter(
-                initialValue: _item.qty.toDouble(),
-                onChange: (count) => setState(() => _item.qty = count?.round())
+                  initialValue: _item.qty.toDouble(),
+                  onChange: (count) => setState(() => _item.qty = count?.round())
               )
             ], mainAxisAlignment: MainAxisAlignment.spaceBetween),
           )),
@@ -134,26 +138,23 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
 
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(15, 0, 15, 20),
-          sliver: SliverToBoxAdapter(child: LocationPickerWidget(
-            initialValue: _order.location,
-            onChanged: (Location location) => _order.location = location
+          sliver: SliverToBoxAdapter(child: LocationPicker(
+              initialValue: _order.location,
+              onChanged: (Location location) => _order.location = location
           )),
         ),
       ],
 
-      bottom: RaisedActionButton(
-        label: 'Continue',
-        onPressed: _item.qty > 0 ? () {
-          _item.variants = _selectedVariants;
+      onContinue: _item.qty > 0 ? () {
+        _item.variants = _selectedVariants;
 
-          _order.items = [OrderItemHolder(
-            item: _item,
-            subtotal: _item.price * _item.qty
-          )];
+        _order.items = [OrderItemHolder(
+          item: _item,
+          subtotal: _item.price * _item.qty
+        )];
 
-          navigateTo(context, FinishingMaterialOrderConfirmationPage(_order));
-        } : null
-      ),
+        navigateTo(context, FinishingMaterialOrderConfirmationPage(_order));
+      } : null
     );
   }
 

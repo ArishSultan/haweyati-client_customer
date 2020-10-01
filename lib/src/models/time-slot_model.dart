@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/common/models/json_serializable.dart';
+import 'package:haweyati/src/common/models/serializable.dart';
 
 enum ServiceType {
   dumpsters,
@@ -9,19 +9,32 @@ enum ServiceType {
   finishing_materials,
 }
 
-class TimeSlot implements JsonSerializable {
+class TimeSlot implements Serializable<String> {
   final TimeOfDay to;
   final TimeOfDay from;
 
   TimeSlot({this.to, this.from});
 
-  factory TimeSlot.fromJson(Map<String,dynamic> json) {
+  factory TimeSlot.fromJson(dynamic json) {
+    if (json == null) return null;
+
+    if (json is String) {
+      final arr = json.split('-');
+
+      json = {
+        'from': arr[0].toString().trim(),
+        'to': arr[1].toString().trim()
+      };
+    }
+
+
     final _to = json['to'].toString().split(':');
     final _from = json['from'].toString().split(':');
+    print('$_to - $_from');
 
     return TimeSlot(
-      to: TimeOfDay(hour: int.parse(_to[0]), minute: int.parse(_to[1])),
-      from: TimeOfDay(hour: int.parse(_from[0]), minute: int.parse(_from[1]))
+        to: TimeOfDay(hour: int.parse(_to[0]), minute: int.parse(_to[1])),
+        from: TimeOfDay(hour: int.parse(_from[0]), minute: int.parse(_from[1]))
     );
   }
 
@@ -44,6 +57,7 @@ class TimeSlot implements JsonSerializable {
       ));
     }
 
+    print(_intervals);
     return _intervals;
   }
 
@@ -51,10 +65,8 @@ class TimeSlot implements JsonSerializable {
     return '${from.__toString()} - ${to.__toString()}';
   }
 
-  @override Map<String, dynamic> serialize() => {
-    'to': '${to.hour}:${to.minute}',
-    'from': '${from.hour}:${from.minute}'
-  };
+  @override String serialize() =>
+      '${from.hour}:${from.minute} - ${to.hour}:${to.minute}';
 
   @override
   bool operator ==(Object other) {

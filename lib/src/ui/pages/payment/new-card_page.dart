@@ -7,7 +7,7 @@ import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/date-picker-field.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 
 class NewCardPage extends StatefulWidget {
   @override

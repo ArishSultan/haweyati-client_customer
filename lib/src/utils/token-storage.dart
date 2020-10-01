@@ -6,8 +6,10 @@ class TokenStorage extends JwtStorage<String> {
   String _token;
 
   @override
-  FutureOr<void> clear() async =>
+  FutureOr<void> clear() async {
+    _token = null;
     (await SharedPreferences.getInstance()).remove('access_token');
+  }
 
   @override
   FutureOr<String> read() async => _token;

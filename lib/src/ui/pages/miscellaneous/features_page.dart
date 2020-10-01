@@ -1,9 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/l10n/localization.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 
 import '../../../routes.dart';
 
@@ -26,6 +27,8 @@ class _FeaturesPageState extends State<FeaturesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final _lang = HaweyatiLocalizations.of(context);
+
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
@@ -33,12 +36,7 @@ class _FeaturesPageState extends State<FeaturesPage> {
         titleSpacing: 5,
         automaticallyImplyLeading: false,
         title: Row(children: <Widget>[
-          LocalizationSelector(
-            selected: EasyLocalization.of(context).locale,
-            onChanged: (locale) {
-              setState(() => EasyLocalization.of(context).locale = locale);
-            }
-          ),
+          LocalizationSelector(),
           Expanded(child: Image.asset(AppLogo, width: 40, height: 40))
         ]),
         actions: <Widget>[
@@ -46,7 +44,7 @@ class _FeaturesPageState extends State<FeaturesPage> {
             width: 70,
             child: FlatButton(
               textColor: Colors.white,
-              child: Text(tr('skip')),
+              child: Text(_lang?.skip ?? ''),
               onPressed: () => Navigator.of(context).pushNamed(PRE_LOCATION_PAGE)
             )
           ): Container(width: 70)
@@ -59,23 +57,23 @@ class _FeaturesPageState extends State<FeaturesPage> {
           children: <Widget>[
             _FeatureView(
               image: '1',
-              title: tr('Our_Services'),
-              detail: tr('services_detail')
+              title: _lang?.ourServices ?? '',
+              detail: _lang?.ourServicesDescription ?? ''
             ),
             _FeatureView(
               image: '2',
-              title: tr('Our_product'),
-              detail: tr('product_detail')
+              // title: tr('Our_product'),
+              // detail: tr('product_detail')
             ),
             _FeatureView(
               image: '3',
-              title: tr('Truck'),
-              detail: tr('truck_detail')
+              // title: tr('Truck'),
+              // detail: tr('truck_detail')
             ),
             _FeatureView(
               image: '4',
-              title: tr('Payment'),
-              detail: tr('payment_detail')
+              // title: tr('Payment'),
+              // detail: tr('payment_detail')
             ),
           ],
           controller: _controller,
@@ -94,7 +92,9 @@ class _FeaturesPageState extends State<FeaturesPage> {
               curve: Curves.easeInOut,
               duration: Duration(milliseconds: 300)
             );
-          else Navigator.of(context).pushNamed('/pre-location');
+          else Navigator
+              .of(context)
+              .pushNamed(PRE_LOCATION_PAGE);
         },
         child: AnimatedContainer(
           duration: Duration(milliseconds: 200),
@@ -115,7 +115,10 @@ class _FeaturesPageState extends State<FeaturesPage> {
                 ), overflow: TextOverflow.ellipsis),
               ),
               Expanded(flex: 1, child: Container()),
-              Image.asset(NextFeatureIcon, width: 20)
+              Transform.rotate(
+                angle: Localizations.localeOf(context).countryCode == 'ar' ? 3.14 : 0,
+                child: Image.asset(NextFeatureIcon, width: 20)
+              )
             ]),
           ): Center(child: Image.asset(NextFeatureIcon, width: 30)),
         )
@@ -157,14 +160,14 @@ class _FeatureView extends Column {
     )),
     Padding(
       padding: const EdgeInsets.fromLTRB(16, 30, 16, 0),
-      child: Text(title, style: TextStyle(
+      child: Text(title ?? '', style: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold
       )),
     ),
     Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 60),
-      child: Text(detail),
+      child: Text(detail ?? ''),
     )
   ], crossAxisAlignment: CrossAxisAlignment.start);
 }

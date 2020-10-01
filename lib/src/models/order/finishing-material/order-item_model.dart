@@ -17,12 +17,12 @@ class FinishingMaterialOrderItem extends OrderItem {
     this.variants = const {},
   }): super(product);
 
-  factory FinishingMaterialOrderItem.fromJson(Map<String, dynamic> json) {
+  static FinishingMaterialOrderItem fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 
     return FinishingMaterialOrderItem(
       qty: json['qty'],
-      price: json['price'],
+      price: json['price']?.toDouble(),
       variants: json['variants'],
       product: FinishingMaterial.fromJson(json['product'])
     );

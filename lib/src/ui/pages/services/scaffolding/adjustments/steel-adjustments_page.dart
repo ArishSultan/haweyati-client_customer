@@ -6,7 +6,7 @@ import 'package:haweyati/src/ui/views/scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/counter.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 
 class SteelAdjustmentsPage extends StatelessWidget {
   final _calculations;

@@ -52,12 +52,13 @@ class FinishingMaterial extends Orderable {
     return FinishingMaterial(
       id: json['_id'],
       name: json['name'],
-      price: json['price'].toDouble(),
+      price: json['price']?.toDouble(),
       parent: json['parent'],
       description: json['description'],
       options: json['options']
           ?.map((item) => FinishingMaterialOption.fromJson(item))
           ?.toList()?.cast<FinishingMaterialOption>(),
+
       variants: json['varient']?.cast<Map<String, dynamic>>(),
       images: ImageModel.fromJson(json['image'])
     );

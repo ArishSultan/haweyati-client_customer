@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 
 class EditButton extends StatelessWidget {
   final Function onPressed;

@@ -30,6 +30,5 @@ class Location extends HiveObject implements JsonSerializable {
   Map<String, dynamic> serialize() => {
     'city': city, 'longitude': longitude,
     'address': address, 'latitude': latitude,
-
   };
 }

@@ -36,10 +36,10 @@ abstract class EasyRest {
   );
 
   $delete({String route, Map<String, dynamic> query, Serializable data});
-  $getAll({String route, Map<String, dynamic> query});
+  $getAll({String endpoint, Map<String, dynamic> query});
   $getOne({String route, Map<String, dynamic> query});
   $patch({String route, Map<String, dynamic> query, Serializable data});
-  $post({String route, Map<String, dynamic> query, Serializable data});
+  $post({String endpoint, Map<String, dynamic> query, Serializable payload});
   $raw({String route, Map<String, dynamic> query, RequestType type, Serializable data});
 
   factory EasyRest({String endpoint, Function parser}) {
@@ -59,11 +59,11 @@ class _EasyRestImpl implements EasyRest {
   }
 
   @override
-  $getAll({String route, Map<String, dynamic> query}) async {
+  $getAll({String endpoint, Map<String, dynamic> query}) async {
     final data = await _request(
       query: query,
       type: RequestType.get,
-      route: _resolveRoute(route),
+      route: _resolveRoute(endpoint),
     );
 
     if (data is List) {
@@ -96,7 +96,8 @@ class _EasyRestImpl implements EasyRest {
   }
 
   @override
-  $post({String route, Map<String, dynamic> query, Serializable<dynamic> data}) {
+  $post({String endpoint, Map<String, dynamic> query, Serializable<dynamic> payload}) {
+    return _request(route: _resolveRoute(endpoint), query: query, data: payload, type: RequestType.post);
   }
 
   @override
@@ -118,7 +119,6 @@ class _EasyRestImpl implements EasyRest {
     RequestType type,
     Serializable<dynamic> data
   }) async {
-    print('here');
     print(EasyRest._config.createUri(route, query));
     final response = await request(
       data: data,
@@ -129,10 +129,17 @@ class _EasyRestImpl implements EasyRest {
     return _analyzeResponse(response);
   }
   static _analyzeResponse(Response response) {
-    if (response.headers['content-type'][0] == Headers.jsonContentType) {
+    print('here');
+    print(response.data);
+
+    final type = response.headers['content-type'];
+    print(type);
+    if (type == null) return null;
+
+    if (type[0] == Headers.jsonContentType) {
       return response.data;
     } else {
-      throw 'Unsupported Format found ${response.headers['content-type'][0]}';
+      throw 'Unsupported Format found ${response.headers['content-type']}';
     }
   }
 }

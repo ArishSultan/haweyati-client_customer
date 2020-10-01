@@ -1,13 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/common/models/serializable.dart';
-import 'package:haweyati/src/common/services/jwt-auth_service.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/common/simple-form.dart';
-import 'package:haweyati/src/ui/dialogs/waiting_dialog.dart';
+import 'package:haweyati/src/routes.dart';
+import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/common/models/serializable.dart';
+import 'package:haweyati/src/common/services/jwt-auth_service.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
-import 'package:haweyati/src/utils/const.dart';
 
 class _SignInData extends Serializable {
   String username;
@@ -31,9 +33,25 @@ class SignInPage extends StatelessWidget {
       child: SimpleForm(
         key: _key,
         waitingDialog: WaitingDialog(message: 'Signing in ...'),
-        onSubmit: () async {
-          await JwtAuthService.create().$signIn(_data);
+        onError: (err) async {
+          print(err);
+          print('here');
+          if (err is UnAuthorizedError) {
+            await showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  title: Text('Username or Password is incorrect'),
+                );
+              }
+            );
+          }
         },
+        afterSubmit: () => Navigator
+          .of(context)
+          .pushNamedAndRemoveUntil(HOME_PAGE, (route) => false),
+
+        onSubmit: () => JwtAuthService.create().$signIn(_data),
 
         child: Column(children: [
           HeaderView(
@@ -45,7 +63,7 @@ class SignInPage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 15),
             child: HaweyatiTextField(
               label: 'Your Phone #',
-              controller: TextEditingController(text: '+923376202011'),
+              controller: TextEditingController(text: '+923317079787'),
               onSaved: (value) => _data.username = value,
             ),
           ),

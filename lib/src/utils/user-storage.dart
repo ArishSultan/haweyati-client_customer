@@ -9,14 +9,14 @@ class UserStorage extends JwtStorage<User> {
 
   @override
   FutureOr<void> clear() async {
-    await Hive.box('customers').clear();
-    await Hive.box('customers').deleteFromDisk();
+    customer = null;
+    await Hive.box<User>('customers').clear();
   }
 
   @override
   FutureOr<User> read() {
     try {
-      return Hive.box('customers').values.first;
+      return Hive.box<User>('customers').values.first;
     } catch(e) {
       return null;
     }
@@ -24,7 +24,7 @@ class UserStorage extends JwtStorage<User> {
 
   @override
   FutureOr<void> write(User customer) {
-    Hive.box('customers').add(customer);
+    Hive.box<User>('customers').add(customer);
     customer.save();
   }
 

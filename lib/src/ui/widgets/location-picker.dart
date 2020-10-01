@@ -1,25 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haweyati/src/models/location_model.dart';
+import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
 import 'package:haweyati/src/ui/widgets/buttons/edit-button.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 import 'dark-container.dart';
 
-class LocationPickerWidget extends StatefulWidget {
+class LocationPicker extends StatefulWidget {
   final Location initialValue;
   final Function(Location location) onChanged;
 
-  LocationPickerWidget({
+  LocationPicker({
     this.initialValue,
     @required this.onChanged
   });
 
   @override
-  _LocationPickerWidgetState createState() => _LocationPickerWidgetState();
+  _LocationPickerState createState() => _LocationPickerState();
 }
 
-class _LocationPickerWidgetState extends State<LocationPickerWidget> {
+class _LocationPickerState extends State<LocationPicker> {
   var _address;
 
   @override
@@ -41,7 +44,9 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
           )),
           Spacer(),
           EditButton(onPressed: () async {
-            final location = await Navigator.of(context).pushNamed('/location');
+            final location = await navigateTo(context, LocationPickerMapPage(
+              LatLng(widget.initialValue.latitude, widget.initialValue.longitude)
+            ));
             if (location != null) {
               _address = location;
               widget.onChanged(_address);

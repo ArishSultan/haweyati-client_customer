@@ -14,7 +14,7 @@ import 'package:haweyati/src/models/location_model.dart' as l;
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 
 const apiKey = 'AIzaSyDdNpY6LGWgHqRfTRZsKkVhocYOaER325w';
 
@@ -107,12 +107,7 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Center(
-              child: LocalizationSelector(
-                selected: EasyLocalization.of(context).locale,
-                onChanged: (locale) {
-                  setState(() => EasyLocalization.of(context).locale = locale);
-                },
-              ),
+              child: LocalizationSelector(),
             ),
           )
         ],

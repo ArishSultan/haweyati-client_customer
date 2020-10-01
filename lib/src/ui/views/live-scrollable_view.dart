@@ -29,6 +29,8 @@ class _LiveScrollableViewState<T> extends State<LiveScrollableView<T>> {
     super.initState();
     _future = widget.loader()..then((value) {
       if (!_allowRefresh) setState(() => _allowRefresh = true);
+    })..catchError((error) {
+      setState(() => _allowRefresh = true);
     });
   }
 

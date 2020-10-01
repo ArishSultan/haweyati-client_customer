@@ -26,11 +26,11 @@ Future<Response> request({
     print(await JwtAuthService.create().token);
     response = await _resolveRequestType(type)
       (uri, data: data?.serialize(), options: Options(
-      headers: { 'Authorization': 'Bearer ' + await JwtAuthService.create().token }
+      headers: { 'Authorization': 'Bearer ${await JwtAuthService.create().token}' }
     ));
   } else {
     response = await _resolveRequestType(type)(uri, options: Options(
-      headers: { 'Authorization': 'Bearer ' + await JwtAuthService.create().token }
+      headers: { 'Authorization': 'Bearer ${await JwtAuthService.create().token}' }
     ));
   }
 

@@ -1,4 +1,8 @@
 import 'package:haweyati/src/common/models/json_serializable.dart';
+import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/models/order/building-material/order-item_model.dart';
+import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
+import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
 import 'package:haweyati/src/models/order/order-location_model.dart';
 import 'package:haweyati/src/models/payment_model.dart';
 import 'package:haweyati/src/models/user_model.dart';
@@ -9,11 +13,12 @@ import 'order-item_model.dart';
 @HiveType(typeId: 0)
 class Order extends HiveObject implements JsonSerializable {
   String id;
+
+  int status;
   String city;
   String note;
   double total;
   String number;
-  String status;
   OrderType type;
 
   User customer;
@@ -26,11 +31,11 @@ class Order extends HiveObject implements JsonSerializable {
   DateTime createdAt;
   DateTime updatedAt;
 
-  Order({
+  Order(this.type, {
     this.city,
     this.note,
-    this.type,
     this.items,
+    this.number,
     this.images,
     this.status,
     this.location,
@@ -42,9 +47,46 @@ class Order extends HiveObject implements JsonSerializable {
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
-    return Order(
-      type: _typeFromString(json['service'])
-      // items: json['items'].map((item) => )
+    OrderItem Function(Map<String, dynamic>) _parser = null;
+    final type = _typeFromString(json['service']);
+
+    switch (type) {
+      case OrderType.dumpster:
+        _parser = DumpsterOrderItem.fromJson;
+        break;
+      case OrderType.scaffolding:
+        // TODO: Handle this case.
+        break;
+      case OrderType.buildingMaterial:
+        _parser = BuildingMaterialOrderItem.fromJson;
+        break;
+      case OrderType.finishingMaterial:
+        _parser = FinishingMaterialOrderItem.fromJson;
+        break;
+    }
+
+    return Order(_typeFromString(json['service']),
+      note: json['note'],
+      city: json['city'],
+      total: json['total']?.toDouble(),
+      status: json['status'],
+      number: json['orderNo'],
+      payment: Payment.fromJson(/*json['payment'] ?? */json),
+
+      customer: json['customer'] is String
+          ? AppData.instance().user
+          : User.fromJson(json['customer']),
+
+      location: OrderLocation.fromJson(json['dropoff']),
+
+      items: (json['items'] as List)
+        .map((item) => OrderItemHolder(
+          supplier: item['supplier'],
+          subtotal: item['subtotal']?.toDouble(),
+
+          item: _parser != null ? _parser(item['item']) : null
+        ))
+        .toList(growable: false),
     );
   }
 
@@ -62,9 +104,9 @@ class Order extends HiveObject implements JsonSerializable {
 
     'location': location.serialize(),
 
-    'customer': customer.serialize(),
-    'paymentType': payment.type,
-    'paymentIntentId': payment.intentId,
+    'customer': AppData.instance().user.serialize(),
+    'paymentType': payment?.type,
+    'paymentIntentId': payment?.intentId,
   };
 
   @override Map<String, dynamic> serialize() => toJson();

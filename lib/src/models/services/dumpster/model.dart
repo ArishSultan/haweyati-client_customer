@@ -28,7 +28,7 @@ class Dumpster extends Orderable {
   double get rent => pricing.first.rent;
   double get extraDayRent => pricing.first.extraDayRent ?? 0;
 
-  Dumpster.fromJson(Map<String, dynamic> json, [bool isOrder = false]) {
+  Dumpster.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
     size = json['size'];
     suppliers = json['suppliers'].cast<String>();
@@ -37,12 +37,12 @@ class Dumpster extends Orderable {
 
     final _pricing = json['pricing'];
     if (_pricing != null) {
-      if (isOrder) {
-        pricing = [Rent.fromJson(json['pricing'])];
-      } else {
-        pricing = (_pricing as List)
+      if (_pricing is List) {
+        pricing = _pricing
           .map((e) => Rent.fromJson(e))
           .toList(growable: false);
+      } else {
+        pricing = [Rent.fromJson(json['pricing'])];
       }
     }
   }

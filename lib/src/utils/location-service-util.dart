@@ -16,7 +16,7 @@ Future<bool> _checkLocationServiceStatus() async {
 
 Future<bool> checkLocationService(BuildContext context, {
   AlertDialog gpsErrorDialog,
-  AlertDialog locationPermissionErrorDialog
+  Widget locationPermissionErrorDialog
 }) async {
   try {
     await _checkLocationServiceStatus();

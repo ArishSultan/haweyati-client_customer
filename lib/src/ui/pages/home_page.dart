@@ -1,18 +1,20 @@
 import 'dart:ui' as ui;
 
-import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:haweyati/src/common/widgets/badged-widget.dart';
-import 'package:haweyati/src/data.dart';
-import 'package:haweyati/src/models/services/finishing-material/model.dart';
-import 'package:haweyati/src/routes.dart';
-import 'package:haweyati/src/services/service-availability_service.dart';
-import 'package:haweyati/src/ui/widgets/localization-selector.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/common/services/jwt-auth_service.dart';
+import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:hive/hive.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:haweyati/src/data.dart';
+import 'package:flutter/foundation.dart';
+import 'package:haweyati/src/routes.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:haweyati/src/common/widgets/badged-widget.dart';
+import 'package:haweyati/src/ui/widgets/localization-selector.dart';
+import 'package:haweyati/src/services/service-availability_service.dart';
+import 'package:haweyati/src/models/services/finishing-material/model.dart';
 
 import '../../routes.dart';
 import '../../utils/custom-navigator.dart';
@@ -34,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
+    print(AppData.instance().user.serialize());
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
   }
 
@@ -127,12 +130,7 @@ class _HomePageState extends State<HomePage> {
             child: Column(children: <Widget>[
               Padding(
                 padding: const EdgeInsets.only(left: 10, top: 5, right: 10),
-                child: LocalizationSelector(
-                  selected: EasyLocalization.of(context).locale,
-                  onChanged: (locale) {
-                    setState(() => EasyLocalization.of(context).locale = locale);
-                  },
-                ),
+                child: LocalizationSelector(),
               ),
               Center(child: CircleAvatar(
                 radius: 50,
@@ -141,17 +139,17 @@ class _HomePageState extends State<HomePage> {
 //                  backgroundImage: (!HaweyatiData.isSignedIn || HaweyatiData.customer?.profile?.image ==null) ? AssetImage("assets/images/building.png")
 //                  : NetworkImage(HaweyatiService.convertImgUrl(HaweyatiData.customer.profile.image.name)),
               )),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 15),
-              //   child: Center(child: Text(AppData.instance.user.profile.name, style: TextStyle(
-              //     fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold
-              //   ))),
-              // ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15),
+                child: Center(child: Text(AppData.instance().user.name, style: TextStyle(
+                  fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold
+                ))),
+              ),
               Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: Center(child: FlatButton.icon(
                   onPressed: null,
-                  icon: Image.asset('assets/images/star_outlined.png', width: 20, height: 20),
+                  icon: Image.asset(StarIconOutlined, width: 20, height: 20),
                   label: Text('Rated 5.0', style: TextStyle(color: Colors.white))
                 )),
               ),
@@ -161,8 +159,7 @@ class _HomePageState extends State<HomePage> {
                   _ListTile(context,
                     image: OrderIcon,
                     title: tr('My_Orders'),
-                  // navigateTo: () =>
-                  //  CustomNavigator.navigateTo(context, ViewAllOrders());
+                    navigateTo: MY_ORDERS_PAGE
                   ),
                   _ListTile(context,
                     image: SettingsIcon,
@@ -192,7 +189,20 @@ class _HomePageState extends State<HomePage> {
                   _ListTile(context,
                     image: LogoutIcon,
                     title: tr('Logout'),
-                    // navigateTo: '/log-out',
+                    onPressed: () async {
+                      showDialog(
+                        context: context,
+                        builder: (context) => WaitingDialog(message: 'Signing Out')
+                      );
+                      try {
+                        await JwtAuthService.create().$signOut();
+                      } catch (err) {
+                        print(err);
+                      }
+                      Navigator
+                          .of(context)
+                          .pushNamedAndRemoveUntil(HOME_PAGE, (route) => false);
+                    }
                   )
                ]),
              ))

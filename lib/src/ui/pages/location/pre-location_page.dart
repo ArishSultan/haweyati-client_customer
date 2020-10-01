@@ -2,6 +2,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/ui/modals/dialogs/errors/gps-off_error-dialog.dart';
+import 'package:haweyati/src/ui/modals/dialogs/errors/location-permission_error-dialog.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
@@ -11,8 +13,6 @@ import 'package:haweyati/src/utils/location-service-util.dart';
 
 import '../../../routes.dart';
 import '../../../routes.dart';
-import '../../dialogs/gps-error_dialog.dart';
-import '../../dialogs/location-permission_dialog.dart';
 
 class PreLocationPage extends StatefulWidget {
   @override

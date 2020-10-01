@@ -17,10 +17,15 @@ class FinishingMaterialOption extends HiveObject {
   factory FinishingMaterialOption.fromJson(Map<String, dynamic> json) {
     if (json == null) return null;
 
+    var value = json['optionValues'];
+    if (value is String) {
+      value = value?.split(',');
+    }
+
     return FinishingMaterialOption(
       id: json['_id'],
       name: json['optionName'],
-      values: json['optionValues'].split(','),
+      values: value?.cast<String>()
     );
   }
 

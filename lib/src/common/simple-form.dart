@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/ui/dialogs/waiting_dialog.dart';
+import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 
 class SimpleForm extends StatefulWidget {
+  final Widget child;
   final bool autoValidate;
   final Function onSubmit;
-  final Widget child;
+  final Function afterSubmit;
   final Widget waitingDialog;
+  final Function(dynamic) onError;
 
   SimpleForm({
     @required Key key,
     @required this.onSubmit,
     this.child,
+    this.onError,
+    this.afterSubmit,
     this.autoValidate,
     this.waitingDialog
   }): super(key: key);
@@ -36,16 +40,27 @@ class SimpleFormState extends State<SimpleForm> {
   void submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      final data = widget.onSubmit();
+        final data = widget.onSubmit();
 
-      if (data is Future) {
-        showDialog(
-          context: context,
-          builder: (context) => widget.waitingDialog ?? WaitingDialog()
-        );
-        await data;
-        Navigator.of(context).pop();
-      }
+        if (data is Future) {
+          showDialog(
+            context: context,
+            builder: (context) => widget.waitingDialog ?? WaitingDialog()
+          );
+          try {
+            await data;
+            Navigator.of(context).pop();
+          } catch (err) {
+            Navigator.of(context).pop();
+
+            if (widget.onError != null) {
+              widget.onError(err);
+              return;
+            }
+          }
+        }
+
+        if (widget.afterSubmit != null) widget.afterSubmit();
     } else {
       if (!this._validate) setState(() => this._validate = true);
     }

@@ -3,7 +3,7 @@ import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 
 class TermsAndConditionsPage extends StatefulWidget {
   @override
@@ -21,17 +21,17 @@ class _TermsAndConditionsPageState extends State<TermsAndConditionsPage> {
   Widget build(BuildContext context) {
     return NotificationListener<ScrollUpdateNotification>(
       onNotification: (ScrollUpdateNotification scrollNotification) {
+        if (_allow) return true;
+
         if (scrollNotification.metrics.pixels >= scrollNotification.metrics.maxScrollExtent) {
-          if (!_allow) setState(() => _allow = true);
-        } else {
-          if (_allow) setState(() => _allow = false);
+          setState(() => _allow = true);
         }
 
         return true;
       },
       child: ScrollableView(
         appBar: HaweyatiAppBar(hideHome: true, hideCart: true),
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 100),
         showBackground: true,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

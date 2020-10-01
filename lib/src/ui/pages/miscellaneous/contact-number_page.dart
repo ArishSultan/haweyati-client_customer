@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/common/simple-form.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 
 class ContactNumberPage extends StatelessWidget {
   final GlobalKey<SimpleFormState> key = GlobalKey<SimpleFormState>();

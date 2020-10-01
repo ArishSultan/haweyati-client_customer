@@ -1,13 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/ui/pages/payment/credit-cards_page.dart';
-import 'package:haweyati/src/ui/views/dotted-background_view.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
-import 'package:haweyati/src/utils/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:haweyati/src/ui/views/dotted-background_view.dart';
+import 'package:haweyati/src/ui/pages/payment/credit-cards_page.dart';
+import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 
 enum PaymentMethod {
   applePay,
@@ -17,12 +16,24 @@ enum PaymentMethod {
 
 class PaymentResponse {
   final String intentId;
-  final PaymentMethod method;
+  final PaymentMethod _method;
   
-  PaymentResponse({
-    this.method,
-    this.intentId
-  });
+  const PaymentResponse(this._method, [this.intentId]);
+
+  String get method {
+    switch (_method) {
+      case PaymentMethod.applePay:
+        return 'A';
+        break;
+      case PaymentMethod.creditCard:
+        return 'C';
+        break;
+      case PaymentMethod.cashOnDelivery:
+        return 'COD';
+    }
+
+    return null;
+  }
 }
 
 class PaymentMethodsPage extends StatefulWidget {
@@ -75,7 +86,6 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
   }
 
   _processPayment() {
-    print(_paymentType);
     switch (_paymentType) {
       case PaymentMethod.applePay:
         break;
@@ -83,9 +93,7 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
         navigateTo(context, CreditCardsPage());
         break;
       case PaymentMethod.cashOnDelivery:
-        return Navigator.of(context).pop(PaymentResponse(
-          method: PaymentMethod.cashOnDelivery
-        ));
+        return Navigator.of(context).pop(PaymentResponse(PaymentMethod.cashOnDelivery));
     }
   }
 }

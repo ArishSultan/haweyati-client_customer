@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:dio/dio.dart';
+import 'package:hive/hive.dart';
+
 import 'http/basics/request-type.dart';
 import 'package:haweyati/src/common/models/serializable.dart';
 import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
@@ -6,7 +9,7 @@ import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
 abstract class JwtStorage<T> {
   FutureOr<T> read();
   FutureOr<void> clear();
-  FutureOr<void> write(T token);
+  FutureOr<void> write(T data);
   FutureOr<void> refreshCache();
 }
 
@@ -100,32 +103,51 @@ class _JwtAuthServiceImpl<T, U> implements JwtAuthService<T, U> {
   final _service = EasyRest();
   static var _isAuthenticated = false;
 
-  /// 128.199.20.220
   @override
   $signIn(Serializable data) async {
-    final resp = await _service.$raw(
-      data: data,
-      type: JwtAuthService._config.signInRequest.type,
-      route: JwtAuthService._config.signInRequest.endpoint
-    );
+    var resp;
+
+    try {
+      resp = await _service.$raw(
+        data: data,
+        type: JwtAuthService._config.signInRequest.type,
+        route: JwtAuthService._config.signInRequest.endpoint
+      );
+    } on DioError catch (error) {
+      print(error.message);
+      print(error.response);
+      if (error.response.statusCode == 401) throw UnAuthorizedError();
+    }
 
     JwtAuthService._config.tokenStorage.write(
       JwtAuthService._config.tokenParser(resp)
     );
 
-    await $user();
+    print('here2');
+    try {
+      await $user();
+    } on HiveError catch (err) {
+      print(err.message);
+      print(err.stackTrace.toString());
+      rethrow;
+    }
     _isAuthenticated = true;
+    print(_isAuthenticated);
   }
 
   @override
   $signOut() async {
-    // await RestHttpService.create().$raw(
-    //   type: JwtAuthService._config.signInRequest.type,
-    //   path: JwtAuthService._config.signInRequest.endpoint
-    // );
-    //
-    // JwtAuthService._config.userStorage.clear();
-    // JwtAuthService._config.tokenStorage.clear();
+    try {
+      await _service.$raw(
+        type: JwtAuthService._config.signOutRequest.type,
+        route: JwtAuthService._config.signOutRequest.endpoint
+      );
+    } catch (err) {}
+
+    await JwtAuthService._config.userStorage.clear();
+    await JwtAuthService._config.tokenStorage.clear();
+    print('signing-out');
+    _isAuthenticated = false;
   }
 
   @override
@@ -134,14 +156,20 @@ class _JwtAuthServiceImpl<T, U> implements JwtAuthService<T, U> {
       type: JwtAuthService._config.userRequest.type,
       route: JwtAuthService._config.userRequest.endpoint
     );
+    final user = await _service.$raw(
+      type: RequestType.get,
+      route: 'customers/getProfile/${resp['profile']['contact']}'
+    );
 
-    JwtAuthService._config.userStorage.write(
-      JwtAuthService._config.userParser(resp)
+    user['profile'] = resp['profile'];
+
+    await JwtAuthService._config.userStorage.write(
+      JwtAuthService._config.userParser(user)
     );
   }
 
   @override
-  T get user => throw UnimplementedError();
+  T get user => JwtAuthService._config.userStorage.read();
 
   @override
   U get token => JwtAuthService._config.tokenStorage.read();
@@ -149,3 +177,5 @@ class _JwtAuthServiceImpl<T, U> implements JwtAuthService<T, U> {
   @override
   bool get isAuthenticated => _isAuthenticated;
 }
+
+class UnAuthorizedError implements Exception {}

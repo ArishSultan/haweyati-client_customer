@@ -1,40 +1,58 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/routes.dart';
+import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/ui/modals/dialogs/order/cancel-order-confirmation_dialog.dart';
+import 'package:haweyati/src/ui/pages/cart_page.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
   final bool hideCart;
   final bool hideHome;
+  final bool allowBack;
   final double progress;
+  final List<Widget> actions;
+  final bool confirmOrderCancel;
 
   const HaweyatiAppBar({
+    this.allowBack = true,
+    this.confirmOrderCancel = false,
     this.hideCart = false,
     this.hideHome = false,
-    this.progress = 0.0
+    this.progress = 0.0,
+    this.actions
   });
 
   @override
   Widget build(BuildContext context) {
     List<Widget> _actions = [];
     if (!hideHome) _actions.add(
-      GestureDetector(
-        child: Image.asset(HomeIcon, width: 23, color: Colors.white),
-        onTap: () => Navigator
-            .of(context)
-            .popUntil((route) => route.settings.name == '/')
+      IconButton(
+        icon: Image.asset(HomeIcon, width: 23, color: Colors.white),
+        onPressed: () async {
+          if (confirmOrderCancel) {
+            final result = await showDialog(
+              context: context,
+              builder: (context) => CancelOrderConfirmationDialog()
+            );
+
+            if (result ?? true) return;
+          }
+          Navigator
+              .of(context)
+              .popUntil((route) => route.settings.name == HOME_PAGE);
+        },
       )
     );
     if (!hideCart) _actions.add(
-      GestureDetector(
-        child: IconButton(
-          onPressed: () {},
-          icon: Image.asset(CartIcon, width: 30)
-        ),
+      IconButton(
+        onPressed: () => navigateTo(context, CartPage()),
+        icon: Image.asset(CartIcon, width: 30)
       )
     );
 
     Widget _leading;
-    if (Navigator.of(context).canPop()) {
+    if (Navigator.of(context).canPop() && allowBack) {
       _leading = IconButton(
         icon: Transform.rotate(
           angle: Localizations.localeOf(context).toString() == 'ar' ? 3.14159 : 0,
@@ -61,7 +79,8 @@ class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
       elevation: 0,
       bottom: _progress,
       leading: _leading,
-      actions: _actions,
+      automaticallyImplyLeading: false,
+      actions: actions ?? _actions,
       centerTitle: true,
       title: const Image(
         width: 33, height: 33,

@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
-import 'package:haweyati/src/models/order/order_model.dart';
-import 'package:haweyati/src/models/services/dumpster/model.dart';
-import 'package:haweyati/src/services/haweyati-service.dart';
-import 'package:haweyati/src/ui/pages/payment/payment-methods_page.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
-import 'package:haweyati/src/ui/views/order-location_view.dart';
-import 'package:haweyati/src/ui/views/scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/widgets/buttons/edit-button.dart';
-import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
+import 'package:haweyati/src/models/order/order_model.dart';
+import 'package:haweyati/src/services/haweyati-service.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
 import 'package:haweyati/src/ui/widgets/rich-price-text.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/ui/views/order-location_view.dart';
+import 'package:haweyati/src/models/services/dumpster/model.dart';
+import 'package:haweyati/src/ui/widgets/buttons/edit-button.dart';
+import 'package:haweyati/src/ui/views/order-confirmation_view.dart';
+import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
 
 class DumpsterOrderConfirmationPage extends StatelessWidget {
   final Order _order;
@@ -26,9 +22,14 @@ class DumpsterOrderConfirmationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScrollableView(
-      appBar: HaweyatiAppBar(progress: .75),
-      showBackground: true,
+    return OrderConfirmationView(
+      order: _order,
+
+      preProcess: () {
+        _order.total = _total;
+        _order.items.first.subtotal = _total;
+      },
+
       children: [
         HeaderView(
           title: 'Hello User,',
@@ -58,12 +59,14 @@ class DumpsterOrderConfirmationPage extends StatelessWidget {
                   HaweyatiService.resolveImage(_dumpster.image.name),
                   height: 60
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text('${_dumpster.size} Yard Container', style: TextStyle(
-                    color: Color(0xFF313F53),
-                    fontSize: 15, fontWeight: FontWeight.bold
-                  )),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text('${_dumpster.size} Yard Container', style: TextStyle(
+                      color: Color(0xFF313F53),
+                      fontSize: 15, fontWeight: FontWeight.bold
+                    )),
+                  ),
                 )
               ]),
             ),
@@ -134,14 +137,15 @@ class DumpsterOrderConfirmationPage extends StatelessWidget {
               )),
               RichPriceText(price: _dumpster.pricing.first.rent),
             ]),
-            TableRow(children: [
-              Text('Extra (${_item.extraDays} Days)', style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey,
-                fontFamily: 'Lato', height: 1.9
-              )),
-              RichPriceText(price: _item.extraDaysPrice),
-            ]),
+            if (_item.extraDays > 0)
+              TableRow(children: [
+                Text('Extra (${_item.extraDays} Days)', style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey,
+                  fontFamily: 'Lato', height: 1.9
+                )),
+                RichPriceText(price: _item.extraDaysPrice),
+              ]),
             TableRow(children: [
               Text('Delivery Fee', style: TextStyle(
                 fontSize: 13,
@@ -161,12 +165,6 @@ class DumpsterOrderConfirmationPage extends StatelessWidget {
           ]
         )
       ],
-      padding: const EdgeInsets.fromLTRB(15, 0, 15, 100),
-      extendBody: true,
-      bottom: RaisedActionButton(
-        label: 'Proceed',
-        onPressed: () => navigateTo(context, PaymentMethodsPage()),
-      ),
     );
   }
 }

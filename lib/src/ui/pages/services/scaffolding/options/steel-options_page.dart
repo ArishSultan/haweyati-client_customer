@@ -5,7 +5,7 @@ import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/dark-list-tile.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class SteelScaffoldingOptionsPage extends StatelessWidget {
@@ -38,7 +38,7 @@ class SteelScaffoldingOptionsPage extends StatelessWidget {
             title: 'Manual',
             trailing: Icon(CupertinoIcons.right_chevron),
             onTap: () {
-              CustomNavigator.navigateTo(context, SteelAdjustmentsPage(null));
+              navigateTo(context, SteelAdjustmentsPage(null));
             }
           ),
         ]),

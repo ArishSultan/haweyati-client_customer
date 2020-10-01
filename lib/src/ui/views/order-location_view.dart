@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:haweyati/src/models/order/order-location_model.dart';
 import 'package:haweyati/src/ui/widgets/buttons/edit-button.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/date-formatter.dart';
 
 class OrderLocationView extends DarkContainer {

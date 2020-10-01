@@ -9,7 +9,7 @@ class HeaderView extends Wrap {
     Padding(
       padding: const EdgeInsets.only(top: 30, bottom: 10),
       child: Center(child: Text(title, textAlign: TextAlign.center, style: TextStyle(
-        color: Colors.black,
+        color: Color(0xFF313F53),
         fontSize: 18,
         fontWeight: FontWeight.bold
       ))),

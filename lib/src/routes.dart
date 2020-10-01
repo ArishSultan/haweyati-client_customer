@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
 
 import 'data.dart';
 import 'ui/pages/auth/sign-in_page.dart';
@@ -25,11 +26,12 @@ import 'ui/pages/services/scaffolding/options/steel-options_page.dart';
 final routes = <String, Widget Function(BuildContext)>{
   HOME_PAGE: (context) {
     /// Check whether the user is Authenticated
+    final _appData = AppData.instance();
 
-    // TODO: Replace with Auth-Condition
-    if (true) {
+    print(_appData.isAuthenticated);
+    if (_appData.isAuthenticated) {
       /// Check whether user location is saved.
-      if (AppData.instance().location != null) {
+      if (_appData.location != null) {
         return HomePage();
       } else {
         return PreLocationPage();
@@ -76,6 +78,10 @@ final routes = <String, Widget Function(BuildContext)>{
   NOTIFICATIONS_PAGE: (context) => NotificationsPage(),
   SHARE_AND_INVITE_PAGE: (context) => ShareAndInvitePage(),
   TERMS_AND_CONDITIONS_PAGE: (context) => TermsAndConditionsPage(),
+
+  /// Orders History/Status Routes.
+  // ORDER_PLACED_PAGE: (context) =>
+  MY_ORDERS_PAGE: (context) => MyOrdersPage(),
 };
 
 const REWARDS_PAGE = '0';
@@ -104,3 +110,6 @@ const PATENTED_SCAFFOLDING_OPTIONS_PAGE = '17';
 const BUILDING_MATERIALS_LIST_PAGE = '18';
 
 const FINISHING_MATERIALS_LIST_PAGE = '19';
+
+const MY_ORDERS_PAGE = '20';
+const ORDER_PLACED_PAGE = '21';

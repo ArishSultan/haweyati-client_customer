@@ -1,4 +1,5 @@
 import 'package:haweyati/src/common/models/json_serializable.dart';
+import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/models/profile_model.dart';
 import 'package:hive/hive.dart';
 
@@ -13,6 +14,9 @@ class User extends HiveObject implements JsonSerializable {
   @HiveField(2) String message;
   @HiveField(3) Profile profile;
   @HiveField(4) Location location;
+
+  String get name => profile.name;
+  String get image => profile.image.name;
 
   User({
     this.id,

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +27,21 @@ class CartPage extends StatelessWidget {
       appBar: HaweyatiAppBar(
         hideCart: true,
         hideHome: true,
+        actions: [
+          ValueListenableBuilder(
+            valueListenable: _box,
+            builder: (context, val, widget) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Text('${val.length} ${val.length == 1 ? 'Item' : 'Items'}', style: TextStyle(
+                    color: Colors.white
+                  )),
+                )
+              );
+            }
+          )
+        ]
       ),
       body: ValueListenableBuilder(
         valueListenable: _box,
@@ -47,24 +61,22 @@ class CartPage extends StatelessWidget {
             itemBuilder: (context, index) => FutureBuilder(
               future: _cart.getAt(index),
               builder: (context, AsyncSnapshot<FinishingMaterial> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Dismissible(
-                    key: UniqueKey(),
-                    direction: DismissDirection.endToStart,
-                    onDismissed: (_) async {
-                      await _cart.deleteAt(index);
+                return Dismissible(
+                  key: UniqueKey(),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (_) async {
+                    await _cart.deleteAt(index);
 
-                      if (_cart.isEmpty) {
-                        Navigator.of(context).pop();
-                      }
-                    },
-                    child: ServiceListItem(
-                      image: snapshot.data.images.name,
-                      name: snapshot.data.name,
-                      onTap: () {}
-                    )
-                  );
-                } else return Text('Loading');
+                    if (_cart.isEmpty) {
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: ServiceListItem(
+                    image: snapshot.data?.images?.name ?? '',
+                    name: snapshot.data?.name ?? '',
+                    onTap: () {}
+                  )
+                );
               },
             ),
             itemCount: box.length,

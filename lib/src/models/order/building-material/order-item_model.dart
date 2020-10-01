@@ -17,11 +17,11 @@ class BuildingMaterialOrderItem extends OrderItem {
     this.price = 0.0,
   }): super(product);
 
-  factory BuildingMaterialOrderItem.fromJson(Map<String, dynamic> json) {
+  static BuildingMaterialOrderItem fromJson(Map<String, dynamic> json) {
     return BuildingMaterialOrderItem(
       qty: json['qty'],
       size: json['size'],
-      price: json['price'],
+      price: json['price']?.toDouble(),
       product: BuildingMaterial.fromJson(json['product'])
     );
   }

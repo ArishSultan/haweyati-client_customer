@@ -11,8 +11,8 @@ import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/drop-off-picker.dart';
 import 'package:haweyati/src/ui/widgets/image-picker-widget.dart';
-import 'package:haweyati/src/ui/widgets/location-picker-widget.dart';
-import 'package:haweyati/src/utils/const.dart';
+import 'package:haweyati/src/ui/widgets/location-picker.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class BuildingMaterialTimeAndLocationPage extends StatelessWidget {
@@ -40,7 +40,7 @@ class BuildingMaterialTimeAndLocationPage extends StatelessWidget {
           subtitle: loremIpsum.substring(0, 80),
         ),
 
-        LocationPickerWidget(
+        LocationPicker(
           initialValue: _order.location,
           onChanged: (location) {}/*_order.location.update*/
         ),
