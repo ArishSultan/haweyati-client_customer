@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -180,7 +179,7 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
       ),
       body: _resolveMap(),
       bottom: RaisedActionButton(
-        label: tr('Set_Your_Location'),
+        // label: tr('Set_Your_Location'),
         onPressed: _location != null ? () {
           Navigator.of(context).pop(l.Location(
             city: _address.locality,

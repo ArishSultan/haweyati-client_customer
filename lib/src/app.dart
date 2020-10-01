@@ -1,10 +1,9 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-
 import 'routes.dart';
+import 'l10n/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:haweyati/src/l10n/localization.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class HaweyatiApp extends Theme {
   HaweyatiApp({
@@ -33,23 +32,25 @@ class HaweyatiApp extends Theme {
     ),
     child: ValueListenableBuilder(
       valueListenable: locale,
-      builder: (context, value, _) => CupertinoApp(
-        locale: Locale('ar', 'AE'),
-        routes: routes,
+      builder: (context, value, _) {
+        return CupertinoApp(
+          locale: value,
+          routes: routes,
 
-        initialRoute: /*status ? HOME_PAGE : */FEATURES_PAGE,
+          initialRoute: /*status ? HOME_PAGE : */FEATURES_PAGE,
 
-        supportedLocales: const [
-          const Locale('en'),
-          const Locale('ar', 'AE'),
-        ],
+          supportedLocales: const [
+            const Locale('en'),
+            const Locale('ar'),
+          ],
 
-        localizationsDelegates: [
-          // HaweyatiLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate
-        ],
-      ),
+          localizationsDelegates: [
+            HaweyatiLocalizations.delegate,
+            // GlobalWidgetsLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate
+          ],
+        );
+      }
     )
   );
 }

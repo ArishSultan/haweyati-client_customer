@@ -36,12 +36,8 @@ class LocalizationSelector extends StatelessWidget {
       ],
 
       onChanged: (val) async {
-        if (_appData.currentLocale.value.languageCode == 'en') {
-          _appData.locale = const Locale('ar');
-        } else {
-          _appData.locale = const Locale('en');
-        }
-
+        if (_appData.currentLocale.value.languageCode != val.languageCode)
+          _appData.locale = val;
       }
     );
   }

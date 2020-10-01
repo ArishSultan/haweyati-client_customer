@@ -10,7 +10,6 @@ import 'package:flutter/foundation.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:haweyati/src/common/widgets/badged-widget.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
 import 'package:haweyati/src/services/service-availability_service.dart';
@@ -83,8 +82,8 @@ class _HomePageState extends State<HomePage> {
             ),
             padding: const EdgeInsets.all(15),
             child: Column(children: <Widget>[
-              Text(tr('hello'), style: TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold)),
-              Padding(padding: const EdgeInsets.only(top: 8, bottom: 20), child: Text(tr('explore'), style: TextStyle(color: Colors.white))),
+              // Text(tr('hello'), style: TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold)),
+              // Padding(padding: const EdgeInsets.only(top: 8, bottom: 20), child: Text(tr('explore'), style: TextStyle(color: Colors.white))),
 
               Directionality(
                 textDirection: ui.TextDirection.ltr,
@@ -158,37 +157,37 @@ class _HomePageState extends State<HomePage> {
                 child: Column(children: <Widget>[
                   _ListTile(context,
                     image: OrderIcon,
-                    title: tr('My_Orders'),
+                    // title: tr('My_Orders'),
                     navigateTo: MY_ORDERS_PAGE
                   ),
                   _ListTile(context,
                     image: SettingsIcon,
-                    title: tr('Settings'),
+                    // title: tr('Settings'),
                     navigateTo: SETTINGS_PAGE,
                   ),
                   _ListTile(context,
                     image: AccountIcon,
-                    title: tr('Invite_Friends'),
+                    // title: tr('Invite_Friends'),
                     navigateTo: SHARE_AND_INVITE_PAGE,
                   ),
                   _ListTile(context,
                     image: OrderIcon,
-                    title: tr('Rewards'),
+                    // title: tr('Rewards'),
                     navigateTo: REWARDS_PAGE,
                   ),
                   _ListTile(context,
                     image: TermIcon,
-                    title: tr('Terms_Conditions'),
+                    // title: tr('Terms_Conditions'),
                     navigateTo: TERMS_AND_CONDITIONS_PAGE,
                   ),
                   _ListTile(context,
                     image: StarIconOutlined,
-                    title: tr('Rate App'),
+                    // title: tr('Rate App'),
                     navigateTo: RATE_APP_PAGE,
                   ),
                   _ListTile(context,
                     image: LogoutIcon,
-                    title: tr('Logout'),
+                    // title: tr('Logout'),
                     onPressed: () async {
                       showDialog(
                         context: context,
@@ -319,13 +318,13 @@ class _ServiceContainer extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(20)
         ),
-        child: Center(
-          child: Text(tr(service.title), style: TextStyle(
-            fontSize: 18,
-            color: Colors.white,
-            fontWeight: FontWeight.bold
-          )),
-        ),
+        // child: Center(
+        //   child: Text(tr(service.title), style: TextStyle(
+        //     fontSize: 18,
+        //     color: Colors.white,
+        //     fontWeight: FontWeight.bold
+        //   )),
+        // ),
       )
     );
   }

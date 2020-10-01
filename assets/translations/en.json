@@ -1,20 +1,10 @@
 {
   "hello" : "Hello",
-  "construction_dumpster" : "Construction Dumpster",
-  "scaffolding" : "Scaffolding",
-  "building" : "Building Material",
-  "finishing_material" : "Finishing Material",
+
   "vehicles" : "Vehicles",
   "explore" : "Explore our products and services",
-  "skip" : "Skip",
-  "Our_Services": "Our Services",
 
-  "services_detail":"Renting different sizes of construction dumpsters and different types of scaffolding. By just easy steps, it will be delivered to your site." ,
-  "Our_product":"Our Product",
-  "product_detail":"You can buy any building & finishing materials as per your location & time schedule without contacting with any person.",
-  "truck_detail":"Need to transfer your materials?Rent the right truck type to suit your materials volume with the right price",
   "payment_detail":"Pay with Mada, Visa/Mater Card and Apple pay for a secure & hands free deals, or choose cash on delivery option.",
-  "Truck":"Our Truck",
   "Payment":"Payment & Security",
   "Location_Detail" : "Please select your site location. This location will be used to show the services & delivering your items.\nYou can edit this location at any time.",
   "Location": "Location",

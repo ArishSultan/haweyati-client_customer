@@ -1,12 +1,11 @@
-import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/l10n/localization.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
-import 'package:haweyati/src/const.dart';
-
-import '../../../routes.dart';
 
 class FeaturesPage extends StatefulWidget {
   @override
@@ -57,8 +56,8 @@ class _FeaturesPageState extends State<FeaturesPage> {
           children: <Widget>[
             _FeatureView(
               image: '1',
-              title: _lang?.ourServices ?? '',
-              detail: _lang?.ourServicesDescription ?? ''
+              title: _lang.ourServices,
+              detail: _lang.ourServicesDescription
             ),
             _FeatureView(
               image: '2',
@@ -116,11 +115,14 @@ class _FeaturesPageState extends State<FeaturesPage> {
               ),
               Expanded(flex: 1, child: Container()),
               Transform.rotate(
-                angle: Localizations.localeOf(context).countryCode == 'ar' ? 3.14 : 0,
+                angle: Localizations.localeOf(context).languageCode == 'ar' ? 3.14 : 0,
                 child: Image.asset(NextFeatureIcon, width: 20)
               )
             ]),
-          ): Center(child: Image.asset(NextFeatureIcon, width: 30)),
+          ): Center(child: Transform.rotate(
+            angle: Localizations.localeOf(context).languageCode == 'ar' ? 3.14 : 0,
+            child: Image.asset(NextFeatureIcon, width: 30)
+          )),
         )
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
@@ -161,21 +163,21 @@ class _FeatureView extends Column {
     Padding(
       padding: const EdgeInsets.fromLTRB(16, 30, 16, 0),
       child: Text(title ?? '', style: TextStyle(
+        height: 1,
         fontSize: 20,
         fontWeight: FontWeight.bold
       )),
     ),
     Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 60),
-      child: Text(detail ?? ''),
+      child: Text(detail ?? '', style: TextStyle(fontSize: 14 )),
     )
   ], crossAxisAlignment: CrossAxisAlignment.start);
 }
 
 class _FeatureViewIndicator extends Container {
   _FeatureViewIndicator(bool selected): super(
-    width: 7,
-    height: 7,
+    width: 7, height: 7,
     margin: const EdgeInsets.only(left: 5),
     decoration: BoxDecoration(
       shape: BoxShape.circle,
