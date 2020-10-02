@@ -279,9 +279,7 @@ class _MapUtilsImpl {
   }
 
   Future<LatLng> fetchCurrentLocation() async {
-    final position = await Geolocator()
-      .getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
-
+    final position = await getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
     return LatLng(position.latitude, position.longitude);
   }
 }

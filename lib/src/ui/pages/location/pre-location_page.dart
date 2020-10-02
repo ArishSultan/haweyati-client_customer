@@ -21,7 +21,7 @@ class _PreLocationPageState extends State<PreLocationPage> {
   bool _enabled = false;
 
   checkStatus() async {
-    _enabled = await Geolocator().isLocationServiceEnabled();
+    _enabled = await isLocationServiceEnabled();
 
     if (!_enabled) {
       showDialog(

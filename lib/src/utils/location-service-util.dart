@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart' as geolocator;
 
 Future<bool> _isGPSEnabled() async =>
-  Geolocator().isLocationServiceEnabled();
+    geolocator.isLocationServiceEnabled();
 
 Future<bool> _isLocationAllowed() async =>
-    (await Geolocator().checkGeolocationPermissionStatus()) == GeolocationStatus.granted;
+    (await geolocator.checkPermission()) == geolocator.LocationPermission.always;
 
 Future<bool> _checkLocationServiceStatus() async {
   if (! (await _isGPSEnabled())) throw GPSError();
@@ -22,7 +22,6 @@ Future<bool> checkLocationService(BuildContext context, {
     await _checkLocationServiceStatus();
     return true;
   } on GPSError catch (_) {
-    print('herer');
 
     await showDialog(
       context: context,
