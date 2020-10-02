@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 
 class LocalizationSelector extends StatelessWidget {
   LocalizationSelector();
@@ -30,14 +32,23 @@ class LocalizationSelector extends StatelessWidget {
           value: Locale('ar'),
           child: Padding(
             padding: const EdgeInsets.only(right: 5),
-            child: Text('عربى', style: TextStyle(color: Colors.white, fontSize: 13)),
+            child: Text('العربية', style: TextStyle(color: Colors.white, fontSize: 13)),
           ),
         )
       ],
 
       onChanged: (val) async {
-        if (_appData.currentLocale.value.languageCode != val.languageCode)
-          _appData.locale = val;
+        if (_appData.currentLocale.value.languageCode != val.languageCode) {
+          /// Create 2s delay for smooth translation
+          showDialog(
+            context: context,
+            builder: (context) => WaitingDialog(
+              message: AppLocalizations.of(context).changingLanguage
+            )
+          );
+          _appData.locale = await Future.delayed(Duration(seconds: 1), () => val);
+          Navigator.of(context).pop();
+        }
       }
     );
   }

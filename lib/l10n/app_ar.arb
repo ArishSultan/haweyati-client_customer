@@ -1,0 +1,53 @@
+{
+  "@@locale": "ar",
+
+  "ourServices": "خدماتنا",
+  "@ourServices": {},
+  "ourServicesDescription": "تأجير حاويات الدمار بمختلف مقاستها و عدة أنواع من السقالات، بخطوات بسيطة تصل إليك.",
+  "@ourServicesDescription": {},
+
+  "ourProducts": "منتجاتنا",
+  "@ourProducts": {},
+  "ourProductsDescription": "تستطيع شراء مواد البناء والتشطيب حسب موقعك وجدول أعمالك بدون التواصل مع أي.",
+  "@ourProductsDescription": {},
+
+  "ourTrucks": "منتجاتنا",
+  "@ourTrucks": {},
+  "ourTrucksDescription": "هل تحتاج لنقل المواد الخاصة بك؟إستأجر الشاحنة المناسبة لحجم بضاعتك بالسعر المناسب.",
+  "@ourTrucksDescription": {},
+
+  "paymentAndSecurity": "الدفع والأمان",
+  "@paymentAndSecurity": {},
+  "paymentAndSecurityDescription": "إدفع عن طريق التطبيق ببطاقة مدى، فيزا/ماستر كارد وأبل باي لعملية أمنة و بدون ملامسة. ويمكنك أيضا إختيار الدفع عند التوصيل.",
+  "@paymentAndSecurityDescription": {},
+
+  "skip": "تخطي",
+  "@skip": {},
+
+  "getStarted": "البدء",
+  "@getStarted": {},
+
+
+  "location": "الموقع",
+  "@location": {},
+  "locationDescription": "الرجاء تحديد موقع المشروع. هذا الموقع سيستخدم لإظهار الخدمات ولتوصيل بضائعك.يمكنك تغيير الموقع في أي وقت",
+  "@locationDescription": {},
+
+  "setYourLocation": "حدد موقعك",
+  "@setYourLocation": {},
+
+
+  "changingLanguage": "تغيير اللغة",
+  "@changingLanguage": {},
+
+  "vehicles": "Vehicles",
+  "@vehicles": {
+    "description": "The conventional newborn programmer greeting"
+  },
+
+  "scaffoldings": "Scaffolding",
+  "@scaffoldings": {
+    "description": "The conventional newborn programmer greeting"
+
+  }
+}

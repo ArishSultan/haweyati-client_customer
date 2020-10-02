@@ -1,0 +1,53 @@
+{
+  "@@locale": "en",
+
+  "ourServices": "Our Services",
+  "@ourServices": {},
+  "ourServicesDescription": "Renting different sizes of construction dumpsters and different types of scaffolding. By just easy steps, it will be delivered to your site.",
+  "@ourServicesDescription": {},
+
+  "ourProducts": "Our Products",
+  "@ourProducts": {},
+  "ourProductsDescription": "You can buy any building & finishing materials as per your location & time schedule without contacting with any person.",
+  "@ourProductsDescription": {},
+
+  "ourTrucks": "Our Trucks",
+  "@ourTrucks": {},
+  "ourTrucksDescription": "Need to transfer your materials?Rent the right truck type to suit your materials volume with the right price",
+  "@ourTrucksDescription": {},
+
+  "paymentAndSecurity": "Payment & Security",
+  "@paymentAndSecurity": {},
+  "paymentAndSecurityDescription": "Pay with Mada, Visa/Mater Card and Apple pay for a secure & hands free deals, or choose cash on delivery option.",
+  "@paymentAndSecurityDescription": {},
+
+  "skip": "Skip",
+  "@skip": {},
+
+  "getStarted": "Get Started",
+  "@getStarted": {},
+
+
+  "location": "Location",
+  "@location": {},
+  "locationDescription": "Please select your site location. This location will be used to show the services & delivering your items. You can edit this location at any time.",
+  "@locationDescription": {},
+
+  "setYourLocation": "Set Your Location",
+  "@setYourLocation": {},
+
+
+  "changingLanguage": "Changing Language",
+  "@changingLanguage": {},
+
+  "vehicles": "Vehicles",
+  "@vehicles": {
+    "description": "The conventional newborn programmer greeting"
+  },
+
+  "scaffoldings": "Scaffolding",
+  "@scaffoldings": {
+    "description": "The conventional newborn programmer greeting"
+
+  }
+}

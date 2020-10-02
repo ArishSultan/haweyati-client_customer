@@ -1,9 +1,8 @@
 import 'routes.dart';
-import 'l10n/localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:haweyati/l10n/app_localizations.dart';
 
 class HaweyatiApp extends Theme {
   HaweyatiApp({
@@ -17,6 +16,17 @@ class HaweyatiApp extends Theme {
           color: Colors.white
         ),
         brightness: Brightness.dark
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith((states) {
+            print(states);
+            return Color(0xFFFF974D);
+          }),
+          overlayColor: MaterialStateProperty.all(Color(0x33FFFFFF)),
+          foregroundColor: MaterialStateProperty.all(Colors.white),
+          shape: MaterialStateProperty.all(StadiumBorder())
+        )
       ),
       inputDecorationTheme: InputDecorationTheme(
         isDense: true,
@@ -38,17 +48,8 @@ class HaweyatiApp extends Theme {
           routes: routes,
 
           initialRoute: /*status ? HOME_PAGE : */FEATURES_PAGE,
-
-          supportedLocales: const [
-            const Locale('en'),
-            const Locale('ar'),
-          ],
-
-          localizationsDelegates: [
-            HaweyatiLocalizations.delegate,
-            // GlobalWidgetsLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate
-          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          localizationsDelegates: AppLocalizations.localizationsDelegates
         );
       }
     )

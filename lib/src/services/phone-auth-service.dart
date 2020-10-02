@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebasePhoneAuth{
@@ -17,11 +17,13 @@ class FirebasePhoneAuth{
           verificationId=verID;
         },
         codeSent: (String verID,[int forceCodeResend]) async {
-          await this.completer;
-          print('asdasdasdasd');
+          await this.completer.future;
 
-          AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verID, smsCode: "00");
-          AuthResult result = await auth.signInWithCredential(credential);
+          final credential = PhoneAuthProvider.credential(
+            verificationId: verID, smsCode: '00'
+          );
+
+          UserCredential result = await auth.signInWithCredential(credential);
           if(result.user != null){
             print("code verified");
           } else {
@@ -35,7 +37,8 @@ class FirebasePhoneAuth{
           Navigator.pop(context);
           Navigator.pop(context);
         },
-        verificationFailed: (AuthException exception){
+
+        verificationFailed: (exception){
           print('${exception.message}');
         }
     );

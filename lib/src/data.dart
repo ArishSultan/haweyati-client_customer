@@ -86,7 +86,7 @@ class _AppDataImpl implements AppData {
     final preferences = await SharedPreferences.getInstance();
 
     currentLocale.value = Locale.fromSubtags(
-      languageCode: preferences.getString('locale')
+      languageCode: preferences.getString('locale') ?? 'en'
     );
 
     _city = preferences.getString('city');

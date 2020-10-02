@@ -10,6 +10,11 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Internationalization (i18n) Support.
+  flutter_localizations:
+    sdk: flutter
+  intl:
+
   # Location and Maps Plugins
   geocoder:
   geolocator:
@@ -21,12 +26,6 @@ dependencies:
   hive:
   hive_flutter:
   shared_preferences:
-
-  # l10n related Plugins (Will be removed).
-  intl:
-  intl_translation:
-  flutter_localizations:
-    sdk: flutter
 
   # Plugins for Social Authentication
   firebase_auth:
@@ -55,14 +54,14 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  generate: true
   uses-material-design: true
 
   assets:
     - assets/icons/
     - assets/images/
     - assets/images/home-page/
-    - assets/images/welcome-page/
-    - assets/translations/
+    - assets/images/features-page/
 
   fonts:
     - family: Lato
