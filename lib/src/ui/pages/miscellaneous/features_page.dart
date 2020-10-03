@@ -19,8 +19,7 @@ class FeaturesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return LocalizedView(
       builder: (context, lang) => NoScrollView(
-        appBar: _AppBar(_page.value != 3, lang.skip),
-
+        appBar: _AppBar(_page, lang.skip),
         extendBody: true,
         body: DottedBackgroundView(
           padding: const EdgeInsets.only(bottom: 56),
@@ -94,7 +93,7 @@ class _BottomControls extends StatelessWidget {
               TextButton.icon(
                 onPressed: () => Navigator
                     .of(context)
-                    .pushNamed(PRE_LOCATION_PAGE),
+                    .pushReplacementNamed(PRE_LOCATION_PAGE),
 
                 style: ButtonStyle(
                   padding: MaterialStateProperty.all(const EdgeInsets.symmetric(
@@ -164,45 +163,53 @@ class _FeatureViewIndicator extends Container {
     )
   );
 }
+
 class _AppBar extends StatelessWidget with PreferredSizeWidget {
-  final bool showSkip;
   final String skipText;
-  _AppBar(this.showSkip, this.skipText);
+  final ValueListenable<int> page;
+  _AppBar(this.page, this.skipText);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      color: Color(0xFF313F53),
-      child: Stack(children: [
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: LocalizationSelector(),
-          ),
-        ),
-
-        Align(
-          alignment: Alignment.center,
-          child: Image.asset(AppLogo, width: 40, height: 40)
-        ),
-
-        if (showSkip)
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              child: Text(skipText),
-              style: ButtonStyle(
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0)
-                )),
-                backgroundColor: MaterialStateProperty.all(Colors.transparent)
+    return ValueListenableBuilder(
+      valueListenable: page,
+      builder: (context, val, child) {
+        return Container(
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          color: Color(0xFF313F53),
+          child: Stack(children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: LocalizationSelector(),
               ),
-              onPressed: () => Navigator.of(context).pushNamed(PRE_LOCATION_PAGE)
-            )
-          ),
-      ], fit: StackFit.expand),
+            ),
+
+            Align(
+              alignment: Alignment.center,
+              child: Image.asset(AppLogo, width: 40, height: 40)
+            ),
+
+            if (val != 3)
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  child: Text(skipText),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(0)
+                    )),
+                    backgroundColor: MaterialStateProperty.all(Colors.transparent)
+                  ),
+                  onPressed: () => Navigator
+                      .of(context)
+                      .pushReplacementNamed(PRE_LOCATION_PAGE)
+                )
+              ),
+          ], fit: StackFit.expand),
+        );
+      },
     );
   }
 

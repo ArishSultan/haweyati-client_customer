@@ -36,9 +36,31 @@
   "setYourLocation": "حدد موقعك",
   "@setYourLocation": {},
 
+  "useLocation": "إستخدام الموقع؟",
+  "@useLocation": {},
+  "useLocationMessage1": "هذا التطبيق يريد تغيير إعدادات هاتفك.الرجاء فتح خدمة تحديد المواقع في جهازك للمتابعة.",
+  "@useLocationMessage1": {},
+  "useLocationMessage2": "استخدم شبكات الواي فاي والجوال لتحديد الموقع",
+  "@useLocationMessage2": {},
 
+
+  "learnMore": "Learn More",
+  "@learnMore": {},
+
+
+  "fetchingCurrentCoordinates": "إحضار الإحداثيات الحالية",
+  "@fetchingCurrentCoordinates": {},
+  "fetchingLocationData": "إحضار بيانات الموقع",
+  "@fetchingLocationData": {},
   "changingLanguage": "تغيير اللغة",
   "@changingLanguage": {},
+
+
+  "yes": "نعم",
+  "@yes": {},
+  "no": "ل",
+  "@no": {},
+
 
   "vehicles": "Vehicles",
   "@vehicles": {

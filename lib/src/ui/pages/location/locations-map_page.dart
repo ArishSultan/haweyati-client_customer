@@ -1,19 +1,22 @@
 import 'dart:async';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:geocoder/geocoder.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
+import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/data.dart';
-import 'package:haweyati/src/models/location_model.dart' as l;
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
-import 'package:haweyati/src/ui/widgets/localization-selector.dart';
+import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
+import 'package:location/location.dart' as loc;
 import 'package:haweyati/src/const.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:haweyati/src/ui/views/localized_view.dart';
+import 'package:haweyati/src/models/location_model.dart' as l;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:haweyati/src/ui/widgets/localization-selector.dart';
+import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 
 const apiKey = 'AIzaSyDdNpY6LGWgHqRfTRZsKkVhocYOaER325w';
 
@@ -100,95 +103,97 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return NoScrollView(
-      appBar: AppBar(
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Center(
-              child: LocalizationSelector(),
-            ),
-          )
-        ],
-        title: Image.asset(AppLogo, width: 40, height: 40),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Transform.rotate(
-            angle: Localizations.localeOf(context).toString() == 'ar' ? 3.14159 : 0,
-            child: Image.asset(ArrowBackIcon, width: 26, height: 26),
-          ),
-          onPressed: Navigator.of(context).pop
-        ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(50),
-          child: Container(
-            height: 50,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15, vertical: 8
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20)
-              ),
-              child: Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Image.asset(LocationIcon, width: 15),
-                  ),
-                  Expanded(
-                    child: CupertinoTextField(
-                      onTap: () async {
-                        final prediction = await PlacesAutocomplete.show(
-                          context: context, apiKey: apiKey,
-                        );
-
-                        if (prediction != null) {
-                          final detail = await GoogleMapsPlaces(apiKey: apiKey)
-                            .getDetailsByPlaceId(prediction.placeId);
-
-                          _setLocationOnMap(LatLng(
-                            detail.result.geometry.location.lat,
-                            detail.result.geometry.location.lng
-                          ));
-                        }
-                      },
-                      readOnly: true,
-                      padding: const EdgeInsets.all(0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(50)
-                      ),
-                      style: TextStyle(color: Colors.grey.shade700),
-                      controller: TextEditingController(text: _address?.addressLine ?? 'Tap To Search'),
-                    ),
-                  ),
-                  GestureDetector(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 7),
-                      child: Image.asset(MyLocationIcon, width: 24),
-                    ),
-                    onTap: () async => _setLocationOnMap(null)
-                  ),
-                ],
+    return LocalizedView(
+      builder: (context, lang) => NoScrollView(
+        appBar: AppBar(
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Center(
+                child: LocalizationSelector(),
               ),
             )
+          ],
+          title: Image.asset(AppLogo, width: 40, height: 40),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Transform.rotate(
+              angle: Localizations.localeOf(context).toString() == 'ar' ? 3.14159 : 0,
+              child: Image.asset(ArrowBackIcon, width: 26, height: 26),
+            ),
+            onPressed: Navigator.of(context).pop
+          ),
+          bottom: PreferredSize(
+            preferredSize: Size.fromHeight(50),
+            child: Container(
+              height: 50,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15, vertical: 8
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20)
+                ),
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Image.asset(LocationIcon, width: 15),
+                    ),
+                    Expanded(
+                      child: CupertinoTextField(
+                        onTap: () async {
+                          final prediction = await PlacesAutocomplete.show(
+                            context: context, apiKey: apiKey,
+                          );
+
+                          if (prediction != null) {
+                            final detail = await GoogleMapsPlaces(apiKey: apiKey)
+                              .getDetailsByPlaceId(prediction.placeId);
+
+                            _setLocationOnMap(LatLng(
+                              detail.result.geometry.location.lat,
+                              detail.result.geometry.location.lng
+                            ));
+                          }
+                        },
+                        readOnly: true,
+                        padding: const EdgeInsets.all(0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(50)
+                        ),
+                        style: TextStyle(color: Colors.grey.shade700),
+                        controller: TextEditingController(text: _address?.addressLine ?? 'Tap To Search'),
+                      ),
+                    ),
+                    GestureDetector(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 7),
+                        child: Image.asset(MyLocationIcon, width: 24),
+                      ),
+                      onTap: () async => _setLocationOnMap(null)
+                    ),
+                  ],
+                ),
+              )
+            )
           )
+        ),
+        body: _resolveMap(),
+        bottom: RaisedActionButton(
+          label: lang.setYourLocation,
+          onPressed: (_location != null && _initiated) ? () {
+            Navigator.of(context).pop(l.Location(
+              city: _address.locality,
+              address: _address.addressLine,
+              latitude: _location.latitude,
+              longitude: _location.longitude
+            ));
+          } : null,
         )
       ),
-      body: _resolveMap(),
-      bottom: RaisedActionButton(
-        // label: tr('Set_Your_Location'),
-        onPressed: _location != null ? () {
-          Navigator.of(context).pop(l.Location(
-            city: _address.locality,
-            address: _address.addressLine,
-            latitude: _location.latitude,
-            longitude: _location.longitude
-          ));
-        } : null,
-      )
     );
   }
 
@@ -228,23 +233,15 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
           child: CircularProgressIndicator(strokeWidth: 1)
         ),
         SizedBox(width: 20),
-        Text('Fetching Current Coordinates')
+        Text(AppLocalizations.of(context).fetchingCurrentCoordinates)
       ], mainAxisAlignment: MainAxisAlignment.center));
     }
   }
 
   _setLocationOnMap(LatLng location) async {
     if (_controller != null) {
-      showDialog(context: context, builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        content: Row(children: <Widget>[
-          SizedBox(
-            width: 20, height: 20,
-            child: CircularProgressIndicator(strokeWidth: 2)
-          ),
-          SizedBox(width: 20),
-          Text('Fetching Location Data ...')
-        ]),
+      showDialog(context: context, builder: (context) => WaitingDialog(
+        message: AppLocalizations.of(context).fetchingLocationData
       ));
     }
 
@@ -262,7 +259,7 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
 
     _address = await _utils.fetchAddress(_location);
     if (_controller != null) {
-      await Navigator.of(context).pop();
+      Navigator.of(context).pop();
       _controller.animateCamera(CameraUpdate.newLatLng(_location));
     }
 
@@ -272,6 +269,8 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
 }
 
 class _MapUtilsImpl {
+  final _location = loc.Location();
+
   Future<Address> fetchAddress(final LatLng location) async {
     return (await Geocoder.google(apiKey)
         .findAddressesFromCoordinates(Coordinates(location.latitude, location.longitude)))
@@ -279,7 +278,7 @@ class _MapUtilsImpl {
   }
 
   Future<LatLng> fetchCurrentLocation() async {
-    final position = await getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+    final position = await _location.getLocation();
     return LatLng(position.latitude, position.longitude);
   }
 }

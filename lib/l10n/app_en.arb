@@ -37,8 +37,31 @@
   "@setYourLocation": {},
 
 
+  "useLocation": "Use Location?",
+  "@useLocation": {},
+  "useLocationMessage1": "This app wants to change your device settings.",
+  "@useLocationMessage1": {},
+  "useLocationMessage2": "Use Wifi and mobile networks for location",
+  "@useLocationMessage2": {},
+
+
+  "learnMore": "Learn More",
+  "@learnMore": {},
+
+
+  "fetchingCurrentCoordinates": "Fetching Current Coordinates",
+  "@fetchingCurrentCoordinates": {},
+  "fetchingLocationData": "Fetching Location Data",
+  "@fetchingLocationData": {},
   "changingLanguage": "Changing Language",
   "@changingLanguage": {},
+
+
+  "yes": "YES",
+  "@yes": {},
+  "no": "NO",
+  "@no": {},
+
 
   "vehicles": "Vehicles",
   "@vehicles": {

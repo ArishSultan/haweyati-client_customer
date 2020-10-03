@@ -17,7 +17,7 @@ dependencies:
 
   # Location and Maps Plugins
   geocoder:
-  geolocator:
+  location:
   google_maps_flutter:
   flutter_google_places:
   google_maps_webservice:
