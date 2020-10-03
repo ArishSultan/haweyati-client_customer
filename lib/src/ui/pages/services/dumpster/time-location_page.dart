@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/app.dart';
 import 'package:haweyati/src/common/simple-form.dart';
 import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
@@ -33,6 +34,7 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return OrderProgressView(
       key: _scaffoldKey,
+      progress: .5,
 
       children: [
         HeaderView(

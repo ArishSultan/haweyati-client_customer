@@ -61,21 +61,39 @@ class CartPage extends StatelessWidget {
             itemBuilder: (context, index) => FutureBuilder(
               future: _cart.getAt(index),
               builder: (context, AsyncSnapshot<FinishingMaterial> snapshot) {
-                return Dismissible(
-                  key: UniqueKey(),
-                  direction: DismissDirection.endToStart,
-                  onDismissed: (_) async {
-                    await _cart.deleteAt(index);
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10, horizontal: 15
+                  ),
+                  child: Dismissible(
+                    key: UniqueKey(),
+                    direction: DismissDirection.endToStart,
 
-                    if (_cart.isEmpty) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: ServiceListItem(
-                    image: snapshot.data?.images?.name ?? '',
-                    name: snapshot.data?.name ?? '',
-                    onTap: () {}
-                  )
+                    background: Container(
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Icon(CupertinoIcons.trash, color: Colors.red, size: 30),
+                        ),
+                      ),
+                    ),
+
+                    onDismissed: (_) async {
+                      await _cart.deleteAt(index);
+
+                      if (_cart.isEmpty) {
+                        Navigator.of(context).pop();
+                      }
+                    },
+
+                    child: ServiceListItem(
+                      margin: const EdgeInsets.all(0),
+                      image: snapshot.data?.images?.name ?? '',
+                      name: snapshot.data?.name ?? '',
+                      onTap: () {}
+                    )
+                  ),
                 );
               },
             ),

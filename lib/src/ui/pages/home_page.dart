@@ -1,7 +1,9 @@
 import 'dart:ui' as ui;
 
+import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/common/services/jwt-auth_service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
+import 'package:haweyati/src/ui/views/localized_view.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,14 +36,12 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    print(AppData.instance().user.serialize());
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return LocalizedView(builder: (context, lang) => Scaffold(
       key: _drawerKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -82,8 +82,15 @@ class _HomePageState extends State<HomePage> {
             ),
             padding: const EdgeInsets.all(15),
             child: Column(children: <Widget>[
-              // Text(tr('hello'), style: TextStyle(fontSize: 17, color: Colors.white, fontWeight: FontWeight.bold)),
-              // Padding(padding: const EdgeInsets.only(top: 8, bottom: 20), child: Text(tr('explore'), style: TextStyle(color: Colors.white))),
+              Text(lang.hello, style: TextStyle(
+                fontSize: 17,
+                color: Colors.white,
+                fontWeight: FontWeight.bold
+              )),
+              Padding(
+                padding: const EdgeInsets.only(top: 8, bottom: 20),
+                child: Text(lang.explore, style: TextStyle(color: Colors.white))
+              ),
 
               Directionality(
                 textDirection: ui.TextDirection.ltr,
@@ -157,49 +164,50 @@ class _HomePageState extends State<HomePage> {
                 child: Column(children: <Widget>[
                   _ListTile(context,
                     image: OrderIcon,
-                    // title: tr('My_Orders'),
+                    title: lang.myOrders,
                     navigateTo: MY_ORDERS_PAGE
                   ),
                   _ListTile(context,
                     image: SettingsIcon,
-                    // title: tr('Settings'),
+                    title: lang.settings,
                     navigateTo: SETTINGS_PAGE,
                   ),
                   _ListTile(context,
                     image: AccountIcon,
-                    // title: tr('Invite_Friends'),
+                    title: lang.inviteFriends,
                     navigateTo: SHARE_AND_INVITE_PAGE,
                   ),
                   _ListTile(context,
                     image: OrderIcon,
-                    // title: tr('Rewards'),
+                    title: lang.rewards,
                     navigateTo: REWARDS_PAGE,
                   ),
                   _ListTile(context,
                     image: TermIcon,
-                    // title: tr('Terms_Conditions'),
+                    title: lang.termsAndConditions,
                     navigateTo: TERMS_AND_CONDITIONS_PAGE,
                   ),
                   _ListTile(context,
                     image: StarIconOutlined,
-                    // title: tr('Rate App'),
+                    title: lang.rateApp,
                     navigateTo: RATE_APP_PAGE,
                   ),
                   _ListTile(context,
                     image: LogoutIcon,
-                    // title: tr('Logout'),
+                    title: lang.logout,
                     onPressed: () async {
                       showDialog(
                         context: context,
-                        builder: (context) => WaitingDialog(message: 'Signing Out')
+                        builder: (context) => WaitingDialog(message: lang.signingOut)
                       );
+
                       try {
                         await JwtAuthService.create().$signOut();
                       } catch (err) {
                         print(err);
                       }
-                      Navigator
-                          .of(context)
+
+                      Navigator.of(context)
                           .pushNamedAndRemoveUntil(HOME_PAGE, (route) => false);
                     }
                   )
@@ -217,7 +225,7 @@ class _HomePageState extends State<HomePage> {
         child: LiveScrollableView<String>(
           header: Padding(padding: const EdgeInsets.only(top: 21)),
           loader: () => _service.getAvailableServices(_appData.city),
-          builder: (context, string) => _ServiceContainer(string)
+          builder: (context, string) => _ServiceContainer(string, lang)
         ),
       ),
       floatingActionButton: ValueListenableBuilder(
@@ -239,7 +247,7 @@ class _HomePageState extends State<HomePage> {
           );
         }
       )
-    );
+    ));
   }
 }
 
@@ -262,8 +270,8 @@ class _ListTile extends ListTile {
 }
 class _ServiceContainerDetail {
   final String page;
-  final String title;
   final String image;
+  final String Function(AppLocalizations) title;
 
   const _ServiceContainerDetail({
     this.page, this.title, this.image
@@ -272,31 +280,32 @@ class _ServiceContainerDetail {
 
 class _ServiceContainer extends StatelessWidget {
   final String service;
-  _ServiceContainer(this.service);
+  final AppLocalizations lang;
+  _ServiceContainer(this.service, this.lang);
 
-  static const _map = {
-    'Construction Dumpster': const _ServiceContainerDetail(
+  static final _map = {
+    'Construction Dumpster': _ServiceContainerDetail(
       page: DUMPSTERS_LIST_PAGE,
-      title: 'Construction_Dumpster',
+      title: (lang) => lang.constructionDumpsters,
       image: ConstructionDumpsterServiceImage
     ),
-    'Scaffolding': const _ServiceContainerDetail(
-      title: 'Scaffolding',
+    'Scaffolding': _ServiceContainerDetail(
+      title: (lang) => lang.scaffoldings,
       page: SCAFFOLDINGS_LIST_PAGE,
       image: ScaffoldingServiceImage
     ),
-    'Building Material': const _ServiceContainerDetail(
-      title: 'building',
+    'Building Material': _ServiceContainerDetail(
+      title: (lang) => lang.buildingMaterials,
       page: BUILDING_MATERIALS_LIST_PAGE,
       image: BuildingMaterialsServiceImage
     ),
-    'Finishing Material': const _ServiceContainerDetail(
-      title: 'Finishing_Materials',
+    'Finishing Material': _ServiceContainerDetail(
+      title: (lang) => lang.finishingMaterials,
       page: FINISHING_MATERIALS_LIST_PAGE,
       image: FinishingMaterialsServiceImage
     ),
-    'Delivery Vehicle': const _ServiceContainerDetail(
-      title: 'vehicles',
+    'Delivery Vehicle': _ServiceContainerDetail(
+      title: (lang) => lang.vehicles,
       page: '/scaffoldings-list',
       image: DeliveryVehiclesServiceImage,
     )
@@ -318,13 +327,13 @@ class _ServiceContainer extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(20)
         ),
-        // child: Center(
-        //   child: Text(tr(service.title), style: TextStyle(
-        //     fontSize: 18,
-        //     color: Colors.white,
-        //     fontWeight: FontWeight.bold
-        //   )),
-        // ),
+        child: Center(
+          child: Text(service.title(lang), style: TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+            fontWeight: FontWeight.bold
+          )),
+        ),
       )
     );
   }

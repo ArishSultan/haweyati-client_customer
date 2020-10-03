@@ -63,14 +63,57 @@
   "@no": {},
 
 
+  "hello": "Hello",
+  "@hello": {},
+
+  "explore": "Explore our products and services",
+  "@explore": {},
+
+  "myOrders": "My Order",
+  "@myOrders": {},
+  "settings": "Settings",
+  "@settings": {},
+  "inviteFriends": "Invite Friends",
+  "@inviteFriends": {},
+  "rewards": "Rewards",
+  "@rewards": {},
+  "termsAndConditions": "Terms & Conditions",
+  "@termsAndConditions": {},
+  "rateApp": "Rate App",
+  "@rateApp": {},
+  "logout": "Sign out",
+  "@logout": {},
+
+
+  "signIn": "Sign in",
+  "@signIn": {},
+  "enterCredentials": "Enter your Credentials",
+  "@enterCredentials": {},
+  "signingIn": "Signing In",
+  "@signingIn": {},
+  "signingOut": "Signing Out",
+  "@signingOut": {},
+
+  "show": "Show",
+  "@show": {},
+  "hide": "Hide",
+  "@hide": {},
+  "yourPhone": "Your Phone",
+  "@yourPhone": {},
+  "yourPassword": "Your Password",
+  "@yourPassword": {},
+  "forgotPassword": "Forgot Password?",
+  "@forgotPassword": {},
+
+
+  "scaffoldings": "Scaffoldings",
+  "@scaffoldings": {},
+  "buildingMaterials": "Building Materials",
+  "@buildingMaterials": {},
+  "finishingMaterials": "Finishing Materials",
+  "@finishingMaterials": {},
+  "constructionDumpsters": "Construction Dumpsters",
+  "@constructionDumpsters": {},
   "vehicles": "Vehicles",
-  "@vehicles": {
-    "description": "The conventional newborn programmer greeting"
-  },
-
-  "scaffoldings": "Scaffolding",
-  "@scaffoldings": {
-    "description": "The conventional newborn programmer greeting"
-
-  }
+  "@vehicles": {}
 }

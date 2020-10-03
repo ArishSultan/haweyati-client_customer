@@ -80,12 +80,19 @@ class Order extends HiveObject implements JsonSerializable {
       location: OrderLocation.fromJson(json['dropoff']),
 
       items: (json['items'] as List)
-        .map((item) => OrderItemHolder(
-          supplier: item['supplier'],
-          subtotal: item['subtotal']?.toDouble(),
+        .map((item) {
+          var supplier = item['supplier'];
+          if (supplier is Map) {
+            supplier = supplier['_id'];
+          }
 
-          item: _parser != null ? _parser(item['item']) : null
-        ))
+          return OrderItemHolder(
+            supplier: supplier,
+            subtotal: item['subtotal']?.toDouble(),
+
+            item: _parser != null ? _parser(item['item']) : null
+          );
+        })
         .toList(growable: false),
     );
   }

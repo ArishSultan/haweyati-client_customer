@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/l10n/app_localizations.dart';
 
 class HaweyatiTextField extends StatelessWidget {
   final bool dense;
   final String label;
   final IconData icon;
   final int maxLength;
+  final EdgeInsets scrollPadding;
   final Function(String) onSaved;
   final Function(String) validator;
   final TextInputType keyboardType;
@@ -13,6 +15,7 @@ class HaweyatiTextField extends StatelessWidget {
 
   HaweyatiTextField({
     this.maxLength,
+    this.scrollPadding = const EdgeInsets.all(100),
     this.label, this.icon, this.onSaved,
     this.dense = false, this.validator,
     this.keyboardType, this.controller
@@ -26,7 +29,7 @@ class HaweyatiTextField extends StatelessWidget {
       onFieldSubmitted: (v) {
         FocusScope.of(context).nextFocus();
       },
-      scrollPadding: EdgeInsets.all(180),
+      scrollPadding: EdgeInsets.all(100),
       decoration: InputDecoration(
         labelText: label,
       ),
@@ -41,8 +44,9 @@ class HaweyatiTextField extends StatelessWidget {
 class HaweyatiPasswordField extends StatefulWidget {
   final IconData icon;
   final String label;
-  final TextInputType keyboardType;
   final BuildContext context;
+  final TextInputType keyboardType;
+  final EdgeInsets scrollPadding;
   final TextEditingController controller;
   final Function(String) validator;
   final Function(String) onSaved;
@@ -50,6 +54,7 @@ class HaweyatiPasswordField extends StatefulWidget {
   HaweyatiPasswordField({
     this.icon,
     this.label,
+    this.scrollPadding = const EdgeInsets.all(100),
     this.keyboardType,
     this.context,
     this.onSaved,
@@ -80,15 +85,19 @@ class _HaweyatiPasswordFieldState extends State<HaweyatiPasswordField> {
       obscureText: _show,
       keyboardType: widget.keyboardType,
       textInputAction: TextInputAction.next,
-      scrollPadding: EdgeInsets.all(180),
+      scrollPadding: widget.scrollPadding,
       decoration: InputDecoration(
         labelText: widget.label,
         focusColor: Theme.of(context).primaryColor,
         suffix: GestureDetector(
-          child: Text('Show', style: TextStyle(
-            color: _node.hasFocus
-              ? Theme.of(context).primaryColor
-              : Colors.grey
+          child: Text(_show
+            ? AppLocalizations.of(context).show
+            : AppLocalizations.of(context).hide,
+            style: TextStyle(
+              height: 1,
+              color: _node.hasFocus
+                ? Theme.of(context).primaryColor
+                : Colors.grey
           )),
           onTap: () => setState(() => _show = !_show),
         )

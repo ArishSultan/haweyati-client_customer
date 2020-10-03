@@ -17,22 +17,20 @@ Future<model.Location> _handleGranted({
   model.Location result;
 
   /// Check if the gps is on.
-  var status = await location.serviceEnabled();
-  if (!status) {
-    status = await location.requestService();
-    if (!status) return null;
+  if (await location.requestService()) {
+    if (prevLocation != null) {
+      result = await navigateTo(context, LocationPickerMapPage(LatLng(
+        prevLocation.latitude,
+        prevLocation.longitude
+      )));
+    } else {
+      result = await navigateTo(context, LocationPickerMapPage());
+    }
+
+    return result;
   }
 
-  if (prevLocation != null) {
-    result = await navigateTo(context, LocationPickerMapPage(LatLng(
-      prevLocation.latitude,
-      prevLocation.longitude
-    )));
-  } else {
-    result = await navigateTo(context, LocationPickerMapPage());
-  }
-
-  return result;
+  return null;
 }
 
 Future<model.Location> _handleDenied({

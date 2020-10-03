@@ -8,10 +8,16 @@ class ServiceListItem extends StatelessWidget {
   final String detail;
   final Function onTap;
   final bool assetImage;
+  final bool trailingIcon;
+  final EdgeInsets margin;
 
   ServiceListItem({
     this.image,
     this.detail,
+    this.trailingIcon = false,
+    this.margin = const EdgeInsets.symmetric(
+      vertical: 10, horizontal: 15
+    ),
     @required this.name,
     @required this.onTap,
     this.assetImage = false,
@@ -21,9 +27,7 @@ class ServiceListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(
-        vertical: 10, horizontal: 15
-      ),
+      margin: margin,
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -48,7 +52,9 @@ class ServiceListItem extends StatelessWidget {
         subtitle: detail != null
             ? Text(detail, style: TextStyle(color: Colors.grey))
             : null,
-        trailing: Icon(CupertinoIcons.right_chevron),
+        trailing: trailingIcon
+            ? Icon(CupertinoIcons.right_chevron)
+            : null
       ),
     );
   }

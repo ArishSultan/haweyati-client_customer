@@ -153,6 +153,8 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
           subtotal: _item.price * _item.qty
         )];
 
+        _order.total = _item.price * _item.qty;
+
         navigateTo(context, FinishingMaterialOrderConfirmationPage(_order));
       } : null
     );

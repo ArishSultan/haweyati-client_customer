@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/models/location_model.dart';
 import 'package:haweyati/src/models/time-slot_model.dart';
 
@@ -34,6 +35,7 @@ class OrderLocation extends Location {
 
   @override
   Map<String, dynamic> serialize() => super.serialize()..addAll({
+    'dropoffAddress': address,
     'dropoffTime': dropOffTime?.serialize(),
     'dropoffDate': dropOffDate?.millisecondsSinceEpoch,
   });

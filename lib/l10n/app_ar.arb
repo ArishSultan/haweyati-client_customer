@@ -36,6 +36,7 @@
   "setYourLocation": "حدد موقعك",
   "@setYourLocation": {},
 
+
   "useLocation": "إستخدام الموقع؟",
   "@useLocation": {},
   "useLocationMessage1": "هذا التطبيق يريد تغيير إعدادات هاتفك.الرجاء فتح خدمة تحديد المواقع في جهازك للمتابعة.",
@@ -62,14 +63,57 @@
   "@no": {},
 
 
-  "vehicles": "Vehicles",
-  "@vehicles": {
-    "description": "The conventional newborn programmer greeting"
-  },
+  "hello": "مرحبا",
+  "@hello": {},
 
-  "scaffoldings": "Scaffolding",
-  "@scaffoldings": {
-    "description": "The conventional newborn programmer greeting"
+  "explore": "اكتشف منتجاتنا وخدماتنا",
+  "@explore": {},
 
-  }
+  "myOrders": "طلباتي",
+  "@myOrders": {},
+  "settings": "الضبط",
+  "@settings": {},
+  "inviteFriends": "إدعو أصدقائك",
+  "@inviteFriends": {},
+  "rewards": "المكافاّت",
+  "@rewards": {},
+  "termsAndConditions": "الشروط والأحكام",
+  "@termsAndConditions": {},
+  "rateApp": "قيم البرنامج",
+  "@rateApp": {},
+  "signOut": "تسجيل الخروج",
+  "@signOut": {},
+
+
+  "signIn": "تسجيل الدخول",
+  "@signIn": {},
+  "enterCredentials": "أدخل بيانات الاعتماد الخاصة بك",
+  "@enterCredentials": {},
+  "signingIn": "تسجيل الدخول",
+  "@signingIn": {},
+  "signingOut": "تسجيل خروج",
+  "@signingOut": {},
+
+  "show": "تبين",
+  "@show": {},
+  "hide": "إخفاء",
+  "@hide": {},
+  "yourPhone": "هاتفك #",
+  "@yourPhone": {},
+  "yourPassword": "كلمتك السرية",
+  "@yourPassword": {},
+  "forgotPassword": "هل نسيت كلمة المرور؟",
+  "@forgotPassword": {},
+
+
+  "scaffoldings": "سقالات",
+  "@scaffoldings": {},
+  "buildingMaterials": "مواد بناء",
+  "@buildingMaterials": {},
+  "finishingMaterials": "مواد التشطيب",
+  "@finishingMaterials": {},
+  "constructionDumpsters": "حاويات الدمار",
+  "@constructionDumpsters": {},
+  "vehicles": "مركبات",
+  "@vehicles": {}
 }

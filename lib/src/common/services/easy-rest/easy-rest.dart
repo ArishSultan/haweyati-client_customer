@@ -67,7 +67,7 @@ class _EasyRestImpl implements EasyRest {
     );
 
     if (data is List) {
-      return data.map((e) => _parser(e)).toList();
+      return data/*.map((e) => _parser(e)).toList()*/;
     } else if (data is Map) {
       print('Use Get one for better support');
     }

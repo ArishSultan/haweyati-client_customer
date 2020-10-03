@@ -47,7 +47,7 @@ class HaweyatiApp extends Theme {
           locale: value,
           routes: routes,
 
-          initialRoute: /*status ? HOME_PAGE : */FEATURES_PAGE,
+          initialRoute: status ? HOME_PAGE : FEATURES_PAGE,
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates
         );
