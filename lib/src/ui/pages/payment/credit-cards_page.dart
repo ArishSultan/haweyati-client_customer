@@ -8,6 +8,8 @@ import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:hive/hive.dart';
 
 class CreditCardsPage extends StatefulWidget {
+  final int amount;
+  CreditCardsPage({this.amount});
   @override
   _CreditCardsPageState createState() => _CreditCardsPageState();
 }
@@ -16,7 +18,7 @@ class _CreditCardsPageState extends State<CreditCardsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HaweyatiAppBar(),
+      appBar: HaweyatiAppBar(hideCart: true, hideHome: true),
       body: DottedBackgroundView(
         child: LiveScrollableView(
           title: 'Available Cards',
@@ -42,8 +44,11 @@ class _CreditCardsPageState extends State<CreditCardsPage> {
         height: 40,
         margin: const EdgeInsets.only(bottom: 5),
         child: FlatButton.icon(
-          onPressed: () {
-            navigateTo(context, NewCardPage());
+          onPressed: () async {
+            final data = await navigateTo(context, NewCardPage(amount: widget.amount));
+            print('on cards list page');
+            print(data);
+            if (data != null) Navigator.of(context).pop(data);
           },
           icon: Icon(Icons.add),
           shape: StadiumBorder(),

@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart' as w;
 import 'package:haweyati/src/common/simple-form.dart';
 import 'package:haweyati/src/models/credit-card_model.dart';
+import 'package:haweyati/src/services/payment-service.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/date-picker-field.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:stripe_payment/stripe_payment.dart';
+
+import 'payment-methods_page.dart';
 
 class NewCardPage extends StatefulWidget {
-  @override
-  _NewCardPageState createState() => _NewCardPageState();
+  final int amount;
+  NewCardPage({this.amount});
+
+  @override _NewCardPageState createState() => _NewCardPageState();
 }
 
 class _NewCardPageState extends State<NewCardPage> {
@@ -19,8 +27,15 @@ class _NewCardPageState extends State<NewCardPage> {
   final _key = GlobalKey<SimpleFormState>();
 
   @override
+  void initState() {
+    super.initState();
+    StripeService.init();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return NoScrollView(
+      appBar: HaweyatiAppBar(hideHome: true, hideCart: true),
       body: DottedBackgroundView(
         padding: const EdgeInsets.symmetric(
           horizontal: 15
@@ -28,7 +43,19 @@ class _NewCardPageState extends State<NewCardPage> {
         child: SingleChildScrollView(
           child: SimpleForm(
             key: _key,
-            onSubmit: () {},
+            onSubmit: () async {
+              StripeTransactionResponse response = await StripeService.payViaExistingCard(
+                card: _card, currency: 'SAR', amount: widget.amount.toString()
+              );
+
+              if (response.success ?? false) {
+                print('New Card Page');
+                w.Navigator.pop(context, PaymentResponse(
+                  PaymentMethodEnum.creditCard,
+                  response.paymentIntentId
+                ));
+              }
+            },
             child: Column(children: [
               HeaderView(
                 title: 'Visa/Master Card',
@@ -42,7 +69,8 @@ class _NewCardPageState extends State<NewCardPage> {
 
               HaweyatiTextField(
                 label: 'Name',
-                onSaved: (val) => _card.ownerName = val,
+                value: 'Haroon',
+                onSaved: (val) => _card.name = val,
               ),
               Padding(
                 padding: const EdgeInsets.only(
@@ -51,6 +79,7 @@ class _NewCardPageState extends State<NewCardPage> {
                 child: HaweyatiTextField(
                   label: 'Card Number',
                   maxLength: 16,
+                  value: '4242424242424242',
                   keyboardType: TextInputType.number,
                   onSaved: (val) => _card.number = val,
                 ),
@@ -67,7 +96,11 @@ class _NewCardPageState extends State<NewCardPage> {
                       border: Border.all(color: Colors.grey.shade500)
                     ),
                     child: DatePickerField(
-                      onChanged: (date) => _card.expiresAt = date
+                      initialValue: DateTime.now(),
+                      onChanged: (date) {
+                        _card.expMonth = date.month;
+                        _card.expYear = date.year;
+                      }
                     )
                   )
                 ),
@@ -75,7 +108,9 @@ class _NewCardPageState extends State<NewCardPage> {
                 Expanded(
                   child: HaweyatiTextField(
                     label: 'Security Code',
-                    onSaved: (val) => _card.ownerName = val,
+                    value: '123',
+                    keyboardType: TextInputType.number,
+                    onSaved: (val) => _card.cvc = val,
                   ),
                 ),
               ])
@@ -85,10 +120,12 @@ class _NewCardPageState extends State<NewCardPage> {
       ),
 
       bottom: FlatActionButton(
-        /// TODO: Change this icon.
         icon: Icon(Icons.lock_outline),
-        label: 'Pay \$123123.00 SAR',
-        onPressed: () {
+        label: 'Pay ${widget.amount} SAR',
+        onPressed: () async {
+          _key.currentState.submit();
+          print(_card.cvc);
+
         }
       ),
     );

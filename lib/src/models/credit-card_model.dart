@@ -1,13 +1,13 @@
 import 'package:hive/hive.dart';
 
-class CreditCard extends HiveObject {
+class CreditCardModel extends HiveObject {
   String number;
   String ownerName;
   String securityCode;
 
   DateTime expiresAt;
 
-  CreditCard({
+  CreditCardModel({
     this.number,
     this.ownerName,
     this.securityCode,

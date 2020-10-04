@@ -30,23 +30,36 @@ class StripeService {
   }
 
   static Future<StripeTransactionResponse> payViaExistingCard({String amount, String currency, CreditCard card}) async{
+
     try {
-      var paymentMethod = await StripePayment.createPaymentMethod(
-          PaymentMethodRequest(card: card)
-      );
-      var paymentIntent = await StripeService.createPaymentIntent(
-          amount,
-          currency
-      );
+      var paymentMethod = await StripePayment.createPaymentMethod(PaymentMethodRequest(card: card));
+
+      var paymentIntent;
+      try{
+        paymentIntent = await StripeService.createPaymentIntent(
+            amount,
+            currency
+        );
+
+        print(paymentIntent);
+      } catch (e){
+        print(e);
+      }
 
 
-      var response = await StripePayment.confirmPaymentIntent(
-          PaymentIntent(
-              clientSecret: paymentIntent['client_secret'],
-              paymentMethodId: paymentMethod.id
-          )
-      );
-//      print(response.paymentIntentId);
+      var response;
+      try{
+        response = await StripePayment.confirmPaymentIntent(
+            PaymentIntent(
+                clientSecret: paymentIntent['client_secret'],
+                paymentMethodId: paymentMethod.id
+            ));
+      }catch (e){
+          print(e);
+        }
+
+
+        print(response.paymentIntentId);
 
       if (response.status == 'succeeded') {
         return new StripeTransactionResponse(
@@ -111,6 +124,7 @@ class StripeService {
   }
 
   static getPlatformExceptionErrorResult(err) {
+    print(err);
     String message = 'Something went wrong';
     if (err.code == 'cancelled') {
       message = 'Transaction cancelled';

@@ -35,6 +35,7 @@ class _DatePickerFieldState extends State<DatePickerField> {
   void initState() {
     super.initState();
     _selectedDate = widget.initialValue ?? _firstDate;
+    widget.onChanged(_selectedDate);
   }
 
   @override

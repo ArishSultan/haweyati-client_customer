@@ -45,7 +45,9 @@ class OrderConfirmationView extends StatelessWidget {
 
           if (preProcess != null) await preProcess();
 
-          final result = await navigateTo(context, PaymentMethodsPage());
+          final result = await navigateTo(context, PaymentMethodPage(
+            amount: order.total.toInt(),
+          ));
 
           if (result == null) {
             _scaffoldKey.currentState.showSnackBar(PaymentMethodNotSelectedSnackBar());
