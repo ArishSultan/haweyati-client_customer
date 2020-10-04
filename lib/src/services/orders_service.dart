@@ -5,11 +5,11 @@ import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
 class OrdersService {
   final _service = EasyRest();
 
-  Future<List<Order>> orders() async {
+  Future<List<Order>> orders({String orderId}) async {
     final id = AppData.instance().user?.id;
     if (id != null) {
       List<dynamic> data = await _service
-          .$getAll(endpoint: 'orders/dummy', query: {'customer': id});
+          .$getAll(endpoint: 'orders/dummy', query: {'customer': id, 'name': orderId});
 
       return data.map((e) => Order.fromJson(e)).toList();
     } else {

@@ -14,7 +14,7 @@ import 'order-item_model.dart';
 class Order extends HiveObject implements JsonSerializable {
   String id;
 
-  int status;
+  OrderStatus status;
   String city;
   String note;
   double total;
@@ -47,7 +47,7 @@ class Order extends HiveObject implements JsonSerializable {
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
-    OrderItem Function(Map<String, dynamic>) _parser = null;
+    OrderItem Function(Map<String, dynamic>) _parser;
     final type = _typeFromString(json['service']);
 
     switch (type) {
@@ -65,12 +65,32 @@ class Order extends HiveObject implements JsonSerializable {
         break;
     }
 
+    var status;
+    switch (json['status']) {
+      case 0:
+        status = OrderStatus.pending;
+        break;
+      case 1:
+        status = OrderStatus.active;
+        break;
+      case 2:
+        status = OrderStatus.closed;
+        break;
+      case 3:
+        status = OrderStatus.rejected;
+        break;
+      case 4:
+        status = OrderStatus.dispatched;
+        break;
+    }
+
     return Order(_typeFromString(json['service']),
       note: json['note'],
       city: json['city'],
       total: json['total']?.toDouble(),
-      status: json['status'],
+      status: status,
       number: json['orderNo'],
+      createdAt: DateTime.parse(json['createdAt']),
       payment: Payment.fromJson(/*json['payment'] ?? */json),
 
       customer: json['customer'] is String
@@ -140,6 +160,13 @@ class Order extends HiveObject implements JsonSerializable {
   }
 }
 
+enum OrderStatus {
+  pending,
+  active,
+  closed,
+  rejected,
+  dispatched
+}
 enum OrderType {
   dumpster,
   scaffolding,

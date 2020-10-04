@@ -115,5 +115,22 @@
   "constructionDumpsters": "حاويات الدمار",
   "@constructionDumpsters": {},
   "vehicles": "مركبات",
-  "@vehicles": {}
+  "@vehicles": {},
+
+  "price": "{value} SAR",
+  "@price": {
+    "placeholders": {
+      "value": {
+      }
+    }
+  },
+  "nProducts": "{count,plural, =1{1 المنتج} other{{count} منتجات}}",
+  "@nProducts": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  }
 }

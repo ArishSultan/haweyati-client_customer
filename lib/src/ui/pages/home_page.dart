@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
         backgroundColor: Color(0xFF313F53),
-        title: Image.asset(AppLogo, width: 40, height: 40),
+        title: Image.asset(AppLogo, width: 33, height: 33),
         leading: IconButton(
           icon: Image.asset(MenuIcon, width: 20, height: 20),
           onPressed: () => _drawerKey.currentState.openDrawer()

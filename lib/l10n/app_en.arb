@@ -115,5 +115,23 @@
   "constructionDumpsters": "Construction Dumpsters",
   "@constructionDumpsters": {},
   "vehicles": "Vehicles",
-  "@vehicles": {}
+  "@vehicles": {},
+
+
+  "price": "{value} SAR",
+  "@price": {
+    "placeholders": {
+      "value": {
+      }
+    }
+  },
+  "nProducts": "{count,plural, =1{1 Product} other{{count} Products}}",
+  "@nProducts": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  }
 }

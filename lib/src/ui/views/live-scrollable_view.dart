@@ -7,7 +7,10 @@ class LiveScrollableView<T> extends StatefulWidget {
   final Future<List<T>> Function() loader;
   final Widget Function(BuildContext context, T data) builder;
 
+  LiveScrollableViewState _state;
+
   LiveScrollableView({
+    Key key,
     this.title,
     this.header,
     this.subtitle,
@@ -16,11 +19,18 @@ class LiveScrollableView<T> extends StatefulWidget {
   }): assert(loader != null),
       assert(builder != null);
 
+  Future reload() {
+    return _state.loadDataAgain();
+  }
+
   @override
-  _LiveScrollableViewState<T> createState() => _LiveScrollableViewState<T>();
+  LiveScrollableViewState<T> createState() {
+    _state = LiveScrollableViewState<T>();
+    return _state;
+  }
 }
 
-class _LiveScrollableViewState<T> extends State<LiveScrollableView<T>> {
+class LiveScrollableViewState<T> extends State<LiveScrollableView<T>> {
   Future<List<T>> _future;
   bool _allowRefresh = false;
 
@@ -36,15 +46,10 @@ class _LiveScrollableViewState<T> extends State<LiveScrollableView<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(slivers: [
+    return CustomScrollView(key: widget.key, slivers: [
       if (_allowRefresh)
         CupertinoSliverRefreshControl(
-          onRefresh: () async {
-            _future = widget.loader();
-            await _future;
-
-            setState(() {});
-          },
+          onRefresh: () => loadDataAgain(),
         ),
 
       if (widget.header != null)
@@ -123,5 +128,12 @@ class _LiveScrollableViewState<T> extends State<LiveScrollableView<T>> {
         },
       )
     ]);
+  }
+  
+  loadDataAgain() async {
+    _future = widget.loader();
+    await _future;
+
+    setState(() {});
   }
 }
