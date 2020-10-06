@@ -38,7 +38,7 @@ abstract class EasyRest {
   $delete({String route, Map<String, dynamic> query, Serializable data});
   $getAll({String endpoint, Map<String, dynamic> query});
   $getOne({String route, Map<String, dynamic> query});
-  $patch({String route, Map<String, dynamic> query, Serializable data});
+  $patch({String endpoint, Map<String, dynamic> query, Serializable payload});
   $post({String endpoint, Map<String, dynamic> query, Serializable payload});
   $raw({String route, Map<String, dynamic> query, RequestType type, Serializable data});
 
@@ -92,7 +92,8 @@ class _EasyRestImpl implements EasyRest {
   }
 
   @override
-  $patch({String route, Map<String, dynamic> query, Serializable<dynamic> data}) {
+  $patch({String endpoint, Map<String, dynamic> query, Serializable<dynamic> payload}) {
+    return _request(route: _resolveRoute(endpoint), query: query, data: payload, type: RequestType.patch);
   }
 
   @override
@@ -129,11 +130,9 @@ class _EasyRestImpl implements EasyRest {
     return _analyzeResponse(response);
   }
   static _analyzeResponse(Response response) {
-    print('here');
     print(response.data);
 
     final type = response.headers['content-type'];
-    print(type);
     if (type == null) return null;
 
     if (type[0] == Headers.jsonContentType) {

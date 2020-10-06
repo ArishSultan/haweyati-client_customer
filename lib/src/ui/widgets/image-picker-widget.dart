@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagePickerWidget extends StatefulWidget {
+  final PickedFile initialImage;
   final Function(PickedFile) onImagePicked;
-  ImagePickerWidget({this.onImagePicked});
+
+  ImagePickerWidget({this.initialImage, this.onImagePicked});
 
   @override
   _ImagePickerWidgetState createState() => _ImagePickerWidgetState();
@@ -14,6 +16,12 @@ class ImagePickerWidget extends StatefulWidget {
 
 class _ImagePickerWidgetState extends State<ImagePickerWidget> {
   PickedFile _image;
+
+  @override
+  void initState() {
+    super.initState();
+    _image = widget.initialImage;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +51,9 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               color: Theme.of(context).accentColor,
               onPressed: () async {
                 final image = await ImagePicker().getImage(source: ImageSource.gallery);
-                if (image != null) setState(() => this._image = image);
+                if (image != null) setState(() => _image = image);
+
+                widget.onImagePicked(_image);
               },
             )
           ], mainAxisAlignment: MainAxisAlignment.spaceBetween),

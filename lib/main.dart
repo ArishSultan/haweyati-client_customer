@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
 import 'package:haweyati/src/app.dart';
 import 'package:haweyati/src/data.dart';
@@ -29,8 +30,35 @@ void main() async {
 
   final _appData = AppData.instance();
 
+
+  /// Initiate FCM.
+  final fcm = FirebaseMessaging();
+  await fcm.requestNotificationPermissions();
+  await fcm.subscribeToTopic('news');
+
+  fcm.configure(
+    onMessage: (message) async {
+      print(message);
+    }
+  );
+
+  fcm.onTokenRefresh.listen((event) {
+    if (_appData.isAuthenticated) {
+      EasyRest().$patch(
+        endpoint: 'persons',
+        payload: _appData.user..profile.token = event
+      );
+    }
+  });
+
   runApp(HaweyatiApp(
     locale: _appData.currentLocale,
     status: await _appData.isFuseBurnt
   ));
 }
+
+/// Orders/add-image
+/// _id
+/// sort
+/// image
+

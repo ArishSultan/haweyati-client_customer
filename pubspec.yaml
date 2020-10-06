@@ -15,6 +15,9 @@ dependencies:
     sdk: flutter
   intl:
 
+  # Firebase Cloud Notifications (FCM)
+  firebase_messaging:
+
   # Location and Maps Plugins
   geocoder:
   location:

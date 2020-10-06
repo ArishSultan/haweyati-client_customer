@@ -7,6 +7,7 @@ Function _resolveRequestType(RequestType type) {
   switch (type) {
     case RequestType.get: return Dio().getUri;
     case RequestType.post: return Dio().postUri;
+    case RequestType.patch: return Dio().patchUri;
   }
 
   return null;

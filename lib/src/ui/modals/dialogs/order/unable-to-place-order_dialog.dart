@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class UnableToPlaceOrderDialog extends StatelessWidget {
@@ -14,7 +15,9 @@ class UnableToPlaceOrderDialog extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Text(details.toString()),
           ),
-          Text(details.stackTrace.toString())
+          if (details is! DioError)
+            Text(details?.stackTrace.toString())
+          else Text('Error')
         ],
       ),
       actions: [

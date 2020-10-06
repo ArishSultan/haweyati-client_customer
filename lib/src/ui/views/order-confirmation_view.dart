@@ -66,9 +66,20 @@ class OrderConfirmationView extends StatelessWidget {
           );
 
           try {
-            final _order = await OrdersService().placeOrder(order);
-            Navigator.of(context).pop();
+            final _service = OrdersService();
+            final _order = await _service.placeOrder(order);
 
+            /// loc, bd-s, bd-d, ad
+            _order.images = [];
+            for (final image in order.images) {
+              print(_order.id);
+              _order.images.add(OrderImage(
+                sort: 'loc',
+                name: await _service.addImage(_order.id, image.sort, image.name)
+              ));
+            }
+
+            Navigator.of(context).pop();
             navigateTo(context, OrderPlacedPage(_order, () async {}));
           } catch (e) {
             Navigator.of(context).pop();

@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/models/order/order_model.dart';
 import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
@@ -19,4 +23,12 @@ class OrdersService {
 
   Future<Order> placeOrder(final Order order) async =>
     Order.fromJson(await _service.$post(endpoint: 'orders/dummy', payload: order));
+
+  Future<String> addImage(String id, String sort, String path) async {
+    return (await Dio().patch('$apiUrl/orders/add-image', data: FormData.fromMap({
+      'id': id, 'sort': sort,
+      'image': await MultipartFile.fromFile(path)
+    }))).data as String;
+    // _service.$patch(endpoint: 'orders/add-image', payload: )
+  }
 }

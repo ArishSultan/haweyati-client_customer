@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:haweyati/src/models/user_model.dart';
 import 'package:hive/hive.dart';
 
 import 'http/basics/request-type.dart';
@@ -65,13 +67,13 @@ abstract class JwtAuthService<T, U> {
   static _JwtAuthServiceImpl _;
   static _AuthServiceConfiguration _config;
   static configure<T, U>({
-     UserParser userParser,
-     JwtStorage<T> userStorage,
-     JwtStorage<U> tokenStorage,
-     TokenParser tokenParser,
-     RequestConfig userRequest,
-     RequestConfig signInRequest,
-     RequestConfig signOutRequest,
+    UserParser userParser,
+    JwtStorage<T> userStorage,
+    JwtStorage<U> tokenStorage,
+    TokenParser tokenParser,
+    RequestConfig userRequest,
+    RequestConfig signInRequest,
+    RequestConfig signOutRequest,
   }) async {
     _config = _AuthServiceConfiguration(
       userParser: userParser,
@@ -123,7 +125,6 @@ class _JwtAuthServiceImpl<T, U> implements JwtAuthService<T, U> {
       JwtAuthService._config.tokenParser(resp)
     );
 
-    print('here2');
     try {
       await $user();
     } on HiveError catch (err) {
@@ -162,10 +163,15 @@ class _JwtAuthServiceImpl<T, U> implements JwtAuthService<T, U> {
     );
 
     user['profile'] = resp['profile'];
+    User _user = JwtAuthService._config.userParser(user);
 
-    await JwtAuthService._config.userStorage.write(
-      JwtAuthService._config.userParser(user)
+    _user.profile.token = await FirebaseMessaging().getToken();
+    await _service.$patch(
+      endpoint: 'persons',
+      payload: _user.profile
     );
+
+    await JwtAuthService._config.userStorage.write(_user);
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:haweyati/src/common/models/json_serializable.dart';
+import 'package:haweyati/src/common/models/serializable.dart';
 import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/models/order/building-material/order-item_model.dart';
 import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
@@ -9,6 +10,21 @@ import 'package:haweyati/src/models/user_model.dart';
 import 'package:hive/hive.dart';
 
 import 'order-item_model.dart';
+
+class OrderImage implements Serializable<Map<String, dynamic>> {
+  String sort;
+  String name;
+
+  OrderImage({
+    this.sort,
+    this.name
+  });
+
+  @override
+  Map<String, dynamic> serialize() => {
+    'sort': sort, 'name': name
+  };
+}
 
 @HiveType(typeId: 0)
 class Order extends HiveObject implements JsonSerializable {
@@ -25,14 +41,15 @@ class Order extends HiveObject implements JsonSerializable {
   User customer;
 
   Payment payment;
-  List<String> images;
   OrderLocation location;
+  List<OrderImage> images;
   List<OrderItemHolder> items;
 
   DateTime createdAt;
   DateTime updatedAt;
 
   Order(this.type, {
+    this.id,
     this.city,
     this.note,
     this.total,
@@ -87,6 +104,7 @@ class Order extends HiveObject implements JsonSerializable {
     }
 
     return Order(_typeFromString(json['service']),
+      id: json['_id'],
       status: status,
       note: json['note'],
       city: json['city'],

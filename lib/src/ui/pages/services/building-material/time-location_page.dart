@@ -14,6 +14,7 @@ import 'package:haweyati/src/ui/widgets/image-picker-widget.dart';
 import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:image_picker/image_picker.dart';
 
 class BuildingMaterialTimeAndLocationPage extends StatefulWidget {
   final Order _order;
@@ -32,6 +33,7 @@ class BuildingMaterialTimeAndLocationPage extends StatefulWidget {
 }
 
 class _BuildingMaterialTimeAndLocationPageState extends State<BuildingMaterialTimeAndLocationPage> {
+  PickedFile _image;
   var _allow = false;
   final _formKey = GlobalKey<SimpleFormState>();
 
@@ -68,7 +70,10 @@ class _BuildingMaterialTimeAndLocationPageState extends State<BuildingMaterialTi
 
         Padding(
           padding: const EdgeInsets.only(bottom: 40),
-          child: ImagePickerWidget(),
+          child: ImagePickerWidget(
+            initialImage: _image,
+            onImagePicked: (image) => _image = image
+          ),
         ),
 
         SimpleForm(
@@ -96,6 +101,12 @@ class _BuildingMaterialTimeAndLocationPageState extends State<BuildingMaterialTi
         label: 'Continue',
         onPressed: _allow ? () async {
           await _formKey.currentState.submit();
+          if (_image != null) {
+            widget._order.images = [OrderImage(sort: 'loc', name: _image.path)];
+          } else {
+            widget._order.images = [];
+          }
+          print(widget._order.images);
           navigateTo(context, BuildingMaterialOrderConfirmationPage(widget._order));
         } : null
       )

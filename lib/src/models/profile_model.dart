@@ -17,6 +17,7 @@ class Profile extends HiveObject implements JsonSerializable {
   @HiveField(7) ImageModel image;
 
   @HiveField(8) List<String> scope;
+  @HiveField(9) String token;
 
   Profile({
     this.id,
@@ -52,7 +53,8 @@ class Profile extends HiveObject implements JsonSerializable {
     'name': name,
     'email': email,
     'scope': scope,
-    'image': image?.serialize(),
+    'token': token,
+    // 'image': image?.serialize(),
     'contact': contact,
     'username': username,
     'password': password,

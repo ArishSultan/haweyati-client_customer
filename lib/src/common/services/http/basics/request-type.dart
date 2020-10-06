@@ -1,3 +1,3 @@
 enum RequestType {
-  get, post
+  get, post, patch
 }
