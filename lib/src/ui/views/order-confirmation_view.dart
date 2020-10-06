@@ -69,7 +69,7 @@ class OrderConfirmationView extends StatelessWidget {
             final _order = await OrdersService().placeOrder(order);
             Navigator.of(context).pop();
 
-            navigateTo(context, OrderPlacedPage(_order.number, () async {}));
+            navigateTo(context, OrderPlacedPage(_order, () async {}));
           } catch (e) {
             Navigator.of(context).pop();
 

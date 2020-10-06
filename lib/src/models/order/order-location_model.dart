@@ -30,7 +30,7 @@ class OrderLocation extends Location {
       longitude: location.longitude,
       dropOffTime: TimeSlot.fromJson(json['dropoffTime']),
       dropOffDate: json['dropoffDate'] != null ? DateTime.parse(json['dropoffDate']) : null,
-    );
+    )..address = json['dropoffAddress'];
   }
 
   @override

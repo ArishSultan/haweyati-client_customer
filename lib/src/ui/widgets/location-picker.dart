@@ -15,7 +15,7 @@ class LocationPicker extends StatefulWidget {
 
   LocationPicker({
     this.initialValue,
-    @required this.onChanged
+    this.onChanged
   });
 
   @override
@@ -43,17 +43,18 @@ class _LocationPickerState extends State<LocationPicker> {
             fontWeight: FontWeight.bold
           )),
           Spacer(),
-          EditButton(onPressed: () async {
-            final location = await navigateTo(context, LocationPickerMapPage(
-              LatLng(widget.initialValue.latitude, widget.initialValue.longitude)
-            ));
-            if (location != null) {
-              _address = location;
-              widget.onChanged(_address);
+          if (widget.onChanged != null)
+            EditButton(onPressed: () async {
+              final location = await navigateTo(context, LocationPickerMapPage(
+                LatLng(widget.initialValue.latitude, widget.initialValue.longitude)
+              ));
+              if (location != null) {
+                _address = location;
+                widget.onChanged(_address);
 
-              setState(() {});
-            }
-          })
+                setState(() {});
+              }
+            })
         ]),
         SizedBox(height: 15),
         Padding(
@@ -65,7 +66,7 @@ class _LocationPickerState extends State<LocationPicker> {
             ),
             Expanded(child: Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: Text(_address.address, style: TextStyle(
+              child: Text(_address.address ?? 'No Address', style: TextStyle(
                 height: 1.2,
                 color: Color(0xFF313F53),
               )),

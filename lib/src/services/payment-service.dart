@@ -63,6 +63,7 @@ class StripeService {
 
       if (response.status == 'succeeded') {
         return new StripeTransactionResponse(
+          paymentIntentId: response.paymentIntentId,
             message: 'Transaction successful',
             success: true
         );

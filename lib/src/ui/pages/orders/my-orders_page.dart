@@ -83,11 +83,11 @@ class _OrderListTile extends StatelessWidget {
       child: Wrap(children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 15),
-          child: _OrderMeta(order),
+          child: OrderMeta(order),
         ),
 
         for (final item in order.items)
-          _OrderItemTile(item),
+          OrderItemTile(item),
 
         Padding(
           padding: const EdgeInsets.only(top: 20),
@@ -156,8 +156,8 @@ class _OrderStatus extends Container {
   }
 }
 
-class _OrderMeta extends Row {
-  _OrderMeta(Order order): super(children: [
+class OrderMeta extends Row {
+  OrderMeta(Order order): super(children: [
     Column(children: [
       RichText(text: TextSpan(
         text: 'Order Date - ',
@@ -201,9 +201,9 @@ class _OrderMeta extends Row {
   ], crossAxisAlignment: CrossAxisAlignment.start);
 }
 
-class _OrderItemTile extends StatelessWidget {
+class OrderItemTile extends StatelessWidget {
   final OrderItemHolder item;
-  _OrderItemTile(this.item);
+  OrderItemTile(this.item);
 
   @override
   Widget build(BuildContext context) {

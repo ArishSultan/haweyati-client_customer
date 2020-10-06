@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
+import 'package:haweyati/src/ui/pages/orders/order-detail_page.dart';
 
 import 'data.dart';
 import 'ui/pages/auth/sign-in_page.dart';

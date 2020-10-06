@@ -15,9 +15,8 @@ import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
-class BuildingMaterialTimeAndLocationPage extends StatelessWidget {
+class BuildingMaterialTimeAndLocationPage extends StatefulWidget {
   final Order _order;
-  final _formKey = GlobalKey<SimpleFormState>();
 
   BuildingMaterialTimeAndLocationPage(this._order) {
     if (_order.location == null) {
@@ -27,6 +26,14 @@ class BuildingMaterialTimeAndLocationPage extends StatelessWidget {
           ..update(_appData.location);
     }
   }
+
+  @override
+  _BuildingMaterialTimeAndLocationPageState createState() => _BuildingMaterialTimeAndLocationPageState();
+}
+
+class _BuildingMaterialTimeAndLocationPageState extends State<BuildingMaterialTimeAndLocationPage> {
+  var _allow = false;
+  final _formKey = GlobalKey<SimpleFormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +48,7 @@ class BuildingMaterialTimeAndLocationPage extends StatelessWidget {
         ),
 
         LocationPicker(
-          initialValue: _order.location,
+          initialValue: widget._order.location,
           onChanged: (location) {}/*_order.location.update*/
         ),
 
@@ -50,11 +57,12 @@ class BuildingMaterialTimeAndLocationPage extends StatelessWidget {
             top: 20, bottom: 40
           ),
           child: DropOffPicker(
+            onBuilt: () => setState(() => _allow = true),
             service: ServiceType.buildingMaterials,
-            initialDate: _order.location.dropOffDate,
-            initialTime: _order.location.dropOffTime,
-            onDateChanged: (date) => _order.location.dropOffDate = date,
-            onTimeChanged: (time) => _order.location.dropOffTime = time
+            initialDate: widget._order.location.dropOffDate,
+            initialTime: widget._order.location.dropOffTime,
+            onDateChanged: (date) => widget._order.location.dropOffDate = date,
+            onTimeChanged: (time) => widget._order.location.dropOffTime = time
           ),
         ),
 
@@ -70,7 +78,7 @@ class BuildingMaterialTimeAndLocationPage extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Lato'
             ),
-            initialValue: _order.note,
+            initialValue: widget._order.note,
             decoration: InputDecoration(
               labelText: 'Note',
               hintText: 'Write note here..',
@@ -79,17 +87,17 @@ class BuildingMaterialTimeAndLocationPage extends StatelessWidget {
             maxLines: 4,
             maxLength: 80,
 
-            onSaved: (text) => _order.note = text,
+            onSaved: (text) => widget._order.note = text,
           )
         )
       ],
 
       bottom: RaisedActionButton(
         label: 'Continue',
-        onPressed: () async {
+        onPressed: _allow ? () async {
           await _formKey.currentState.submit();
-          navigateTo(context, BuildingMaterialOrderConfirmationPage(_order));
-        }
+          navigateTo(context, BuildingMaterialOrderConfirmationPage(widget._order));
+        } : null
       )
     );
   }

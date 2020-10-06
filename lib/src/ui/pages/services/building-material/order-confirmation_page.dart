@@ -14,11 +14,10 @@ class BuildingMaterialOrderConfirmationPage extends StatelessWidget {
   final Order _order;
   BuildingMaterialOrderConfirmationPage(this._order);
 
-  double get _delivery => 50;
   double get _total => _order.items.fold(0, (previousValue, element) {
     final item = element.item as BuildingMaterialOrderItem;
     return previousValue + item.qty * item.price;
-  });
+  }) + _order.deliveryFee;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +66,7 @@ class BuildingMaterialOrderConfirmationPage extends StatelessWidget {
                   color: Colors.grey,
                   fontFamily: 'Lato', height: 1.9
               )),
-              RichPriceText(price: _delivery)
+              RichPriceText(price: _order.deliveryFee)
             ]),
             TableRow(children: [
               Text('Total', style: TextStyle(

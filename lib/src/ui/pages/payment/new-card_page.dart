@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart' as w;
 import 'package:haweyati/src/common/simple-form.dart';
-import 'package:haweyati/src/models/credit-card_model.dart';
 import 'package:haweyati/src/services/payment-service.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
@@ -17,7 +15,8 @@ import 'payment-methods_page.dart';
 
 class NewCardPage extends StatefulWidget {
   final int amount;
-  NewCardPage({this.amount});
+  final Function(String) onPaymentIntentId;
+  NewCardPage({this.amount,this.onPaymentIntentId});
 
   @override _NewCardPageState createState() => _NewCardPageState();
 }
@@ -40,81 +39,83 @@ class _NewCardPageState extends State<NewCardPage> {
         padding: const EdgeInsets.symmetric(
           horizontal: 15
         ),
-        child: SingleChildScrollView(
-          child: SimpleForm(
-            key: _key,
-            onSubmit: () async {
-              StripeTransactionResponse response = await StripeService.payViaExistingCard(
-                card: _card, currency: 'SAR', amount: widget.amount.toString()
-              );
+        child: Builder(
+           builder: (ctx) => SingleChildScrollView(
+            child: SimpleForm(
+              key: _key,
+              onSubmit: () async {
+                StripeTransactionResponse response = await StripeService.payViaExistingCard(
+                  card: _card, currency: 'SAR', amount: widget.amount.toString()
+                );
 
-              if (response.success ?? false) {
-                print('New Card Page');
-                w.Navigator.pop(context, PaymentResponse(
-                  PaymentMethodEnum.creditCard,
-                  response.paymentIntentId
-                ));
-              }
-            },
-            child: Column(children: [
-              HeaderView(
-                title: 'Visa/Master Card',
-                subtitle: loremIpsum.substring(0, 70),
-              ),
-
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40),
-                child: Image.asset(CreditCardsIcon, width: 90),
-              ),
-
-              HaweyatiTextField(
-                label: 'Name',
-                value: 'Haroon',
-                onSaved: (val) => _card.name = val,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  top: 25, bottom: 10
+                if (response.success ?? false) {
+                  widget.onPaymentIntentId(response.paymentIntentId);
+                   Navigator.pop(context);
+                  // Navigator.pop(ctx, PaymentResponse(PaymentMethodEnum.creditCard,response.paymentIntentId));
+                  // Navigator.pop(context, PaymentResponse(PaymentMethodEnum.creditCard,response.paymentIntentId));
+                  // Navigator.pop(context, PaymentResponse(PaymentMethodEnum.creditCard,response.paymentIntentId));
+                }
+              },
+              child: Column(children: [
+                HeaderView(
+                  title: 'Visa/Master Card',
+                  subtitle: loremIpsum.substring(0, 70),
                 ),
-                child: HaweyatiTextField(
-                  label: 'Card Number',
-                  maxLength: 16,
-                  value: '4242424242424242',
-                  keyboardType: TextInputType.number,
-                  onSaved: (val) => _card.number = val,
-                ),
-              ),
 
-              Row(children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12, horizontal: 10
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: Colors.grey.shade500)
-                    ),
-                    child: DatePickerField(
-                      initialValue: DateTime.now(),
-                      onChanged: (date) {
-                        _card.expMonth = date.month;
-                        _card.expYear = date.year;
-                      }
-                    )
-                  )
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: Image.asset(CreditCardsIcon, width: 90),
                 ),
-                SizedBox(width: 15),
-                Expanded(
+
+                HaweyatiTextField(
+                  label: 'Name',
+                  value: 'Haroon',
+                  onSaved: (val) => _card.name = val,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 25, bottom: 10
+                  ),
                   child: HaweyatiTextField(
-                    label: 'Security Code',
-                    value: '123',
+                    label: 'Card Number',
+                    maxLength: 16,
+                    value: '4242424242424242',
                     keyboardType: TextInputType.number,
-                    onSaved: (val) => _card.cvc = val,
+                    onSaved: (val) => _card.number = val,
                   ),
                 ),
+
+                Row(children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 10
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: Colors.grey.shade500)
+                      ),
+                      child: DatePickerField(
+                        initialValue: DateTime.now(),
+                        onChanged: (date) {
+                          _card.expMonth = date.month;
+                          _card.expYear = date.year;
+                        }
+                      )
+                    )
+                  ),
+                  SizedBox(width: 15),
+                  Expanded(
+                    child: HaweyatiTextField(
+                      label: 'Security Code',
+                      value: '123',
+                      keyboardType: TextInputType.number,
+                      onSaved: (val) => _card.cvc = val,
+                    ),
+                  ),
+                ])
               ])
-            ])
+            ),
           ),
         ),
       ),

@@ -6,6 +6,7 @@ import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/date-formatter.dart';
 
 class DropOffPicker extends StatefulWidget {
+  final Function onBuilt;
   final ServiceType service;
   final TimeSlot initialTime;
   final DateTime initialDate;
@@ -13,6 +14,7 @@ class DropOffPicker extends StatefulWidget {
   final Function(TimeSlot time) onTimeChanged;
 
   DropOffPicker({
+    this.onBuilt,
     this.service = ServiceType.dumpsters,
     this.initialDate,
     this.initialTime,
@@ -66,7 +68,8 @@ class _DropOffPickerState extends State<DropOffPicker> {
       }
       _lastDate = _firstDate.add(Duration(hours: 100));
 
-      setState(() {});
+      widget.onBuilt();
+      // setState(() {});
     });
   }
 

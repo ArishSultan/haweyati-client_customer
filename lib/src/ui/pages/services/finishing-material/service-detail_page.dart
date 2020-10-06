@@ -10,8 +10,6 @@ import 'package:haweyati/src/models/services/finishing-material/model.dart';
 import 'package:haweyati/src/services/haweyati-service.dart';
 import 'package:haweyati/src/ui/pages/services/finishing-material/order-confirmation_page.dart';
 import 'package:haweyati/src/ui/views/order-progress_view.dart';
-import 'package:haweyati/src/ui/views/scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/counter.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
 import 'package:haweyati/src/ui/widgets/location-picker.dart';

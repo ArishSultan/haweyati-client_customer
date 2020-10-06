@@ -7,6 +7,8 @@ import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:hive/hive.dart';
 
+import 'payment-methods_page.dart';
+
 class CreditCardsPage extends StatefulWidget {
   final int amount;
   CreditCardsPage({this.amount});
@@ -15,6 +17,12 @@ class CreditCardsPage extends StatefulWidget {
 }
 
 class _CreditCardsPageState extends State<CreditCardsPage> {
+
+  String paymentIntentId;
+
+  receive(String id){
+    paymentIntentId = id;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,10 +53,11 @@ class _CreditCardsPageState extends State<CreditCardsPage> {
         margin: const EdgeInsets.only(bottom: 5),
         child: FlatButton.icon(
           onPressed: () async {
-            final data = await navigateTo(context, NewCardPage(amount: widget.amount));
-            print('on cards list page');
-            print(data);
-            if (data != null) Navigator.of(context).pop(data);
+            await navigateTo(context, NewCardPage(amount: widget.amount,onPaymentIntentId: receive,));
+            if (paymentIntentId != null) {
+              Navigator.pop(context, PaymentResponse(PaymentMethodEnum.creditCard,paymentIntentId));
+              Navigator.pop(context, PaymentResponse(PaymentMethodEnum.creditCard,paymentIntentId));
+            }
           },
           icon: Icon(Icons.add),
           shape: StadiumBorder(),

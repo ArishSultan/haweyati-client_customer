@@ -16,10 +16,8 @@ import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
-class DumpsterTimeAndLocationPage extends StatelessWidget {
+class DumpsterTimeAndLocationPage extends StatefulWidget {
   final Order _order;
-  final _formKey = GlobalKey<SimpleFormState>();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   DumpsterTimeAndLocationPage(this._order) {
     if (_order.location == null) {
@@ -29,6 +27,15 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
           .fromLocation(_appData.location);
     }
   }
+
+  @override
+  _DumpsterTimeAndLocationPageState createState() => _DumpsterTimeAndLocationPageState();
+}
+
+class _DumpsterTimeAndLocationPageState extends State<DumpsterTimeAndLocationPage> {
+  var _allow = false;
+  final _formKey = GlobalKey<SimpleFormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +50,8 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
         ),
 
         LocationPicker(
-          initialValue: _order.location,
-          onChanged: _order.location.update
+          initialValue: widget._order.location,
+          onChanged: widget._order.location.update
         ),
 
         Padding(
@@ -52,10 +59,11 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
             top: 20, bottom: 40
           ),
           child: DropOffPicker(
-            initialDate: _order.location.dropOffDate,
-            initialTime: _order.location.dropOffTime,
-            onDateChanged: (date) => _order.location.dropOffDate = date,
-            onTimeChanged: (time) => _order.location.dropOffTime = time
+            onBuilt: () => setState(() => _allow = true),
+            initialDate: widget._order.location.dropOffDate,
+            initialTime: widget._order.location.dropOffTime,
+            onDateChanged: (date) => widget._order.location.dropOffDate = date,
+            onTimeChanged: (time) => widget._order.location.dropOffTime = time
           ),
         ),
 
@@ -71,7 +79,7 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Lato'
             ),
-            initialValue: _order.note,
+            initialValue: widget._order.note,
             decoration: InputDecoration(
               labelText: 'Note',
               floatingLabelBehavior: FloatingLabelBehavior.always,
@@ -80,18 +88,19 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
             maxLines: 4,
             maxLength: 80,
 
-            onSaved: (text) => _order.note = text,
+            onSaved: (text) => widget._order.note = text,
           )
         )
       ],
 
-      onContinue: () async {
+      onContinue: (widget._order.location.dropOffDate != null
+      && widget._order.location.dropOffTime != null) ? () async {
         await _formKey.currentState.submit();
 
         /// Setup Pickup Time and Date for the Dumpster
-        final location = _order.location as RentableOrderLocation;
+        final location = widget._order.location as RentableOrderLocation;
 
-        final item = _order.items.first.item as DumpsterOrderItem;
+        final item = widget._order.items.first.item as DumpsterOrderItem;
         final product = item.product as Dumpster;
 
         location.pickUpTime = location.dropOffTime;
@@ -99,8 +108,8 @@ class DumpsterTimeAndLocationPage extends StatelessWidget {
             days: item.extraDays + product.pricing.first.days
         ));
 
-        navigateTo(context, DumpsterOrderConfirmationPage(_order));
-      }
+        navigateTo(context, DumpsterOrderConfirmationPage(widget._order));
+      }: null
     );
   }
 }

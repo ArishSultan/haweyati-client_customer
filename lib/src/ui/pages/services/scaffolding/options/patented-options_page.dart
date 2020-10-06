@@ -7,6 +7,8 @@ import 'package:haweyati/src/ui/widgets/dark-list-tile.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
+import '../../../../../routes.dart';
+
 class PatentedScaffoldingOptionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class PatentedScaffoldingOptionsPage extends StatelessWidget {
           DarkListTile(
             title: 'Facades',
             trailing: Icon(CupertinoIcons.right_chevron),
-            onTap: () => Navigator.of(context).pushNamed('/scaffoldings-facades')
+            onTap: () => Navigator.of(context).pushNamed(FACADES_CALCULATION_PAGE)
           ),
           SizedBox(height: 15),
           DarkListTile(

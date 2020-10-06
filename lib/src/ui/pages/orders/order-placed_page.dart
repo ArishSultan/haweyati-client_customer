@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:haweyati/src/models/order/order_model.dart';
 import 'package:haweyati/src/routes.dart';
+import 'package:haweyati/src/ui/pages/orders/order-detail_page.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class OrderPlacedPage extends StatelessWidget {
-  final String number;
+  final Order order;
   final Future Function() beforeFinish;
 
-  OrderPlacedPage(this.number, this.beforeFinish);
+  OrderPlacedPage(this.order, this.beforeFinish);
 
   @override
   Widget build(BuildContext context) {
@@ -38,16 +41,14 @@ class OrderPlacedPage extends StatelessWidget {
 
             HeaderView(
               title: 'Thank You',
-              subtitle: 'Your order has been placed. Your order reference number is ${number.toUpperCase()}',
+              subtitle: 'Your order has been placed. Your order reference number is ${order.number.toUpperCase()}',
             ),
 
             GestureDetector(
               child: Text('View Order Details', style: TextStyle(
                 color: Theme.of(context).primaryColor
               )),
-              onTap: () {
-                print('View Order Details');
-              },
+              onTap: () => navigateTo(context, OrderDetailPage(order)),
             )
           ], mainAxisAlignment: MainAxisAlignment.center),
         ),

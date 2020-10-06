@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/ui/pages/services/scaffolding/adjustments/single-adjustments_page.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
@@ -27,13 +28,13 @@ class ScaffoldingsListPage extends StatelessWidget {
             assetImage: true,
             name: "Steel Scaffolding",
             image: 'assets/images/steelscaffolding.png',
-            onTap: () => Navigator.of(context).pushNamed('/steel-scaffolding-options'),
+            onTap: () => Navigator.of(context).pushNamed(STEEL_SCAFFOLDING_OPTIONS_PAGE),
           ),
           ServiceListItem(
             assetImage: true,
             name: "Patented Scaffolding",
             image: 'assets/images/steelscaffolding.png',
-            onTap: () => Navigator.of(context).pushNamed('/patented-scaffolding-options'),
+            onTap: () => Navigator.of(context).pushNamed(PATENTED_SCAFFOLDING_OPTIONS_PAGE),
           ),
           ServiceListItem(
             assetImage: true,

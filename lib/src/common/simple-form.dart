@@ -37,7 +37,7 @@ class SimpleFormState extends State<SimpleForm> {
   }
 
   void reset() => _formKey.currentState.reset();
-  void submit() async {
+  Future<void> submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
         final data = widget.onSubmit();

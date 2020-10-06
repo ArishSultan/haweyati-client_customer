@@ -20,6 +20,7 @@ class Order extends HiveObject implements JsonSerializable {
   double total;
   String number;
   OrderType type;
+  double deliveryFee;
 
   User customer;
 
@@ -34,16 +35,17 @@ class Order extends HiveObject implements JsonSerializable {
   Order(this.type, {
     this.city,
     this.note,
+    this.total,
     this.items,
     this.number,
     this.images,
     this.status,
+    this.payment,
     this.location,
     this.customer,
     this.createdAt,
     this.updatedAt,
-    this.payment,
-    this.total
+    this.deliveryFee = 50
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
@@ -85,11 +87,12 @@ class Order extends HiveObject implements JsonSerializable {
     }
 
     return Order(_typeFromString(json['service']),
+      status: status,
       note: json['note'],
       city: json['city'],
-      total: json['total']?.toDouble(),
-      status: status,
       number: json['orderNo'],
+      total: json['total']?.toDouble(),
+      deliveryFee: json['deliveryFee']?.toDouble() ?? 0.0,
       createdAt: DateTime.parse(json['createdAt']),
       payment: Payment.fromJson(/*json['payment'] ?? */json),
 
@@ -123,6 +126,7 @@ class Order extends HiveObject implements JsonSerializable {
     'total': total,
     'status': status,
     'orderNo': number,
+    'deliveryFee': deliveryFee,
     'service': _typeToString(type),
 
     'items': items
@@ -161,11 +165,11 @@ class Order extends HiveObject implements JsonSerializable {
 }
 
 enum OrderStatus {
+  rejected,
   pending,
   active,
+  dispatched,
   closed,
-  rejected,
-  dispatched
 }
 enum OrderType {
   dumpster,

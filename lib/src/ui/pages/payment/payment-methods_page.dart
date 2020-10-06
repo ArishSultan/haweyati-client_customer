@@ -96,11 +96,7 @@ class _PaymentMethodPageState extends State<PaymentMethodPage> {
       case PaymentMethodEnum.applePay:
         break;
       case PaymentMethodEnum.creditCard:
-        final data = await navigateTo(context, CreditCardsPage(amount: widget.amount));
-        print('on payment method page');
-        print(data);
-        if (data != null) Navigator.of(context).pop(data);
-        break;
+        return navigateTo(context, CreditCardsPage(amount: widget.amount));
       case PaymentMethodEnum.cashOnDelivery:
         return Navigator.of(context).pop(PaymentResponse(PaymentMethodEnum.cashOnDelivery));
     }
