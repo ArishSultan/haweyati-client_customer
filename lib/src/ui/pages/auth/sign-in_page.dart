@@ -4,6 +4,8 @@ import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/common/simple-form.dart';
+import 'package:haweyati/src/ui/pages/auth/customer-registration_page.dart';
+import 'package:haweyati/src/ui/pages/miscellaneous/contact-input_page.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
@@ -13,8 +15,9 @@ import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/common/services/jwt-auth_service.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
-class _SignInData extends Serializable {
+class SignInData extends Serializable {
   String username;
   String password;
 
@@ -30,15 +33,14 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  final _data = _SignInData();
+  final _data = SignInData();
   final _key = GlobalKey<SimpleFormState>();
 
   @override
   Widget build(BuildContext context) {
     return LocalizedView(builder: (context, lang) => Scaffold(
       appBar: HaweyatiAppBar(
-        hideCart: true,
-        hideHome: true,
+        hideCart: true, hideHome: true,
         actions: [Center(child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           child: LocalizationSelector(),
@@ -83,7 +85,7 @@ class _SignInPageState extends State<SignInPage> {
                 ),
 
                 Padding(
-                  padding: const EdgeInsets.only(top: 15, bottom: 100),
+                  padding: const EdgeInsets.only(top: 15, bottom: 15),
                   child: HaweyatiPasswordField(
                     context: context,
                     label: lang.yourPassword,
@@ -91,6 +93,21 @@ class _SignInPageState extends State<SignInPage> {
                     onSaved: (value) => _data.password = value,
                     validator: (value) => value.isEmpty ? 'Provide your Password' : null,
                   ),
+                ),
+
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 300),
+                    child: GestureDetector(
+                      onTap: () {
+                        print('Forgot Password');
+                      },
+                      child: Text(lang.forgotPassword, style: TextStyle(
+                        color: Theme.of(context).primaryColor
+                      ))
+                    ),
+                  )
                 )
               ]),
             ),
@@ -102,9 +119,9 @@ class _SignInPageState extends State<SignInPage> {
               padding: const EdgeInsets.only(bottom: 30),
               child: GestureDetector(
                 onTap: () {
-                  print('Forgot Password');
+                  navigateTo(context, ContactInputPage());
                 },
-                child: Text(lang.forgotPassword, style: TextStyle(
+                child: Text('Register Yourself', style: TextStyle(
                   color: Theme.of(context).primaryColor
                 ))
               ),
@@ -114,6 +131,7 @@ class _SignInPageState extends State<SignInPage> {
       ),
       extendBody: true,
       floatingActionButton: FloatingActionButton(
+        heroTag: 'none',
         elevation: 0,
         child: Transform.rotate(
           angle: AppLocalizations.of(context).localeName == 'ar' ? 3.14: 0,

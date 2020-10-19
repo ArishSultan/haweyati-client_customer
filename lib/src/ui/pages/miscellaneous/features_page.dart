@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
@@ -17,6 +18,8 @@ class FeaturesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppData.instance().burnFuse();
+
     return LocalizedView(
       builder: (context, lang) => NoScrollView(
         appBar: _AppBar(_page, lang.skip),

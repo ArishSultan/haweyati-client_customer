@@ -1,16 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
-import 'package:haweyati/src/ui/pages/cart-order_page.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import '../../models/services/finishing-material/model.dart';
 import 'package:haweyati/src/ui/widgets/service-list-tile.dart';
+import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
+
+import 'cart-order_page.dart';
 
 // ignore: must_be_immutable
 class CartPage extends StatelessWidget {
@@ -57,11 +58,15 @@ class CartPage extends StatelessWidget {
             ));
           }
 
-          return ListView.builder(
-            itemBuilder: (context, index) => FutureBuilder(
-              future: _cart.getAt(index),
-              builder: (context, AsyncSnapshot<FinishingMaterial> snapshot) {
-                return Padding(
+          return FutureBuilder(
+            future: _cartProducts(),
+            builder: (context, AsyncSnapshot<List<FinishingMaterial>> snapshot) {
+              if (snapshot.data == null) {
+                return Center(child: CircularProgressIndicator(strokeWidth: 2));
+              }
+
+              return ListView.builder(
+                itemBuilder: (context, index) => Padding(
                   padding: const EdgeInsets.symmetric(
                     vertical: 10, horizontal: 15
                   ),
@@ -74,7 +79,10 @@ class CartPage extends StatelessWidget {
                         alignment: Alignment.centerRight,
                         child: Padding(
                           padding: const EdgeInsets.all(8),
-                          child: Icon(CupertinoIcons.trash, color: Colors.red, size: 30),
+                          child: Icon(
+                            CupertinoIcons.trash, color: Colors.red,
+                            size: 30
+                          ),
                         ),
                       ),
                     ),
@@ -88,16 +96,16 @@ class CartPage extends StatelessWidget {
                     },
 
                     child: ServiceListItem(
-                      margin: const EdgeInsets.all(0),
-                      image: snapshot.data?.images?.name ?? '',
-                      name: snapshot.data?.name ?? '',
-                      onTap: () {}
+                        margin: const EdgeInsets.all(0),
+                        image: snapshot.data[index].images.name,
+                        name: snapshot.data[index].name,
+                        onTap: () {}
                     )
                   ),
-                );
-              },
-            ),
-            itemCount: box.length,
+                ),
+                itemCount: box.length,
+              );
+            }
           );
         }
       ),
@@ -110,12 +118,20 @@ class CartPage extends StatelessWidget {
   }
 
   void _placeOrder(context) async {
-    navigateTo(context, CartOrderPage(
-      await Future.wait(_cartProducts().map((e) async => FinishingMaterialOrderItem(product: await e)))
+    final products = await _cartProducts();
+    navigateTo(context, CartOrderPage(products
+        .map((e) => FinishingMaterialOrderItem(product: e))
+        .toList()
     ));
   }
 
-  Iterable<Future<FinishingMaterial>> _cartProducts() sync* {
-    for (final key in _cart.keys) yield _cart.get(key);
+  Future<List<FinishingMaterial>> _cartProducts() async {
+    getProducts() sync* {
+      for (var i = 0; i < _cart.length; ++i) {
+        yield _cart.getAt(i);
+      }
+    }
+
+    return (await Future.wait(getProducts())).toList().cast<FinishingMaterial>();
   }
 }

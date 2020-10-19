@@ -1,25 +1,27 @@
 import 'dart:ui';
 
-import 'package:haweyati/src/common/services/jwt-auth_service.dart';
-import 'package:haweyati/src/models/profile_model.dart';
-import 'package:haweyati/src/models/user_model.dart';
 import 'package:hive/hive.dart';
 import 'models/image_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:haweyati/src/models/user_model.dart';
 import 'package:haweyati/src/models/image_model.dart';
 import 'models/services/finishing-material/model.dart';
+import 'package:haweyati/src/models/profile_model.dart';
 import 'package:haweyati/src/models/location_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:haweyati/src/models/notification_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'models/services/finishing-material/options_model.dart';
+import 'package:haweyati/src/services/notifications_service.dart';
+import 'package:haweyati/src/common/services/jwt-auth_service.dart';
 import 'package:haweyati/src/models/services/finishing-material/model.dart';
 import 'package:haweyati/src/models/services/finishing-material/options_model.dart';
 
 abstract class AppData {
   /// Localization Specific Data
   ValueNotifier<Locale> currentLocale;
-  void set locale(Locale locale);
+  set locale(Locale locale);
 
   /// Authentication Data
   User get user;
@@ -31,7 +33,7 @@ abstract class AppData {
   LatLng get coordinates;
 
   Location get location;
-  void set location(Location details);
+  set location(Location details);
 
   /// These controls determine weather the
   /// app has been launched before or not.
@@ -61,15 +63,19 @@ abstract class AppData {
   static Future initiate() async {
     await Hive.initFlutter();
 
-    await Hive.registerAdapter(UserAdapter());
-    await Hive.registerAdapter(ProfileAdapter());
-    await Hive.registerAdapter(LocationAdapter());
-    await Hive.registerAdapter(ImageModelAdapter());
-    await Hive.registerAdapter(FinishingMaterialAdapter());
-    await Hive.registerAdapter(FinishingMaterialOptionAdapter());
+    Hive.registerAdapter(UserAdapter());
+    Hive.registerAdapter(ProfileAdapter());
+    Hive.registerAdapter(LocationAdapter());
+    Hive.registerAdapter(ImageModelAdapter());
+    Hive.registerAdapter(NotificationAdapter());
+    Hive.registerAdapter(NotificationDataAdapter());
+    Hive.registerAdapter(FinishingMaterialAdapter());
+    Hive.registerAdapter(StoreableNotificationAdapter());
+    Hive.registerAdapter(FinishingMaterialOptionAdapter());
 
     await Hive.openBox<User>('customers');
     await Hive.openLazyBox<FinishingMaterial>('cart');
+    await Hive.openBox<StoreableNotification>('notifications');
 
     _initiated = true;
     _instance = _AppDataImpl();
@@ -115,7 +121,7 @@ class _AppDataImpl implements AppData {
   @override LatLng get coordinates => _coordinates;
 
   @override
-  void set location(Location details) {
+  set location(Location details) {
     _coordinates = LatLng(
       details.latitude,
       details.longitude
@@ -183,7 +189,7 @@ class _AppDataImpl implements AppData {
 
   @override
   Future<bool> canAddToCart(FinishingMaterial holder) async =>
-    !(await Hive.lazyBox<FinishingMaterial>('cart').containsKey(holder.id));
+    !(Hive.lazyBox<FinishingMaterial>('cart').containsKey(holder.id));
 
   final _authService = JwtAuthService.create();
 
@@ -194,7 +200,7 @@ class _AppDataImpl implements AppData {
   ValueNotifier<Locale> currentLocale = ValueNotifier(null);
 
   @override
-  void set locale(Locale _locale) {
+  set locale(Locale _locale) {
     SharedPreferences.getInstance().then((value) {
       value.setString('locale', currentLocale.value.languageCode);
     });

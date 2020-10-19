@@ -1,35 +1,67 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/ui/views/dotted-background_view.dart';
-import 'package:haweyati/src/ui/views/header_view.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
-import 'package:haweyati/src/ui/widgets/counter.dart';
-import 'package:haweyati/src/ui/widgets/dark-container.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/models/order/order-item_model.dart';
+import 'package:haweyati/src/models/order/order_model.dart';
+import 'package:haweyati/src/models/order/scaffoldings/order-item_model.dart';
+import 'package:haweyati/src/services/scaffolding_service.dart';
+import 'package:haweyati/src/ui/pages/services/scaffolding/time-location_page.dart';
+import 'package:haweyati/src/ui/views/header_view.dart';
+import 'package:haweyati/src/ui/widgets/scaffolding-item-selector.dart';
+import 'package:haweyati/src/models/services/scaffolding/scaffolding-types.dart';
+import 'package:haweyati/src/models/services/scaffolding/single-scaffolding_model.dart';
+import 'package:haweyati/src/ui/pages/services/scaffolding/adjustments/wrapper_page.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
-class SingleAdjustmentsPage extends StatelessWidget {
+class SingleAdjustmentsPage extends StatefulWidget {
+  @override
+  _SingleAdjustmentsPageState createState() => _SingleAdjustmentsPageState();
+}
+
+class _SingleAdjustmentsPageState extends State<SingleAdjustmentsPage> {
+  final _order = Order(OrderType.scaffolding);
+
+  ScaffoldingPrice _pricing;
+  final _scaffolding = SingleScaffolding();
+
   @override
   Widget build(BuildContext context) {
-    return NoScrollView(
-      body: DottedBackgroundView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15
-        ),
-        child: Column(children: [
+    return WrapperPage(
+      type: ScaffoldingType.single,
+      onPressed: _scaffolding.item.qty > 0 ? () {
+        final _price = _pricing.rent * _scaffolding.item.qty;
+
+        _order.items = [OrderItemHolder(
+          item: ScaffoldingOrderItem(
+            product: _scaffolding,
+            type: ScaffoldingType.single
+          ),
+
+          subtotal: _price
+        )];
+        _order.total = _price;
+
+        navigateTo(context, ScaffoldingTimeAndLocationPage(_order));
+      } : null,
+      builder: (pricing) {
+        _pricing = pricing;
+
+        return [
           HeaderView(
             title: 'Scaffolding Details',
             subtitle: loremIpsum.substring(0, 50),
           ),
 
-          _ScaffoldingItemSelector(
+          ScaffoldingItemSelector(
             text: 'Quantity',
-            price: 100,
+            price: pricing.rent,
+            item: _scaffolding.item,
+            onChange: () => setState(() {}),
           ),
 
           Padding(
             padding: const EdgeInsets.only(
-              left: 8, top: 20
+                left: 8, top: 20
             ),
             child: Text('Mesh Plate Form', style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -39,10 +71,12 @@ class SingleAdjustmentsPage extends StatelessWidget {
           Row(children: [
             Expanded(child: Wrap(children: [
               Radio(
-                value: 1,
-                groupValue: 1,
+                value: SingleScaffoldingType.halfSteel,
+                groupValue: _scaffolding.type,
                 onChanged: (value) {
-
+                  setState(() {
+                    _scaffolding.type = SingleScaffoldingType.halfSteel;
+                  });
                 },
               ),
 
@@ -50,61 +84,20 @@ class SingleAdjustmentsPage extends StatelessWidget {
             ], crossAxisAlignment: WrapCrossAlignment.center)),
             Expanded(child: Wrap(children: [
               Radio(
-                value: 2,
-                groupValue: 1,
+                value: SingleScaffoldingType.fullSteel,
+                groupValue: _scaffolding.type,
                 onChanged: (value) {
-
+                  setState(() {
+                    _scaffolding.type = SingleScaffoldingType.fullSteel;
+                  });
                 },
               ),
 
               Text('Full Steel')
             ], crossAxisAlignment: WrapCrossAlignment.center)),
           ], mainAxisAlignment: MainAxisAlignment.spaceBetween)
-          // Radio(
-          // )
-        ], crossAxisAlignment: CrossAxisAlignment.start),
-      ),
-
-      bottom: FlatActionButton(
-        label: 'Rent Now',
-        onPressed: () {},
-      )
+        ];
+      }
     );
   }
 }
-
-class _ScaffoldingItemSelector extends DarkContainer {
-  _ScaffoldingItemSelector({
-    String text,
-    double price
-  }): super(
-      height: 86,
-      padding: const EdgeInsets.all(15),
-      child: Row(children: [
-        Column(
-          children: [
-            Text(text, style: TextStyle(
-                color: Color(0xFF313F53),
-                fontWeight: FontWeight.bold
-            )),
-            Spacer(),
-            Text('SAR ${price.round()}/day')
-          ],
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-        ),
-        Column(children: [
-          Counter(onChange: (val) {}),
-          SizedBox(height: 10),
-          Counter(
-              increment: .5,
-              maxValue: 4.0,
-              minValue: 1.0,
-              allowDouble: true,
-              onChange: (val) {}
-          )
-        ])
-      ], mainAxisAlignment: MainAxisAlignment.spaceBetween)
-  );
-}
-

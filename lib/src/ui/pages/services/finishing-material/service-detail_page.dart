@@ -70,7 +70,7 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
     return OrderProgressView.sliver(
       children: [
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
+          padding: const EdgeInsets.fromLTRB(0, 30, 0, 15),
           sliver: SliverToBoxAdapter(child: Row(children: [
             Container(
               width: 80, height: 80,
@@ -107,40 +107,34 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
         if (widget.item.variants?.isNotEmpty ?? false)
           ..._buildVariants(),
 
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          sliver: SliverToBoxAdapter(child: DarkContainer(
-            height: 80,
-            margin: const EdgeInsets.only(
-                top: 20, bottom: 30
-            ),
-            padding: const EdgeInsets.all(15),
-            child: Row(children: [
-              Column(children: [
-                Text('Quantity', style: TextStyle(
-                    color: Color(0xFF313F53),
-                    fontWeight: FontWeight.bold
-                )),
-                Spacer(),
-                Text('${_item.price.toStringAsFixed(2)} SAR', style: TextStyle(
-                    color: Color(0xFF313F53)
-                ))
-              ], crossAxisAlignment: CrossAxisAlignment.start),
-              Counter(
-                  initialValue: _item.qty.toDouble(),
-                  onChange: (count) => setState(() => _item.qty = count?.round())
-              )
-            ], mainAxisAlignment: MainAxisAlignment.spaceBetween),
-          )),
-        ),
+        SliverToBoxAdapter(child: DarkContainer(
+          height: 80,
+          margin: const EdgeInsets.only(
+              top: 20, bottom: 30
+          ),
+          padding: const EdgeInsets.all(15),
+          child: Row(children: [
+            Column(children: [
+              Text('Quantity', style: TextStyle(
+                  color: Color(0xFF313F53),
+                  fontWeight: FontWeight.bold
+              )),
+              Spacer(),
+              Text('${_item.price.toStringAsFixed(2)} SAR', style: TextStyle(
+                  color: Color(0xFF313F53)
+              ))
+            ], crossAxisAlignment: CrossAxisAlignment.start),
+            Counter(
+                initialValue: _item.qty.toDouble(),
+                onChange: (count) => setState(() => _item.qty = count?.round())
+            )
+          ], mainAxisAlignment: MainAxisAlignment.spaceBetween),
+        )),
 
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(15, 0, 15, 20),
-          sliver: SliverToBoxAdapter(child: LocationPicker(
-              initialValue: _order.location,
-              onChanged: (Location location) => _order.location = location
-          )),
-        ),
+        SliverToBoxAdapter(child: LocationPicker(
+          initialValue: _order.location,
+          onChanged: (Location location) => _order.location = location
+        )),
       ],
 
       onContinue: _item.qty > 0 ? () {
@@ -163,7 +157,7 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
 
     _availableVariants.forEach((key, values) {
       list.add(SliverPadding(
-        padding: const EdgeInsets.fromLTRB(25, 15, 25, 10),
+        padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
         sliver: SliverToBoxAdapter(
           child: Text(key, style: TextStyle(
             fontSize: 13,
@@ -174,7 +168,7 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
       ));
 
       list.add(SliverPadding(
-        padding: const EdgeInsets.symmetric(horizontal: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 5),
         sliver: SliverGrid(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,

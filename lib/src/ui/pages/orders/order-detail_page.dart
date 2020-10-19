@@ -226,7 +226,7 @@ class OrderItemTile extends StatelessWidget {
 _buildVariants(Map<String, dynamic> variants) {
   final list = [];
 
-  variants.forEach((key, value) {
+  variants?.forEach((key, value) {
     list.add(TableRow(children: [
       Text(key, style: TextStyle(
         height: 1.6,

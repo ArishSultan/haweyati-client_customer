@@ -21,7 +21,7 @@ class OrderConfirmationView extends StatelessWidget {
   final FutureOr Function() preProcess;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  OrderConfirmationView({
+      OrderConfirmationView({
     this.order,
     this.fromCart = false,
     this.children,

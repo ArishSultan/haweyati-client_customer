@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 const _icon = 'assets/icons';
 const AccountIcon = '$_icon/account.png';
@@ -31,6 +32,7 @@ const _image = 'assets/images';
 const Pattern = '$_image/pattern.png';
 const AppLogo = '$_image/app-logo.png';
 const AppLogoBg = '$_image/app-logo-bg.png';
+const AppLogoBgAlt = '$_image/app-logo-bg-alt.png';
 
 /// HomePage Images
 const BuildingMaterialsServiceImage = '$_image/home-page/building-materials-bg.png';
@@ -46,6 +48,6 @@ const FeatureImage4 = '$_image/features-page/feature-4.png';
 
 /// FeaturesPage Images
 
-const apiUrl = "http://192.168.100.100:4000";
+const apiUrl = "http://${kReleaseMode ? '178.128.16.246' : '192.168.100.100'}:4000";
 const boldText = const TextStyle(fontWeight: FontWeight.bold);
 const loremIpsum = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';

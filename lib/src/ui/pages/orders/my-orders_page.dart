@@ -41,7 +41,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                 size: 21, color: Colors.grey.shade400
             ),
           ),
-          style: TextStyle(fontSize: 15),
+          style: TextStyle(fontSize: 15, color: Colors.grey.shade700),
           placeholderStyle: TextStyle(
             fontSize: 15,
             fontFamily: 'Lato',
@@ -213,7 +213,7 @@ class OrderItemTile extends StatelessWidget {
     dynamic product = item.item.product;
 
     if (item.item is DumpsterOrderItem) {
-      title = '${product.size} Yards';
+      title = '${int.parse(product.size)} Yards';
       imageUrl = product.image.name;
     } else if (item.item is BuildingMaterialOrderItem) {
       qty = (item.item as BuildingMaterialOrderItem).qty;
@@ -245,7 +245,7 @@ class OrderItemTile extends StatelessWidget {
           )
         ),
       ),
-      title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Text(title.toString() ,style: TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text(AppLocalizations.of(context).nProducts(qty)),
     );
   }

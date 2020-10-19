@@ -167,7 +167,7 @@ class _JwtAuthServiceImpl<T, U> implements JwtAuthService<T, U> {
 
     _user.profile.token = await FirebaseMessaging().getToken();
     await _service.$patch(
-      endpoint: 'persons',
+      endpoint: 'fcm/token',
       payload: _user.profile
     );
 

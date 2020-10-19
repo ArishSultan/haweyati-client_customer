@@ -117,13 +117,21 @@
   "vehicles": "مركبات",
   "@vehicles": {},
 
-  "price": "{value} SAR",
+
+  "price": "{price}",
   "@price": {
     "placeholders": {
-      "value": {
+      "price": {
+        "name": "SAR",
+        "type": "double",
+        "format": "currency",
+        "optionalParameters": {
+          "name": "'SAR'"
+        }
       }
     }
   },
+
   "nProducts": "{count,plural, =1{1 المنتج} other{{count} منتجات}}",
   "@nProducts": {
     "placeholders": {

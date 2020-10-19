@@ -39,6 +39,18 @@ class _CartOrderPageState extends State<CartOrderPage> {
         itemCount: widget._items.length,
         itemBuilder: (context, index) => Dismissible(
           key: UniqueKey(),
+          background: Container(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Icon(
+                    CupertinoIcons.trash, color: Colors.red,
+                    size: 30
+                ),
+              ),
+            ),
+          ),
           onDismissed: (_) {
             widget._items.removeAt(index);
             if (widget._items.isEmpty) {
@@ -79,6 +91,7 @@ class _CartOrderPageState extends State<CartOrderPage> {
     navigateTo(context, FinishingMaterialOrderConfirmationPage(Order(
       OrderType.finishingMaterial,
       items: items,
+      images: [],
       location: OrderLocation()..update(AppData.instance().location),
       total: items.fold(0, (sum, element) => sum + element.subtotal),
     ), true));

@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/common/widgets/badged-widget.dart';
+import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/ui/modals/dialogs/order/cancel-order-confirmation_dialog.dart';
@@ -45,9 +47,34 @@ class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
       )
     );
     if (!hideCart) _actions.add(
-      IconButton(
-        onPressed: () => navigateTo(context, CartPage()),
-        icon: Image.asset(CartIcon, width: 30)
+      Center(
+        child: ValueListenableBuilder(
+          valueListenable: AppData.instance().cartSize,
+          builder: (context, val, widget) => BadgedWidget(
+            badge: val > 0 ? Positioned(
+              top: 5, right: 5,
+              child: Container(
+                width: 14,
+                height: 14,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Theme.of(context).primaryColor
+                ),
+
+                child: Center(
+                  child: Text(val.toString(), style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 11
+                  )),
+                ),
+              ),
+            ): SizedBox(),
+            child: IconButton(
+              onPressed: () => navigateTo(context, CartPage()),
+              icon: Image.asset(CartIcon, width: 30)
+            ),
+          ),
+        ),
       )
     );
 

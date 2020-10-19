@@ -1,21 +1,26 @@
 import 'dart:ui' as ui;
-
-import 'package:haweyati/l10n/app_localizations.dart';
-import 'package:haweyati/src/common/services/jwt-auth_service.dart';
-import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
-import 'package:haweyati/src/ui/views/localized_view.dart';
+import 'package:haweyati/src/ui/pages/notifications_page.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/data.dart';
 import 'package:flutter/foundation.dart';
-import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/routes.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:haweyati/l10n/app_localizations.dart';
+import 'package:haweyati/src/ui/views/localized_view.dart';
+import 'package:haweyati/src/models/notification_model.dart';
+import 'package:haweyati/src/models/token-update_model.dart';
 import 'package:haweyati/src/common/widgets/badged-widget.dart';
+import 'package:haweyati/src/common/services/jwt-auth_service.dart';
+import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
+import 'package:haweyati/src/services/notifications_service.dart' as n;
+import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
 import 'package:haweyati/src/services/service-availability_service.dart';
 import 'package:haweyati/src/models/services/finishing-material/model.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 import '../../routes.dart';
 import '../../utils/custom-navigator.dart';
@@ -30,19 +35,66 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _appData = AppData.instance();
   final _service = AvailabilityService();
-  final _drawerKey = GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   ValueListenable<LazyBox<FinishingMaterial>> _cart;
 
   @override
   void initState() {
     super.initState();
+
+    n.NotificationsService.initialize(
+      topics: ['news'],
+      context: context,
+      onReceived: (notification, data, context) async {
+        if (Hive.isBoxOpen('notifications')) {
+          Hive.box<StoreableNotification>('notifications')
+            .add(StoreableNotification(
+            notification: notification
+          ));
+          print('added');
+        }
+      },
+      beforeNotify: (notification, notificationData) async {
+        // final storeable = StoreableNotification(
+        //   data: notificationData,
+        //   notification: notification,
+        // );
+        // final flag = Hive.isBoxOpen('notifications');
+        //
+        // print(flag);
+        // print(storeable);
+        //
+        // if (flag) {
+        //   Hive.box<StoreableNotification>('notifications').add(storeable);
+        //   print((Hive.box<StoreableNotification>('notifications')).values);
+        // } else {
+        //   Hive.openLazyBox('notifications')
+        //       .then((value) async {
+        //         await value.add(storeable);
+        //         await value.close();
+        //       });
+        // }
+      },
+      tokenUpdater: (token) async {
+        EasyRest().$patch(
+          endpoint: 'fcm/token',
+          payload: TokenUpdate(_appData.user.profile.id, token)
+        );
+      },
+      dataParser: (data) {
+        return n.NotificationData();
+          // ..type = data['type']
+          // ..createdAt = data['createdAt'];
+      }
+    );
+
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
   }
 
   @override
   Widget build(BuildContext context) {
     return LocalizedView(builder: (context, lang) => Scaffold(
-      key: _drawerKey,
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 5,
@@ -57,7 +109,7 @@ class _HomePageState extends State<HomePage> {
         title: Image.asset(AppLogo, width: 33, height: 33),
         leading: IconButton(
           icon: Image.asset(MenuIcon, width: 20, height: 20),
-          onPressed: () => _drawerKey.currentState.openDrawer()
+          onPressed: () => _scaffoldKey.currentState.openDrawer()
         ),
         actions: <Widget>[
           IconButton(
@@ -65,9 +117,8 @@ class _HomePageState extends State<HomePage> {
             onPressed: () => Navigator.of(context).pushNamed(HELPLINE_PAGE)
           ),
           IconButton(
-            /// TODO: Fix This.
             icon: Image.asset(NotificationIcon, width: 20, height: 20),
-            onPressed: () => Navigator.of(context).pushNamed('/notifications')
+            onPressed: () => navigateTo(context, NotificationsPage())
           )
         ],
         bottom: PreferredSize(
@@ -190,7 +241,18 @@ class _HomePageState extends State<HomePage> {
                   _ListTile(context,
                     image: StarIconOutlined,
                     title: lang.rateApp,
-                    navigateTo: RATE_APP_PAGE,
+                    onPressed: () async {
+                      Navigator.of(context).pop();
+                      final inAppReview = InAppReview.instance;
+
+                      // if (await inAppReview.isAvailable()) {
+                      //   inAppReview.requestReview();
+                      // } else {
+                        _scaffoldKey.currentState.showSnackBar(SnackBar(
+                          content: Text('App Review is not available yet.'),
+                        ));
+                      // }
+                    }
                   ),
                   _ListTile(context,
                     image: LogoutIcon,
@@ -338,4 +400,3 @@ class _ServiceContainer extends StatelessWidget {
     );
   }
 }
-

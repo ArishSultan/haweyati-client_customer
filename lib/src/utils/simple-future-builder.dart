@@ -17,6 +17,9 @@ class SimpleFutureBuilder<T> extends FutureBuilder<T> {
     future: future,
 
     builder: (context, AsyncSnapshot<T> snapshot) {
+      print('i am here');
+      print(snapshot.data);
+      print(snapshot.error);
       if (snapshot.hasData) {
 
         switch(snapshot.connectionState) {

@@ -5,6 +5,7 @@ import 'package:haweyati/src/models/order/building-material/order-item_model.dar
 import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
 import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
 import 'package:haweyati/src/models/order/order-location_model.dart';
+import 'package:haweyati/src/models/order/scaffoldings/order-item_model.dart';
 import 'package:haweyati/src/models/payment_model.dart';
 import 'package:haweyati/src/models/user_model.dart';
 import 'package:hive/hive.dart';
@@ -55,7 +56,7 @@ class Order extends HiveObject implements JsonSerializable {
     this.total,
     this.items,
     this.number,
-    this.images,
+    this.images = const [],
     this.status,
     this.payment,
     this.location,
@@ -74,7 +75,7 @@ class Order extends HiveObject implements JsonSerializable {
         _parser = DumpsterOrderItem.fromJson;
         break;
       case OrderType.scaffolding:
-        // TODO: Handle this case.
+        _parser = ScaffoldingOrderItem.fromJson;
         break;
       case OrderType.buildingMaterial:
         _parser = BuildingMaterialOrderItem.fromJson;

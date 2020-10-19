@@ -1,12 +1,15 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/ui/pages/miscellaneous/change-password.dart';
+import 'package:haweyati/src/ui/pages/miscellaneous/edit-profile.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/dark-list-tile.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -24,7 +27,7 @@ class SettingsPage extends StatelessWidget {
           DarkListTile(
             title: 'Profile',
             trailing: Icon(CupertinoIcons.right_chevron),
-            onTap: () => Navigator.of(context).pushNamed('/profile')
+            onTap: () => navigateTo(context, EditProfile())
           ),
           SizedBox(height: 15),
           DarkListTile(
@@ -36,7 +39,7 @@ class SettingsPage extends StatelessWidget {
           DarkListTile(
             title: 'Change Password',
             trailing: Icon(CupertinoIcons.right_chevron),
-            onTap: () => Navigator.of(context).pushNamed('/change-password')
+            onTap: () => navigateTo(context, ChangePassword())
           )
         ]),
       ),

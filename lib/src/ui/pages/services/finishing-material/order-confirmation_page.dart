@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/models/order/order_model.dart';
 import 'package:haweyati/src/services/haweyati-service.dart';
@@ -12,6 +13,7 @@ import 'package:haweyati/src/ui/widgets/buttons/edit-button.dart';
 import 'package:haweyati/src/ui/views/order-confirmation_view.dart';
 import 'package:haweyati/src/models/services/finishing-material/model.dart';
 import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
+import 'package:hive/hive.dart';
 
 class FinishingMaterialOrderConfirmationPage extends StatelessWidget {
   final Order _order;
@@ -31,12 +33,9 @@ class FinishingMaterialOrderConfirmationPage extends StatelessWidget {
         _order.total = _total;
 
         if (_fromCart) {
-          await showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text('Clear Cart After Order'),
-            )
-          );
+          _order.items.forEach((element) {
+            AppData.instance().removeFromCart(element.item.product);
+          });
         }
       },
 

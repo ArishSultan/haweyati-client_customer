@@ -13,7 +13,6 @@ class ClearCartAfterOrderDialog extends StatelessWidget {
       content: Text('The products that you just ordered will be removed from cart.'),
 
       actions: [
-        FlatActionButton()
       ],
     );
   }

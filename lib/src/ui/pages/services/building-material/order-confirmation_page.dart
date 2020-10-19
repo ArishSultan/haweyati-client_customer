@@ -62,9 +62,9 @@ class BuildingMaterialOrderConfirmationPage extends StatelessWidget {
           children: [
             TableRow(children: [
               Text('Delivery Fee', style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey,
-                  fontFamily: 'Lato', height: 1.9
+                fontSize: 13,
+                color: Colors.grey,
+                fontFamily: 'Lato', height: 1.9
               )),
               RichPriceText(price: _order.deliveryFee)
             ]),

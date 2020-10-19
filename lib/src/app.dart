@@ -46,7 +46,7 @@ class HaweyatiApp extends Theme {
         return CupertinoApp(
           locale: value,
           routes: routes,
-
+          debugShowCheckedModeBanner: false,
           initialRoute: status ? HOME_PAGE : FEATURES_PAGE,
           supportedLocales: AppLocalizations.supportedLocales,
           localizationsDelegates: AppLocalizations.localizationsDelegates
