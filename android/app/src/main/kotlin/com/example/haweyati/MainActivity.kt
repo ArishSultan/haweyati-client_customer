@@ -8,19 +8,5 @@ import io.flutter.plugin.common.PluginRegistry
 import io.flutter.plugins.GeneratedPluginRegistrant
 import io.flutter.plugins.firebasemessaging.FlutterFirebaseMessagingService
 
-class MainActivity: FlutterActivity()//, PluginRegistry.PluginRegistrantCallback
- {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//
-//        FlutterFirebaseMessagingService.setPluginRegistrant(this)
-//    }
-
-    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-        GeneratedPluginRegistrant.registerWith(flutterEngine)
-    }
-
-//    override fun registerWith(registry: PluginRegistry?) {
-//        FirebaseCloudMessagingPluginRegistrant.registerWith(registry!!)
-//    }
+class MainActivity: FlutterActivity() {
 }

@@ -17,6 +17,9 @@ dependencies:
     sdk: flutter
   intl:
 
+  path_provider:
+  firebase_dynamic_links:
+
   # Firebase Cloud Notifications (FCM)
   firebase_messaging:
 

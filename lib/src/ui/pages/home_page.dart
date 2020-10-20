@@ -1,5 +1,4 @@
-import 'dart:ui' as ui;
-import 'package:haweyati/src/ui/pages/notifications_page.dart';
+import 'dart:ui';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,22 +9,13 @@ import 'package:haweyati/src/routes.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
-import 'package:haweyati/src/models/notification_model.dart';
-import 'package:haweyati/src/models/token-update_model.dart';
 import 'package:haweyati/src/common/widgets/badged-widget.dart';
+import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
 import 'package:haweyati/src/common/services/jwt-auth_service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
-import 'package:haweyati/src/services/notifications_service.dart' as n;
-import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
 import 'package:haweyati/src/services/service-availability_service.dart';
 import 'package:haweyati/src/models/services/finishing-material/model.dart';
-import 'package:in_app_review/in_app_review.dart';
-
-import '../../routes.dart';
-import '../../utils/custom-navigator.dart';
-import '../views/live-scrollable_view.dart';
-import 'cart_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -41,53 +31,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    n.NotificationsService.initialize(
-      topics: ['news'],
-      context: context,
-      onReceived: (notification, data, context) async {
-        if (Hive.isBoxOpen('notifications')) {
-          Hive.box<StoreableNotification>('notifications')
-            .add(StoreableNotification(
-            notification: notification
-          ));
-          print('added');
-        }
-      },
-      beforeNotify: (notification, notificationData) async {
-        // final storeable = StoreableNotification(
-        //   data: notificationData,
-        //   notification: notification,
-        // );
-        // final flag = Hive.isBoxOpen('notifications');
-        //
-        // print(flag);
-        // print(storeable);
-        //
-        // if (flag) {
-        //   Hive.box<StoreableNotification>('notifications').add(storeable);
-        //   print((Hive.box<StoreableNotification>('notifications')).values);
-        // } else {
-        //   Hive.openLazyBox('notifications')
-        //       .then((value) async {
-        //         await value.add(storeable);
-        //         await value.close();
-        //       });
-        // }
-      },
-      tokenUpdater: (token) async {
-        EasyRest().$patch(
-          endpoint: 'fcm/token',
-          payload: TokenUpdate(_appData.user.profile.id, token)
-        );
-      },
-      dataParser: (data) {
-        return n.NotificationData();
-          // ..type = data['type']
-          // ..createdAt = data['createdAt'];
-      }
-    );
-
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
   }
 
@@ -118,7 +61,7 @@ class _HomePageState extends State<HomePage> {
           ),
           IconButton(
             icon: Image.asset(NotificationIcon, width: 20, height: 20),
-            onPressed: () => navigateTo(context, NotificationsPage())
+            onPressed: () => Navigator.of(context).pushNamed(NOTIFICATIONS_PAGE)
           )
         ],
         bottom: PreferredSize(
@@ -144,7 +87,7 @@ class _HomePageState extends State<HomePage> {
               ),
 
               Directionality(
-                textDirection: ui.TextDirection.ltr,
+                textDirection: TextDirection.ltr,
                 child: CupertinoTextField(
                   onTap: () async {
                     final location = await Navigator.of(context).pushNamed(PRE_LOCATION_PAGE);
@@ -243,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                     title: lang.rateApp,
                     onPressed: () async {
                       Navigator.of(context).pop();
-                      final inAppReview = InAppReview.instance;
+                      // final inAppReview = InAppReview.instance;
 
                       // if (await inAppReview.isAvailable()) {
                       //   inAppReview.requestReview();
@@ -302,7 +245,7 @@ class _HomePageState extends State<HomePage> {
               child: FloatingActionButton(
                 elevation: 5,
                 backgroundColor: Colors.white,
-                onPressed: () => navigateTo(context, CartPage()),
+                onPressed: () => Navigator.of(context).pushNamed(CART_PAGE),
                 child: Image.asset(CartIcon, width: 30, height: 30, color: Colors.black)
               ),
             ),

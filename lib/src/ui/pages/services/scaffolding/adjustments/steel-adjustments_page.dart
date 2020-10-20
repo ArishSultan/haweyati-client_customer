@@ -1,4 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:haweyati/src/models/order/order-item_model.dart';
+import 'package:haweyati/src/models/order/order_model.dart';
+import 'package:haweyati/src/models/order/scaffoldings/order-item_model.dart';
 import 'package:haweyati/src/models/services/scaffolding/scaffolding-item_model.dart';
 import 'package:haweyati/src/models/services/scaffolding/scaffolding-types.dart';
 import 'package:haweyati/src/models/services/scaffolding/steel-scaffolding_model.dart';
@@ -116,24 +120,44 @@ class _SteelAdjustmentsPageState extends State<SteelAdjustmentsPage> {
               onChange2: (val) => setState(() => data.woodPlanks.size = val),
             ),
           ),
+
+          Padding(
+            padding: const EdgeInsets.only(top: 15, bottom: 15),
+            child: ServiceDaysCounter(
+              pricing: _pricing,
+              onDaysChange: (double val){
+                setState(() {
+                  _pricing.extraDays = val.toInt();
+                  _pricing.total = _pricing.rent + (_pricing.extraDays * _pricing.extraDayRent);
+                });
+              },
+            ),
+          ),
         ];
       },
 
-      // onPressed: _allow ? () {
-      //   final _price = _pricing.rent * _scaffolding.item.qty;
-      //
-      //   _order.items = [OrderItemHolder(
-      //       item: ScaffoldingOrderItem(
-      //           product: _scaffolding,
-      //           type: ScaffoldingType.single
-      //       ),
-      //
-      //       subtotal: _price
-      //   )];
-      //   _order.total = _price;
-      //
-      //   navigateTo(context, ScaffoldingTimeAndLocationPage(_order))
-      // }: null
+      onPressed: _allow ? () {
+        final _price = _pricing.rent * _pricing.extraDays
+            * _pricing.extraDayRent;
+
+        final _order = Order(OrderType.scaffolding);
+
+        _order.addItem(
+          item: ScaffoldingOrderItem(),
+          type:
+        );
+        _order.items = [OrderItemHolder(
+          item: ScaffoldingOrderItem(
+            product: _scaffolding,
+            type: ScaffoldingType.single
+          ),
+
+          subtotal: _price
+        )];
+        _order.total = _price;
+
+        navigateTo(context, ScaffoldingTimeAndLocationPage(_order))
+      }: null
     );
   }
 }
@@ -175,3 +199,48 @@ class _ScaffoldingItemSelector extends DarkContainer {
   );
 }
 
+
+class ServiceDaysCounter extends DarkContainer {
+  ServiceDaysCounter({
+    ScaffoldingPrice pricing,
+    Function(double) onDaysChange,
+}) : super(
+      padding: const EdgeInsets.all(15),
+           child: Column(
+             crossAxisAlignment: CrossAxisAlignment.start,
+             children: [
+               Padding(
+                 padding: const EdgeInsets.symmetric(vertical:8.0),
+                 child: Text('Rent for ${pricing.days} days: ${pricing.rent ?? 0}'),
+               ),
+               Row(
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                 children: [
+                   Column(
+                     children: [
+                       Text("Extra Days", style: TextStyle(
+                           color: Color(0xFF313F53),
+                           fontWeight: FontWeight.bold
+                       )),
+                     ],
+                     mainAxisAlignment: MainAxisAlignment.center,
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                   ),
+                   Counter(
+                     onChange: onDaysChange,
+                    increment: 1,
+                    allowDouble: false,
+                      initialValue: 0,
+                    ),
+                 ],
+               ),
+              pricing.extraDays !=0 &&  pricing.extraDays!=null ? Padding(
+                padding: const EdgeInsets.symmetric(vertical:8.0),
+                child: Text('Rent for extra ${ pricing.extraDays} days: ${ pricing.extraDays * pricing.extraDayRent ?? 0}'),
+              ) : SizedBox(),
+               Padding(
+                 padding: const EdgeInsets.symmetric(vertical:8.0),
+                 child: Text("Total(${pricing.days + (pricing.extraDays ?? 0)} days) : ${pricing.total ?? pricing.rent}"),
+               )
+             ],
+           ));}

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/models/services/scaffolding/scaffolding-types.dart';
-import 'package:haweyati/src/ui/views/scroll_view.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/utils/simple-future-builder.dart';
 import 'package:haweyati/src/services/scaffolding_service.dart';
+import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
+import 'package:haweyati/src/models/services/scaffolding/scaffolding-types.dart';
 
 class WrapperPage extends StatefulWidget {
   final ScaffoldingType type;
@@ -43,47 +44,30 @@ class _WrapperPageState extends State<WrapperPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleFutureBuilder(
-      context: context,
-      future: _pricing,
-      builder: (context) => ScrollableView(
-        showBackground: true,
-        padding: const EdgeInsets.fromLTRB(15, 0, 15, 100),
-        children: widget.builder(context.data),
-        crossAxisAlignment: CrossAxisAlignment.start,
-        bottom: RaisedActionButton(
-          label: 'Rent Now',
-          onPressed: widget.onPressed
-        )
-      ),
-      errorBuilder: (value) {
-        return Scaffold(
-          body: Center(child: Text('Service not available')),
-        );
-      },
-      waitingChild: Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
+    return NoScrollView(
+      body: DottedBackgroundView(
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+        child: SimpleFutureBuilder(
+          future: _pricing,
+          context: context,
+          builder: (snapshot) => ListView(
+            children: widget.builder(snapshot.data)
           ),
+
+          errorBuilder: (value) {
+            return Center(child: Text('Service not available'));
+          },
+          noneChild: Center(child: Text('Service not available')),
+          noDataChild: Center(child: Text('Service not available')),
+          activeChild: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          waitingChild: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          unknownChild: Center(child: Text('Service not available')),
         ),
       ),
-      noDataChild: Scaffold(
-        body: Center(child: Text('Service not available')),
-      ),
-      noneChild: Scaffold(
-        body: Center(child: Text('Service not available')),
-      ),
-      activeChild: Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-          ),
-        ),
-      ),
-      unknownChild: Scaffold(
-        body: Center(child: Text('Service not available')),
-      ),
+      bottom: RaisedActionButton(
+        label: 'Rent Now',
+        onPressed: widget.onPressed
+      )
     );
   }
 }

@@ -1,63 +1,38 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:hive/hive.dart';
+import 'package:flutter/widgets.dart';
+import 'package:haweyati/src/ui/views/header_view.dart';
+import 'package:haweyati/src/ui/views/scroll_view.dart';
+import 'package:haweyati/src/models/notification_model.dart';
 
-class NotificationsPage extends StatefulWidget {
-  @override
-  _NotificationsPageState createState() => _NotificationsPageState();
-}
+class NotificationsPage extends StatelessWidget {
+  final _box = Hive.box<StoreableNotification>('notifications');
 
-class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
-//     return ScrollablePage(
-//       padding: 0,
-//       showBackgroundImage: false,
-//       appBar: HaweyatiAppBar(
-//         progress: 0,
-//         hideHome: true,
-//         hideCart: true
-//       ),
-//       title: "Notifications",
-//       subtitle: loremIpsum.substring(0, 50),
-//
-//       child: SliverList(delegate: SliverChildBuilderDelegate(
-//         (context, index) {
-//           return Container(
-//             margin: EdgeInsets.only(bottom: 20, left: 10, right: 10),
-//             decoration: BoxDecoration(
-//               border: Border(bottom: BorderSide(color: Color(0x11000000)))
-//             ),
-//             child: ListTile(
-//               leading: Icon(Icons.fingerprint),
-//               title: Text(loremIpsum.substring(0, 60)),
-//               subtitle: Padding(
-//                 padding: const EdgeInsets.only(top: 8),
-//                 child: Text("12:30 PM"),
-//               )
-//             ),
-//           );
-//         },
-//         childCount: 20
-//       )),
-//     );
-//
-// //      Scaffold(
-// //      appBar: HaweyatiAppBar(context: context,showCart: false,showHome: false,),
-// //      body: HaweyatiAppBody(
-// //        title: "Notification",
-// //        detail:
-// //            loremIpsum.substring(0,50),
-// //        child: ListView.separated(
-// //            itemBuilder: (context, i) {
-// //              return ListTile(
-// //                leading: Image.asset("assets/images/notification_thumb.png",height: 40,width: 40,),
-// //title: Text(loremIpsum.substring(0,60)),
-// //         ,     );
-// //            },
-// //            separatorBuilder: (context, i) {
-// //              return Divider();
-// //            },
-// //            itemCount: 12)
-// //      ),
-// //    );
+    List<StoreableNotification> list = _box.values.toList();
+
+    return ScrollableView.sliver(
+      appBar: HaweyatiAppBar(hideHome: true, hideCart: true),
+      children: [
+        SliverToBoxAdapter(child: HeaderView(
+          title: 'Notifications',
+          subtitle: 'Some subtitle',
+        )),
+
+        SliverList(delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            return ListTile(
+              leading: Icon(CupertinoIcons.news),
+              title: Text(list[index].notification.title ?? ''),
+              subtitle: Text(list[index].notification.body ?? ''),
+            );
+          },
+          childCount: list.length
+        ))
+      ],
+    );
   }
 }

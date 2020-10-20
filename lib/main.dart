@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:haweyati/src/app.dart';
@@ -31,7 +32,7 @@ void main() async {
   );
 
   final _appData = AppData.instance();
-
+  print(await FirebaseMessaging().getToken());
   // fcm.onTokenRefresh.listen((event) {
   //   if (_appData.isAuthenticated) {
   //     EasyRest().$patch(

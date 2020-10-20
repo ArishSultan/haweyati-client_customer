@@ -260,10 +260,14 @@ class _OrderDetailHeader extends StatelessWidget {
             left: 109,
             child: Image.asset(SettingsIcon, width: 22)
           ),
-          // Positioned(left: 30, child: Image.asset(CartIcon, width: 30)),
+          Positioned(
+            top: 7,
+            right: 106.5,
+            child: Image.asset(CartIcon, width: 28)
+          ),
           Positioned(
             right: 30, top: 9,
-            child: Image.asset(HomeIcon, width: 20)
+            child: Image.asset(HomeIcon, width: 20, color: Colors.white)
           ),
         ],
       )

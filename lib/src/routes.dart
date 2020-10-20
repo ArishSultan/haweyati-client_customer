@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:haweyati/src/ui/pages/cart/cart_page.dart';
 import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
 import 'package:haweyati/src/ui/pages/orders/order-detail_page.dart';
 
@@ -82,6 +83,7 @@ final routes = <String, Widget Function(BuildContext)>{
 
   /// Orders History/Status Routes.
   // ORDER_PLACED_PAGE: (context) =>
+  CART_PAGE: (context) => CartPage(),
   MY_ORDERS_PAGE: (context) => MyOrdersPage(),
 };
 
@@ -114,3 +116,4 @@ const FINISHING_MATERIALS_LIST_PAGE = '19';
 
 const MY_ORDERS_PAGE = '20';
 const ORDER_PLACED_PAGE = '21';
+const CART_PAGE = '22';

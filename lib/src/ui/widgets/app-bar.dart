@@ -5,7 +5,7 @@ import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/ui/modals/dialogs/order/cancel-order-confirmation_dialog.dart';
-import 'package:haweyati/src/ui/pages/cart_page.dart';
+import 'package:haweyati/src/ui/pages/cart/cart_page.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {

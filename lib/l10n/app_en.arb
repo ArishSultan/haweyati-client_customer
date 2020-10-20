@@ -140,5 +140,15 @@
         "format": "compact"
       }
     }
+  },
+
+  "nItem": "{count,plural,=0{No Items} =1{1 Item} other{{count} Items}}",
+  "@nItem": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
   }
 }

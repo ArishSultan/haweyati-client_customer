@@ -8,6 +8,7 @@ import 'package:haweyati/src/models/order/order-location_model.dart';
 import 'package:haweyati/src/models/order/scaffoldings/order-item_model.dart';
 import 'package:haweyati/src/models/payment_model.dart';
 import 'package:haweyati/src/models/user_model.dart';
+import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
 import 'package:hive/hive.dart';
 
 import 'order-item_model.dart';
@@ -31,13 +32,13 @@ class OrderImage implements Serializable<Map<String, dynamic>> {
 class Order extends HiveObject implements JsonSerializable {
   String id;
 
-  OrderStatus status;
   String city;
   String note;
   double total;
   String number;
   OrderType type;
   double deliveryFee;
+  OrderStatus status;
 
   User customer;
 
@@ -49,11 +50,19 @@ class Order extends HiveObject implements JsonSerializable {
   DateTime createdAt;
   DateTime updatedAt;
 
+  void addItem({OrderItem item, double price}) {
+    items.add(OrderItemHolder(
+      item: item, subtotal: price
+    ));
+
+    total += price;
+  }
+
   Order(this.type, {
     this.id,
     this.city,
     this.note,
-    this.total,
+    this.total = 0.0,
     this.items,
     this.number,
     this.images = const [],
@@ -195,4 +204,24 @@ enum OrderType {
   scaffolding,
   buildingMaterial,
   finishingMaterial
+}
+
+
+class _Order {
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final List<OrderItemHolder> _items = [];
+
+  _Order._({
+    this.createdAt,
+    this.updatedAt
+  });
+
+  factory _Order.create(OrderType type) {
+
+  }
+
+  bool canProceed() {
+    return _items.isNotEmpty;
+  }
 }

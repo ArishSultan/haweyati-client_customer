@@ -140,5 +140,15 @@
         "format": "compact"
       }
     }
+  },
+
+  "nItem": "{count,plural, =0{لا توجد عناصر} =1{1 بند} other{{count} العناصر}}",
+  "@nItem": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
   }
 }

@@ -4,12 +4,16 @@ import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
 class ScaffoldingPrice {
   int days;
   double rent;
+  int extraDays;
   double extraDayRent;
+  double total;
 
   ScaffoldingPrice({
     this.days,
+    this.extraDays,
     this.rent,
-    this.extraDayRent
+    this.extraDayRent,
+    this.total
   });
 
   factory ScaffoldingPrice.fromJson(Map<String, dynamic> json) {

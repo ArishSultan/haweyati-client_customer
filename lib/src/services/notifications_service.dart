@@ -1,6 +1,9 @@
+import 'dart:io';
+import 'package:hive/hive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:hive/hive.dart';
+import 'package:haweyati/src/models/notification_model.dart';
+import 'package:path_provider/path_provider.dart';
 
 part 'notifications_service.g.dart';
 
@@ -54,8 +57,11 @@ class NotificationsService {
     }
 
     _firebaseMessaging.configure(
-      onResume: (message) => _parseData(message, onResume),
-      onLaunch: (message) => _parseData(message, onLaunch),
+      onBackgroundMessage: _saveNotification,
+      // onResume: (message) => _parseData(message, onResume),
+      onLaunch: _saveNotification,
+      onResume: _saveNotification,
+      // onLaunch: (message) => _parseData(message, onLaunch),
       onMessage: (message) => _parseData(message, onReceived),
     );
   }
@@ -65,20 +71,49 @@ class NotificationsService {
     print(json['notification']['body']);
     print('title');
     print(json['notification']['title']);
+
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File(dir.path + '/' + 'file.txt');
+
+    try {
+      await file.create();
+    } catch(e) {
+    }
+
+    await file.writeAsString('Notification was recieved');
+
     final notification = Notification()
       ..body = json['notification']['body']
       ..title = json['notification']['title'];
 
-    // final data = _notificationDataParser(json['data']);
-    //
-    // await _beforeNotify(notification, data);
-    //
-
-    if (next != null)
       return next(notification, null, _context);
   }
 
   static Future<void> updateToken() async {
     return _tokenUpdater(await _firebaseMessaging.getToken());
+  }
+}
+
+Future _saveNotification(Map<String, dynamic> json) async {
+  final notification = Notification()
+    ..body = json['notification']['body']
+    ..title = json['notification']['title'];
+
+  final dir = await getApplicationDocumentsDirectory();
+  final file = File(dir.path + '/' + 'file.txt');
+
+  try {
+    await file.create();
+  } catch(e) {
+  }
+
+  await file.writeAsString('Notification was recieved');
+
+  if (Hive.isBoxOpen('notifications')) {
+    Hive.box<StoreableNotification>('notifications')
+      .add(StoreableNotification(
+      notification: notification
+    ));
+    print('added');
   }
 }
