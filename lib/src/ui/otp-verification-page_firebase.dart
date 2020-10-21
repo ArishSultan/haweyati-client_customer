@@ -269,4 +269,3 @@ class __ResendTimerState extends State<_ResendTimer> {
     _controller.close();
   }
 }
-

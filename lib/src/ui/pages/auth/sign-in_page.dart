@@ -1,11 +1,19 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
+import 'package:haweyati/src/common/modals/util.dart';
+import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/models/profile_model.dart';
+import 'package:haweyati/src/models/user_model.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/common/simple-form.dart';
 import 'package:haweyati/src/ui/pages/auth/customer-registration_page.dart';
 import 'package:haweyati/src/ui/pages/miscellaneous/contact-input_page.dart';
+import 'package:haweyati/src/ui/reset-password_page.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
@@ -35,10 +43,12 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   final _data = SignInData();
   final _key = GlobalKey<SimpleFormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return LocalizedView(builder: (context, lang) => Scaffold(
+      key: _scaffoldKey,
       appBar: HaweyatiAppBar(
         hideCart: true, hideHome: true,
         actions: [Center(child: Padding(
@@ -63,10 +73,19 @@ class _SignInPageState extends State<SignInPage> {
                   }
                 );
               }
-            },
-            afterSubmit: () => Navigator.of(context)
-              .pushNamedAndRemoveUntil(HOME_PAGE, (route) => false),
 
+              if (err is DioError) {
+                if (err.response.statusCode == 404) {
+                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text('No Customer account was found, Please Register')
+                  ));
+                }
+              }
+            },
+            afterSubmit: () {
+              Navigator.of(context)
+                  .pushNamedAndRemoveUntil(HOME_PAGE, (route) => false);
+            },
             onSubmit: () => JwtAuthService.create().$signIn(_data),
 
             child: Directionality(
@@ -100,8 +119,11 @@ class _SignInPageState extends State<SignInPage> {
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 300),
                     child: GestureDetector(
-                      onTap: () {
-                        print('Forgot Password');
+                      onTap: () async {
+                        final number = await navigateTo(context, ContactInputPage());
+                        if (number != null) {
+                          navigateTo(context, ResetPasswordPage(phoneNumber: number));
+                        }
                       },
                       child: Text(lang.forgotPassword, style: TextStyle(
                         color: Theme.of(context).primaryColor
@@ -118,8 +140,39 @@ class _SignInPageState extends State<SignInPage> {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 30),
               child: GestureDetector(
-                onTap: () {
-                  navigateTo(context, ContactInputPage());
+                onTap: () async {
+                  final number = await navigateTo(context, ContactInputPage());
+                  if (number != null) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => WaitingDialog(
+                        message: 'Preparing for Registration',
+                      )
+                    );
+                    final service = await EasyRest().$getOne(route: 'persons/contact/$number');
+                    Navigator.of(context).pop();
+                    print('Service');
+                    print(service);
+
+                    if (service != null) {
+                      final result = await showConfirmationDialog(
+                        context: context,
+                        builder: (context) => ConfirmationDialog(
+                          content: Text('This contact is already linked to other accounts i.e. Driver or Supplier'
+                              'Do You also want to link a customer account to this number?'),
+                        )
+                      );
+
+                      if (result ?? false) {
+                        await EasyRest().$post(endpoint: 'customers', payload: User(
+                          profile: Profile.fromJson(service),
+                          location: AppData.instance().location
+                        ));
+                      }
+                    } else {
+                      navigateTo(context, CustomerRegistration(contact: number));
+                    }
+                  }
                 },
                 child: Text('Register Yourself', style: TextStyle(
                   color: Theme.of(context).primaryColor

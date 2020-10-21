@@ -142,21 +142,21 @@ class _SteelAdjustmentsPageState extends State<SteelAdjustmentsPage> {
 
         final _order = Order(OrderType.scaffolding);
 
-        _order.addItem(
-          item: ScaffoldingOrderItem(),
-          type:
-        );
-        _order.items = [OrderItemHolder(
-          item: ScaffoldingOrderItem(
-            product: _scaffolding,
-            type: ScaffoldingType.single
-          ),
-
-          subtotal: _price
-        )];
-        _order.total = _price;
-
-        navigateTo(context, ScaffoldingTimeAndLocationPage(_order))
+        // _order.addItem(
+        //   item: ScaffoldingOrderItem(),
+        //   type:
+        // );
+        // _order.items = [OrderItemHolder(
+        //   item: ScaffoldingOrderItem(
+        //     product: _scaffolding,
+        //     type: ScaffoldingType.single
+        //   ),
+        //
+        //   subtotal: _price
+        // )];
+        // _order.total = _price;
+        //
+        // navigateTo(context, ScaffoldingTimeAndLocationPage(_order))
       }: null
     );
   }

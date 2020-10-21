@@ -77,7 +77,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                 if (value.isEmpty) {
                   return 'Please confirm password';
                 } if (_password != _confirmPassword) {
-                  return 'Passwords don\'t match';
+                  // return 'Passwords don\'t match';
                 }
                 return null;
               }
@@ -94,8 +94,8 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
       bottom: RaisedActionButton(
         label: 'Register',
         onPressed: () async {
+          formKey.currentState.save();
           if (formKey.currentState.validate()) {
-            formKey.currentState.save();
 
             FocusScope.of(context).requestFocus(FocusNode());
             FocusScope.of(context).requestFocus(FocusNode());
@@ -105,6 +105,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
               'name': _name,
               'scope': 'customer',
               'password': _password,
+              'email': DateTime.now(),
               'address': location.address,
               'contact' : widget?.contact,
               'latitude': location.latitude,
@@ -128,7 +129,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
             } catch (e) {
               Navigator.pop(context);
               scaffoldKey.currentState.showSnackBar(
-                SnackBar(content: Text(res.toString()))
+                SnackBar(content: Text(e.toString()))
               );
             }
           } else {

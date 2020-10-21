@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:haweyati/src/common/models/json_serializable.dart';
 import 'package:haweyati/src/common/models/serializable.dart';
 import 'package:haweyati/src/data.dart';
@@ -8,7 +10,6 @@ import 'package:haweyati/src/models/order/order-location_model.dart';
 import 'package:haweyati/src/models/order/scaffoldings/order-item_model.dart';
 import 'package:haweyati/src/models/payment_model.dart';
 import 'package:haweyati/src/models/user_model.dart';
-import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
 import 'package:hive/hive.dart';
 
 import 'order-item_model.dart';
@@ -207,18 +208,64 @@ enum OrderType {
 }
 
 
+// enum UserType { admin, driver, customer, supplier }
+// class OrderUpdater {
+//   String id;
+//   UserType type;
+// }
+//
+// class OrderUpdate {
+//   String updatedBy;
+//   OrderStatus status;
+//
+//   String note;
+//   String message;
+//   DateTime timestamp;
+// }
+
 class _Order {
+  final OrderType type;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  double _total = 0.0;
   final List<OrderItemHolder> _items = [];
 
+  double get total => _total;
+  List<OrderItemHolder> get items => List.from(_items, growable: false);
+
   _Order._({
+    this.type,
     this.createdAt,
     this.updatedAt
   });
 
   factory _Order.create(OrderType type) {
+    final time = DateTime.now();
+    return _Order._(
+      type: type,
+      createdAt: time,
+      updatedAt: time
+    );
+  }
 
+  void addItem({
+    @required OrderItem item,
+    @required double price
+  }) {
+    assert(item != null);
+    assert(item != null && price > 0.0);
+
+    _items.add(OrderItemHolder(
+      item: item, subtotal: price
+    ));
+
+    _total += price;
+  }
+
+  void removeAt(int index) {
+    if (index > 0 && index < _items.length)
+      _total -= _items.removeAt(index).subtotal;
   }
 
   bool canProceed() {

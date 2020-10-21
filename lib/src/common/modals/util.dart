@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 
 Future<bool> showConfirmationDialog({
   BuildContext context,
-  bool barrierDismissible,
+  bool barrierDismissible = true,
   ConfirmationDialog Function(BuildContext) builder
 }) async => (await showDialog(
   context: context,

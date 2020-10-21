@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/const.dart';
-import 'package:haweyati/src/ui/otp-verification-page_firebase.dart';
+import 'package:haweyati/src/ui/pages/otp-page.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
@@ -53,7 +53,7 @@ class ContactInputPage extends StatelessWidget {
           if (_formKey.currentState.validate()) {
             _formKey.currentState.save();
 
-            var result = await navigateTo(context, VerificationPhoneNumber(
+            var result = await navigateTo(context, OtpPage(
               phoneNumber: contact
             ));
             if (result == null) {
@@ -61,7 +61,10 @@ class ContactInputPage extends StatelessWidget {
                 content: Text('Phone Number is not verified')
               ));
             }
-            // Navigator.of(context).pop();
+
+            if (result ?? false) {
+              Navigator.of(context).pop(contact);
+            }
           }
         },
       ),

@@ -66,10 +66,14 @@ class _EasyRestImpl implements EasyRest {
       route: _resolveRoute(endpoint),
     );
 
-    if (data is List) {
-      return data/*.map((e) => _parser(e)).toList()*/;
-    } else if (data is Map) {
-      print('Use Get one for better support');
+    if (_parser != null) {
+      if (data is List) {
+        return data/*.map((e) => _parser(e)).toList()*/;
+      } else if (data is Map) {
+        print('Use Get one for better support');
+      }
+    } else {
+      return data;
     }
   }
 
@@ -84,10 +88,14 @@ class _EasyRestImpl implements EasyRest {
       route: _resolveRoute(route),
     );
 
-    if (data is List) {
-      print('Use Get All for better support');
-    } else if (data is Map) {
-      return _parser(data);
+    if (_parser != null) {
+      if (data is List) {
+        print('Use Get All for better support');
+      } else if (data is Map) {
+        return _parser(data);
+      }
+    } else {
+      return data;
     }
   }
 
