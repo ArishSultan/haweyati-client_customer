@@ -199,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   _ListTile(context,
                     image: LogoutIcon,
-                    title: lang.logout,
+                    title: lang.signOut,
                     onPressed: () async {
                       showDialog(
                         context: context,

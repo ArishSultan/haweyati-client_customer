@@ -81,8 +81,8 @@
   "@termsAndConditions": {},
   "rateApp": "Rate App",
   "@rateApp": {},
-  "logout": "Sign out",
-  "@logout": {},
+  "signOut": "Sign out",
+  "@signOut": {},
 
 
   "signIn": "Sign in",
