@@ -1,15 +1,14 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:haweyati/src/common/widgets/badged-widget.dart';
-import 'package:haweyati/src/data.dart';
-import 'package:haweyati/src/models/services/finishing-material/model.dart';
-import 'package:haweyati/src/routes.dart';
-import 'package:haweyati/src/const.dart';
-import 'package:haweyati/src/ui/modals/dialogs/order/cancel-order-confirmation_dialog.dart';
-import 'package:haweyati/src/ui/pages/cart/cart_page.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:hive/hive.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/routes.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/ui/pages/cart/cart_page.dart';
+import 'package:haweyati/src/common/widgets/badged-widget.dart';
+import 'package:haweyati/src/models/services/finishing-material/model.dart';
+import 'package:haweyati/src/ui/modals/dialogs/order/cancel-order-confirmation_dialog.dart';
 
 class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
   final bool hideCart;
@@ -61,10 +60,11 @@ class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
             badge: val.length > 0 ? Positioned(
               top: 5, right: 5,
               child: Container(
-                width: 14,
-                height: 14,
+                width: 16,
+                height: 16,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 1),
                   color: Theme.of(context).primaryColor
                 ),
 
