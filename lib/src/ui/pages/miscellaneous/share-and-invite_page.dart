@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
@@ -13,11 +14,21 @@ class ShareAndInvitePage extends StatefulWidget {
 }
 
 class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
-  var _code = 'RANDOM CODE';
+  String _code;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    final profileId = AppData.instance().user.profile.id;
+    _code = profileId.substring(profileId.length - 5);
+  }
 
   @override
   Widget build(BuildContext context) {
     return NoScrollView(
+      key: _scaffoldKey,
       appBar: HaweyatiAppBar(hideHome: true, hideCart: true),
       body: DottedBackgroundView(
         padding: const EdgeInsets.only(bottom: 50),
@@ -36,7 +47,7 @@ class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
             ),
           ),
           Container(
-            width: 250,
+            width: 170,
             padding: const EdgeInsets.symmetric(
               horizontal: 20, vertical: 15
             ),
@@ -46,7 +57,11 @@ class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
               borderRadius: BorderRadius.circular(50)
             ),
             child: Row(children: <Widget>[
-              Text(_code, style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(_code.toUpperCase(), style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2
+              )),
               GestureDetector(
                 onTap: () => Clipboard.setData(ClipboardData(text: _code)),
                 child: Text('Copy', style: TextStyle(color: Colors.orange))
@@ -58,6 +73,11 @@ class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
       bottom: FlatActionButton(
         label: 'Invite Friends',
         onPressed: () {
+          _scaffoldKey.currentState.showSnackBar(SnackBar(
+            behavior: SnackBarBehavior.floating,
+            content: Text('Invitation will be available after purchasing application domain'
+                'i.e. https://www.haweyati.com'),
+          ));
         }
       ),
     );

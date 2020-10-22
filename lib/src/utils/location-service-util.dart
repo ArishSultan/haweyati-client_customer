@@ -94,7 +94,7 @@ Future<model.Location> processLocationPicking(BuildContext context, {
   return null;
 }
 
-Future<bool> processUserLocationPicking(BuildContext context, {
+void processUserLocationPicking(BuildContext context, {
   Function onLocationPicked,
   model.Location prevLocation,
 }) async {
@@ -105,8 +105,5 @@ Future<bool> processUserLocationPicking(BuildContext context, {
   if (_pickedLocation != null) {
     AppData.instance().location = _pickedLocation;
     onLocationPicked();
-    return true;
   }
-
-  return false;
 }

@@ -2,11 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/common/widgets/badged-widget.dart';
 import 'package:haweyati/src/data.dart';
+import 'package:haweyati/src/models/services/finishing-material/model.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/ui/modals/dialogs/order/cancel-order-confirmation_dialog.dart';
 import 'package:haweyati/src/ui/pages/cart/cart_page.dart';
 import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
   final bool hideCart;
@@ -15,6 +18,10 @@ class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
   final double progress;
   final List<Widget> actions;
   final bool confirmOrderCancel;
+
+  static final _cart = Hive
+      .lazyBox<FinishingMaterial>('cart')
+      .listenable();
 
   const HaweyatiAppBar({
     this.allowBack = true,
@@ -49,9 +56,9 @@ class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
     if (!hideCart) _actions.add(
       Center(
         child: ValueListenableBuilder(
-          valueListenable: AppData.instance().cartSize,
+          valueListenable: _cart,
           builder: (context, val, widget) => BadgedWidget(
-            badge: val > 0 ? Positioned(
+            badge: val.length > 0 ? Positioned(
               top: 5, right: 5,
               child: Container(
                 width: 14,
@@ -62,7 +69,7 @@ class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
                 ),
 
                 child: Center(
-                  child: Text(val.toString(), style: TextStyle(
+                  child: Text(val.length.toString(), style: TextStyle(
                     color: Colors.white,
                     fontSize: 11
                   )),

@@ -19,7 +19,7 @@ class NotificationsPage extends StatelessWidget {
       children: [
         SliverToBoxAdapter(child: HeaderView(
           title: 'Notifications',
-          subtitle: 'Some subtitle',
+          subtitle: 'this is the history of all the notifications that you have received',
         )),
 
         SliverList(delegate: SliverChildBuilderDelegate(

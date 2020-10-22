@@ -88,13 +88,12 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
 
             try {
               Navigator.pop(context);
-              key.currentState.showSnackBar(SnackBar(
-                content: Text('Your password has been changed successfully!')
-              ));
 
-              Future.delayed(Duration(seconds: 2), () async {
-                navigateTo(context, SignInPage());
-              });
+              await key.currentState.showSnackBar(SnackBar(
+                content: Text('Your password has been changed successfully!')
+              )).closed;
+
+              Navigator.pop(context);
             } catch (e) {
               Navigator.pop(context);
               key.currentState.hideCurrentSnackBar();
@@ -102,7 +101,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             }
           } else {
             setState(() {
-              autoValidate=true;
+              autoValidate = true;
             });
           }
         }

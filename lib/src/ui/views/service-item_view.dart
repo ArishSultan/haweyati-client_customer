@@ -12,25 +12,31 @@ class ServiceItemView extends StatelessWidget {
   final Widget bottom;
   final TextSpan price;
   final String description;
+  final String shareLink;
+  
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   ServiceItemView({
     this.image,
     this.title,
     this.price,
     this.bottom,
-    this.description
+    this.description,
+    this.shareLink
   });
 
   @override
   Widget build(BuildContext context) {
     return NoScrollView(
+      key: _scaffoldKey,
       appBar: HaweyatiAppBar(
         actions: [
           IconButton(icon: Icon(Icons.share_outlined), onPressed: () {
-            showDialog(
-              context: context,
-              builder: (context) => WaitingDialog(message: 'Preparing To Share')
-            );
+            _scaffoldKey.currentState.showSnackBar(SnackBar(
+              behavior: SnackBarBehavior.floating,
+              content: Text('Sharing will be available after purchasing application domain'
+                  'i.e. https://www.haweyati.com'),
+            ));
           })
         ],
       ),

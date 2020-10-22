@@ -156,6 +156,7 @@ class OtpPageState extends State<OtpPage> {
                     maxLength: 6,
                     maxLengthEnforced: true,
                     focusNode: _node,
+                    controller: _controller,
                     onChanged: (val) {
                       final codes = val.split('');
 

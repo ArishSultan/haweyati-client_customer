@@ -10,7 +10,7 @@ class FinishingMaterialsService extends HaweyatiService<FinishingMaterial> {
   Future<List<FinishingMaterial>> getFinSublist(String parentId) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String city = prefs.getString('city');
-    return this.getAll('finishing-materials?city=$city&parent=$parentId');
+    return this.getAll('finishing-materials/available?city=$city&parent=$parentId');
   }
 
   Future<List<FinishingMaterial>> search(String keyword) async {

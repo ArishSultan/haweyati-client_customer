@@ -13,7 +13,7 @@ import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/common/simple-form.dart';
 import 'package:haweyati/src/ui/pages/auth/customer-registration_page.dart';
 import 'package:haweyati/src/ui/pages/miscellaneous/contact-input_page.dart';
-import 'package:haweyati/src/ui/reset-password_page.dart';
+import 'package:haweyati/src/ui/pages/auth/reset-password_page.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
@@ -68,7 +68,12 @@ class _SignInPageState extends State<SignInPage> {
                   context: context,
                   builder: (context) {
                     return AlertDialog(
-                      title: Text('Username or Password is incorrect'),
+                      title: Text('Unable To Sign in'),
+                      content: Text(
+                        'No Customer account is associated with the provided credentials'
+                        '\n\n'
+                        'Please provide the correct credentials or just register yourself as a customer'
+                      ),
                     );
                   }
                 );
@@ -108,7 +113,7 @@ class _SignInPageState extends State<SignInPage> {
                   child: HaweyatiPasswordField(
                     context: context,
                     label: lang.yourPassword,
-                    controller: TextEditingController(text: '12345677'),
+                    controller: TextEditingController(text: '12345678'),
                     onSaved: (value) => _data.password = value,
                     validator: (value) => value.isEmpty ? 'Provide your Password' : null,
                   ),
@@ -151,23 +156,27 @@ class _SignInPageState extends State<SignInPage> {
                     );
                     final service = await EasyRest().$getOne(route: 'persons/contact/$number');
                     Navigator.of(context).pop();
-                    print('Service');
-                    print(service);
 
                     if (service != null) {
-                      final result = await showConfirmationDialog(
-                        context: context,
-                        builder: (context) => ConfirmationDialog(
-                          content: Text('This contact is already linked to other accounts i.e. Driver or Supplier'
-                              'Do You also want to link a customer account to this number?'),
-                        )
-                      );
+                      if (service['scope'].contains('customer')) {
+                        _scaffoldKey.currentState.showSnackBar(
+                          SnackBar(content: Text('You are a customer already.'))
+                        );
+                      } else {
+                        final result = await showConfirmationDialog(
+                          context: context,
+                          builder: (context) => ConfirmationDialog(
+                            content: Text('This contact is already linked to other accounts i.e. Driver or Supplier'
+                                'Do You also want to link a customer account to this number?'),
+                          )
+                        );
 
-                      if (result ?? false) {
-                        await EasyRest().$post(endpoint: 'customers', payload: User(
-                          profile: Profile.fromJson(service),
-                          location: AppData.instance().location
-                        ));
+                        if (result ?? false) {
+                          await EasyRest().$post(endpoint: 'customers', payload: User(
+                              profile: Profile.fromJson(service),
+                              location: AppData.instance().location
+                          ));
+                        }
                       }
                     } else {
                       navigateTo(context, CustomerRegistration(contact: number));
