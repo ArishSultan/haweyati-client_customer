@@ -1,9 +1,7 @@
+import 'data.dart';
 import 'package:flutter/widgets.dart';
 import 'package:haweyati/src/ui/pages/cart/cart_page.dart';
 import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
-import 'package:haweyati/src/ui/pages/orders/order-detail_page.dart';
-
-import 'data.dart';
 import 'ui/pages/auth/sign-in_page.dart';
 import 'ui/pages/home_page.dart';
 import 'ui/pages/location/locations-map_page.dart';
@@ -30,15 +28,12 @@ final routes = <String, Widget Function(BuildContext)>{
     /// Check whether the user is Authenticated
     final _appData = AppData.instance();
 
-    print(_appData.isAuthenticated);
-    if (_appData.isAuthenticated) {
-      /// Check whether user location is saved.
-      if (_appData.location != null) {
-        return HomePage();
-      } else {
-        return PreLocationPage();
-      }
-    } else return SignInPage();
+    /// Check whether user location is saved.
+    if (_appData.location != null) {
+      return HomePage();
+    } else {
+      return PreLocationPage();
+    }
   },
 
   /// Authentication Routes.

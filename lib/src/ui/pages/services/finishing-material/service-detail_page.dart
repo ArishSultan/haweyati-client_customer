@@ -34,7 +34,6 @@ class _FinishingMaterialServiceDetailPageState extends State<FinishingMaterialSe
   void initState() {
     super.initState();
 
-    _order.customer = AppData.instance().user;
     _order.location = OrderLocation()
       ..update(AppData.instance().location);
 

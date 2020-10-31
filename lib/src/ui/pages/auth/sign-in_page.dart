@@ -104,7 +104,6 @@ class _SignInPageState extends State<SignInPage> {
                 HaweyatiTextField(
                   label: lang.yourPhone,
                   scrollPadding: const EdgeInsets.all(300),
-                  controller: TextEditingController(text: '+923317079787'),
                   onSaved: (value) => _data.username = value,
                 ),
 
@@ -113,7 +112,6 @@ class _SignInPageState extends State<SignInPage> {
                   child: HaweyatiPasswordField(
                     context: context,
                     label: lang.yourPassword,
-                    controller: TextEditingController(text: '12345678'),
                     onSaved: (value) => _data.password = value,
                     validator: (value) => value.isEmpty ? 'Provide your Password' : null,
                   ),
@@ -179,7 +177,11 @@ class _SignInPageState extends State<SignInPage> {
                         }
                       }
                     } else {
-                      navigateTo(context, CustomerRegistration(contact: number));
+                      if (number.toString().startsWith('0')) {
+                        navigateTo(context, CustomerRegistration(contact: '+966$number'));
+                      } else {
+                        navigateTo(context, CustomerRegistration(contact: number));
+                      }
                     }
                   }
                 },

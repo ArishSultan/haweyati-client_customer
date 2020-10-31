@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 
 part 'notification_model.g.dart';
 
-@HiveType(typeId: 255)
+@HiveType(typeId: 220)
 class StoreableNotification {
   @HiveField(0) bool isRead;
   @HiveField(1) NotificationData data;

@@ -35,6 +35,7 @@ class ContactInputPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: HaweyatiTextField(
                 label: 'Your Contact #',
+                hint: '500303339',
                 onSaved: (val) => contact = val,
                 keyboardType: TextInputType.phone,
                 validator: (val) {

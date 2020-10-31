@@ -75,7 +75,6 @@ const _mapBounds = const [
 ];
 
 
-
 class LocationPickerMapPage extends StatefulWidget {
   final LatLng coordinates;
 
@@ -168,13 +167,6 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
                         controller: TextEditingController(text: _address?.addressLine ?? 'Tap To Search'),
                       ),
                     ),
-                    GestureDetector(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 7),
-                        child: Image.asset(MyLocationIcon, width: 24),
-                      ),
-                      onTap: () async => _setLocationOnMap(null)
-                    ),
                   ],
                 ),
               )
@@ -207,19 +199,47 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
 
   _resolveMap() {
     if (_initiated) {
-      return GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: _location, zoom: 15
+      return Stack(children: [
+        GoogleMap(
+          initialCameraPosition: CameraPosition(
+            target: _location, zoom: 15
+          ),
+          onTap: _setLocationOnMap,
+          polygons: _bounds,
+          onMapCreated: (controller) {
+            _controller = controller;
+          },
+          zoomControlsEnabled: false,
+          compassEnabled: true,
+          markers: _markers,
         ),
-        onTap: _setLocationOnMap,
-        polygons: _bounds,
-        onMapCreated: (controller) {
-          _controller = controller;
-        },
-        zoomControlsEnabled: false,
-        compassEnabled: true,
-        markers: _markers,
-      );
+
+
+        Positioned(
+          right: 15,
+          bottom: 15,
+          child: Container(
+            width: 35,
+            height: 35,
+            decoration: BoxDecoration(
+              boxShadow: [BoxShadow(
+                color: Colors.grey.shade300,
+                spreadRadius: 2,
+                blurRadius: 10
+              )]
+            ),
+            child: FlatButton(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5)
+              ),
+              padding: const EdgeInsets.all(0),
+              onPressed: () => _setLocationOnMap(null),
+              child: Image.asset(MyLocationIcon, width: 24),
+            ),
+          ),
+        )
+      ]);
     } else {
       if (_location != null) {
         _setLocationOnMap(_location);

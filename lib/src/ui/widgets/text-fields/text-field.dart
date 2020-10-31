@@ -4,6 +4,7 @@ import 'package:haweyati/l10n/app_localizations.dart';
 
 class HaweyatiTextField extends StatelessWidget {
   final bool dense;
+  final String hint;
   final String label;
   final String value;
   final IconData icon;
@@ -15,6 +16,7 @@ class HaweyatiTextField extends StatelessWidget {
   final TextEditingController controller;
 
   HaweyatiTextField({
+    this.hint,
     this.maxLength,
     this.value,
     this.scrollPadding = const EdgeInsets.all(100),
@@ -33,6 +35,7 @@ class HaweyatiTextField extends StatelessWidget {
       },
       scrollPadding: EdgeInsets.all(100),
       decoration: InputDecoration(
+        hintText: hint,
         labelText: label,
       ),
       initialValue: value,

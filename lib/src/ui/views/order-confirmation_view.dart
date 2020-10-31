@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/models/payment_model.dart';
 import 'package:haweyati/src/services/orders_service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/order/unable-to-place-order_dialog.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
+import 'package:haweyati/src/ui/pages/auth/sign-in_page.dart';
 import 'package:haweyati/src/ui/pages/orders/order-placed_page.dart';
 import 'package:haweyati/src/ui/pages/payment/payment-methods_page.dart';
 import 'package:haweyati/src/ui/snack-bars/payment/not-selected_snack-bar.dart';
@@ -21,7 +23,7 @@ class OrderConfirmationView extends StatelessWidget {
   final FutureOr Function() preProcess;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-      OrderConfirmationView({
+  OrderConfirmationView({
     this.order,
     this.fromCart = false,
     this.children,
@@ -41,6 +43,12 @@ class OrderConfirmationView extends StatelessWidget {
       bottom: RaisedActionButton(
         label: 'Proceed',
         onPressed: () async {
+          final _appData = AppData.instance();
+          if (!_appData.isAuthenticated) {
+            navigateTo(context, SignInPage());
+          }
+
+          order.customer = AppData.instance().user;
           _scaffoldKey.currentState.hideCurrentSnackBar();
 
           if (preProcess != null) await preProcess();

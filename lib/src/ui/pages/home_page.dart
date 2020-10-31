@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -139,28 +140,33 @@ class _HomePageState extends State<HomePage> {
 //                  backgroundImage: (!HaweyatiData.isSignedIn || HaweyatiData.customer?.profile?.image ==null) ? AssetImage("assets/images/building.png")
 //                  : NetworkImage(HaweyatiService.convertImgUrl(HaweyatiData.customer.profile.image.name)),
               )),
-              Padding(
-                padding: const EdgeInsets.only(top: 15),
-                child: Center(child: Text(AppData.instance().user.name, style: TextStyle(
-                  fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold
-                ))),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Center(child: FlatButton.icon(
-                  onPressed: null,
-                  icon: Image.asset(StarIconOutlined, width: 20, height: 20),
-                  label: Text('Rated 5.0', style: TextStyle(color: Colors.white))
-                )),
-              ),
+              if (_appData.isAuthenticated)
+                Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: Center(child: Text(AppData.instance().user.name, style: TextStyle(
+                    fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold
+                  ))),
+                ),
+              if (_appData.isAuthenticated)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Center(child: FlatButton.icon(
+                    onPressed: null,
+                    icon: Image.asset(StarIconOutlined, width: 20, height: 20),
+                    label: Text('Rated 5.0', style: TextStyle(color: Colors.white))
+                  )),
+                )
+              else
+                SizedBox(height: 50),
 
               Expanded(child: SingleChildScrollView(
                 child: Column(children: <Widget>[
-                  _ListTile(context,
-                    image: OrderIcon,
-                    title: lang.myOrders,
-                    navigateTo: MY_ORDERS_PAGE
-                  ),
+                  if (_appData.isAuthenticated)
+                    _ListTile(context,
+                      image: OrderIcon,
+                      title: lang.myOrders,
+                      navigateTo: MY_ORDERS_PAGE
+                    ),
                   _ListTile(context,
                     image: SettingsIcon,
                     title: lang.settings,
@@ -197,25 +203,32 @@ class _HomePageState extends State<HomePage> {
                       // }
                     }
                   ),
-                  _ListTile(context,
-                    image: LogoutIcon,
-                    title: lang.signOut,
-                    onPressed: () async {
-                      showDialog(
-                        context: context,
-                        builder: (context) => WaitingDialog(message: lang.signingOut)
-                      );
+                  if (_appData.isAuthenticated)
+                    _ListTile(context,
+                      image: LogoutIcon,
+                      title: lang.signOut,
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          builder: (context) => WaitingDialog(message: lang.signingOut)
+                        );
 
-                      try {
-                        await JwtAuthService.create().$signOut();
-                      } catch (err) {
-                        print(err);
+                        try {
+                          await JwtAuthService.create().$signOut();
+                          Navigator.of(context).pop();
+                          setState(() {});
+                        } catch (err) {
+                          Navigator.of(context).pop();
+                          print(err);
+                        }
                       }
-
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(HOME_PAGE, (route) => false);
-                    }
-                  )
+                    )
+                  else
+                    _ListTile(context,
+                      icon: Icon(Icons.login, color: Colors.white),
+                      title: lang.signIn,
+                      onPressed: () => Navigator.of(context).pushNamed(SIGN_IN_PAGE)
+                    )
                ]),
              ))
             ], crossAxisAlignment: CrossAxisAlignment.start),
