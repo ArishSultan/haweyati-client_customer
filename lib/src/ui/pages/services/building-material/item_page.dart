@@ -9,11 +9,7 @@ import 'package:haweyati/src/utils/custom-navigator.dart';
 
 class BuildingMaterialItemPage extends StatelessWidget {
   final BuildingMaterial item;
-
-  BuildingMaterialItemPage(this.item) {
-    item.pricing.first = item.pricing
-      .firstWhere((element) => element.city == AppData.instance().city);
-  }
+  BuildingMaterialItemPage(this.item);
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +18,8 @@ class BuildingMaterialItemPage extends StatelessWidget {
       image: item.image.name,
       price: TextSpan(
         text: ''
-          '${item.pricing.first.price12yard.toStringAsFixed(2)} SAR - '
-          '${item.pricing.first.price20yard.toStringAsFixed(2)} SAR',
+          '${item.price12.toStringAsFixed(2)} SAR - '
+          '${item.price20.toStringAsFixed(2)} SAR',
         style: TextStyle(
           color: Color(0xFF313F53),
           // fontWeight: FontWeight.w500

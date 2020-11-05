@@ -54,19 +54,19 @@ class _ScaffoldingTimeAndLocationPageState extends State<ScaffoldingTimeAndLocat
           onChanged: (location) {}/*_order.location.update*/
         ),
 
-        Padding(
-          padding: const EdgeInsets.only(
-            top: 20, bottom: 40
-          ),
-          child: DropOffPicker(
-            onBuilt: () => setState(() => _allow = true),
-            service: ServiceType.buildingMaterials,
-            initialDate: widget._order.location.dropOffDate,
-            initialTime: widget._order.location.dropOffTime,
-            onDateChanged: (date) => widget._order.location.dropOffDate = date,
-            onTimeChanged: (time) => widget._order.location.dropOffTime = time
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.only(
+        //     top: 20, bottom: 40
+        //   ),
+        //   // child: DropOffPicker(
+        //   //   // onBuilt: () => setState(() => _allow = true),
+        //   //   // service: ServiceType.buildingMaterials,
+        //   //   // initialDate: widget._order.location.dropOffDate,
+        //   //   // initialTime: widget._order.location.dropOffTime,
+        //   //   // onDateChanged: (date) => widget._order.location.dropOffDate = date,
+        //   //   // onTimeChanged: (time) => widget._order.location.dropOffTime = time
+        //   // ),
+        // ),
 
         Padding(
           padding: const EdgeInsets.only(bottom: 40),

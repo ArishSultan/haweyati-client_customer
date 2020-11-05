@@ -17,7 +17,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  String name = AppData.instance().user.name;
+  String name = AppData.instance().$user.name;
   String imagePath;
   Location location = AppData.instance().location;
 
@@ -82,7 +82,7 @@ class _EditProfileState extends State<EditProfile> {
               builder: (context) => WaitingDialog(message: 'Updating Profile...')
             );
 
-            final user = AppData.instance().user;
+            final user = AppData.instance().$user;
             FormData profile = FormData.fromMap({
               '_id' : user.id,
               'personId' : user.profile.id,

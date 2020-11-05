@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/models/location_model.dart';
 import 'package:haweyati/src/models/time-slot_model.dart';
 
@@ -21,6 +22,10 @@ class OrderLocation extends Location {
     address = location?.address;
     latitude = location?.latitude;
     longitude = location?.longitude;
+  }
+
+  factory OrderLocation.fromAppData() {
+    return OrderLocation()..update(AppData.instance().location);
   }
 
   factory OrderLocation.fromJson(Map<String, dynamic> json) {

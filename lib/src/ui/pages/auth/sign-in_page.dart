@@ -1,21 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
-import 'package:haweyati/src/common/modals/util.dart';
-import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
-import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/data.dart';
-import 'package:haweyati/src/models/profile_model.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/models/_new/auth/sign-in_model.dart';
 import 'package:haweyati/src/models/user_model.dart';
-import 'package:haweyati/src/routes.dart';
+import 'package:haweyati/src/services/_new/auth_service.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/common/modals/util.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/common/simple-form.dart';
-import 'package:haweyati/src/ui/pages/auth/customer-registration_page.dart';
-import 'package:haweyati/src/ui/pages/miscellaneous/contact-input_page.dart';
-import 'package:haweyati/src/ui/pages/auth/reset-password_page.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/models/profile_model.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
+import 'package:haweyati/src/ui/widgets/contact-input-field.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
 import 'package:haweyati/src/common/models/serializable.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
@@ -23,7 +21,11 @@ import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/common/services/jwt-auth_service.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
+import 'package:haweyati/src/ui/pages/auth/reset-password_page.dart';
+import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
+import 'package:haweyati/src/ui/pages/auth/customer-registration_page.dart';
+import 'package:haweyati/src/ui/pages/miscellaneous/contact-input_page.dart';
 
 class SignInData extends Serializable {
   String username;
@@ -41,7 +43,7 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
-  final _data = SignInData();
+  final _data = SignInRequest();
   final _key = GlobalKey<SimpleFormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -63,6 +65,8 @@ class _SignInPageState extends State<SignInPage> {
             key: _key,
             waitingDialog: WaitingDialog(message: 'Signing in ...'),
             onError: (err) async {
+              print('Error Occurred');
+              throw err;
               if (err is UnAuthorizedError) {
                 await showDialog(
                   context: context,
@@ -88,11 +92,12 @@ class _SignInPageState extends State<SignInPage> {
               }
             },
             afterSubmit: () {
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(HOME_PAGE, (route) => false);
+              Navigator.of(context).pop();
             },
-            onSubmit: () => JwtAuthService.create().$signIn(_data),
-
+            onSubmit: () {
+              FocusScope.of(context).unfocus();
+              return AuthService.signIn(_data);
+            },
             child: Directionality(
               textDirection: TextDirection.ltr,
               child: ListView(children: [
@@ -101,11 +106,14 @@ class _SignInPageState extends State<SignInPage> {
                   subtitle: lang.enterCredentials,
                 ),
 
-                HaweyatiTextField(
-                  label: lang.yourPhone,
-                  scrollPadding: const EdgeInsets.all(300),
-                  onSaved: (value) => _data.username = value,
-                ),
+                ContactInputField((value, status) {
+                  _data.username = value;
+                }),
+                // HaweyatiTextField(
+                //   label: lang.yourPhone,
+                //   scrollPadding: const EdgeInsets.all(300),
+                //   onSaved: (value) => _data.username = value,
+                // ),
 
                 Padding(
                   padding: const EdgeInsets.only(top: 15, bottom: 15),
@@ -170,17 +178,16 @@ class _SignInPageState extends State<SignInPage> {
                         );
 
                         if (result ?? false) {
-                          await EasyRest().$post(endpoint: 'customers', payload: User(
-                              profile: Profile.fromJson(service),
-                              location: AppData.instance().location
-                          ));
+                          // await EasyRest().$post(endpoint: 'customers', payload: User(
+                          //     profile: Profile.fromJson(service),
+                          //     location: AppData.instance().location
+                          // ));
                         }
                       }
                     } else {
-                      if (number.toString().startsWith('0')) {
-                        navigateTo(context, CustomerRegistration(contact: '+966$number'));
-                      } else {
-                        navigateTo(context, CustomerRegistration(contact: number));
+                      await navigateTo(context, CustomerRegistration(contact: number));
+                      if (AppData.instance().isAuthenticated) {
+                        Navigator.of(context).pop();
                       }
                     }
                   }

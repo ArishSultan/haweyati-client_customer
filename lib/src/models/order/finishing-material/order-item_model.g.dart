@@ -21,21 +21,19 @@ class FinishingMaterialOrderItemAdapter
       qty: fields[1] as int,
       price: fields[2] as double,
       variants: (fields[3] as Map)?.cast<String, dynamic>(),
-    )..product = fields[0] as Orderable;
+    );
   }
 
   @override
   void write(BinaryWriter writer, FinishingMaterialOrderItem obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(3)
       ..writeByte(1)
       ..write(obj.qty)
       ..writeByte(2)
       ..write(obj.price)
       ..writeByte(3)
-      ..write(obj.variants)
-      ..writeByte(0)
-      ..write(obj.product);
+      ..write(obj.variants);
   }
 
   @override

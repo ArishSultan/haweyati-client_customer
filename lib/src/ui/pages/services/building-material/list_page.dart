@@ -25,10 +25,8 @@ class BuildingMaterialsListPage extends StatelessWidget {
         builder: (context, BuildingMaterial data) {
           return ServiceListItem(
             name: data.name,
-
-            // TODO: Add It at the end.
-            // detail: data.pricing.first.price12yard.toString(),
             image: data.image.name,
+            detail: '${data.price12} - ${data.price20} SAR',
             onTap: () => navigateTo(context, BuildingMaterialItemPage(data))
           );
         }

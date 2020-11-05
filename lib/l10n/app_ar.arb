@@ -150,5 +150,31 @@
         "format": "compact"
       }
     }
-  }
+  },
+
+  "nPieces": "{count,plural, =0{None} =1{1 Piece} other{{count} Pieces}}",
+  "@nPieces": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+
+  "nDays": "{count,plural, =0{None} =1{1 Day} other{{count} Days}}",
+  "@nDays": {
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "format": "compact"
+      }
+    }
+  },
+
+  "orderConfirmationPageTitle": "Hello User,",
+  "@orderConfirmationPageTitle": {},
+
+  "orderConfirmationPageSubtitle": "Please confirm your order details and your order reference number will be generated",
+  "@orderConfirmationPageSubtitle": {}
 }

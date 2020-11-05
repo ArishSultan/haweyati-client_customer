@@ -163,15 +163,15 @@ class _JwtAuthServiceImpl<T, U> implements JwtAuthService<T, U> {
     );
 
     user['profile'] = resp['profile'];
-    User _user = JwtAuthService._config.userParser(user);
+    // User _user = JwtAuthService._config.userParser(user);
 
-    _user.profile.token = await FirebaseMessaging().getToken();
-    await _service.$patch(
-      endpoint: 'fcm/token',
-      payload: _user.profile
-    );
+    // _user.profile.token = await FirebaseMessaging().getToken();
+    // await _service.$patch(
+    //   endpoint: 'fcm/token',
+    //   payload: _user.profile
+    // );
 
-    await JwtAuthService._config.userStorage.write(_user);
+    // await JwtAuthService._config.userStorage.write(_user);
   }
 
   @override

@@ -17,9 +17,10 @@ class DumpsterOrderItemAdapter extends TypeAdapter<DumpsterOrderItem> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return DumpsterOrderItem(
+      qty: fields[3] as int,
       extraDays: fields[1] as int,
       extraDaysPrice: fields[2] as double,
-    )..product = fields[0] as Orderable;
+    );
   }
 
   @override
@@ -30,8 +31,8 @@ class DumpsterOrderItemAdapter extends TypeAdapter<DumpsterOrderItem> {
       ..write(obj.extraDays)
       ..writeByte(2)
       ..write(obj.extraDaysPrice)
-      ..writeByte(0)
-      ..write(obj.product);
+      ..writeByte(3)
+      ..write(obj.qty);
   }
 
   @override

@@ -88,7 +88,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             );
 
             var change = {
-              '_id': AppData.instance().user.profile.id,
+              '_id': AppData.instance().$user.profile.id,
               'old': _oldPassword,
               'password': _newPassword,
             };

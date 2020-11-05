@@ -13,6 +13,7 @@ class ImageModel extends HiveObject implements JsonSerializable {
     return ImageModel(name: json['name']);
   }
 
+  toJson() => serialize();
   @override
   Map<String, dynamic> serialize() => { 'name': name };
 }

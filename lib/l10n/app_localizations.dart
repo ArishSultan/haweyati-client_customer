@@ -239,6 +239,18 @@ abstract class AppLocalizations {
 
   // No description provided in @nItem
   String nItem(int count);
+
+  // No description provided in @nPieces
+  String nPieces(int count);
+
+  // No description provided in @nDays
+  String nDays(int count);
+
+  // No description provided in @orderConfirmationPageTitle
+  String get orderConfirmationPageTitle;
+
+  // No description provided in @orderConfirmationPageSubtitle
+  String get orderConfirmationPageSubtitle;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

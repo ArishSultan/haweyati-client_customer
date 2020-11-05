@@ -1,21 +1,21 @@
-import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
-import 'package:haweyati/src/models/order/building-material/order-item_model.dart';
-import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
-import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
-import 'package:haweyati/src/models/order/order-item_model.dart';
+import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/services/orders_service.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/models/order/order_model.dart';
 import 'package:haweyati/src/services/haweyati-service.dart';
-import 'package:haweyati/src/services/orders_service.dart';
-import 'package:haweyati/src/ui/pages/orders/order-detail_page.dart';
-import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
 import 'package:haweyati/src/ui/widgets/rich-price-text.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
-import 'package:intl/intl.dart';
+import 'package:haweyati/src/models/order/order-item_model.dart';
+import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
+import 'package:haweyati/src/ui/pages/orders/order-detail_page.dart';
+import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
+import 'package:haweyati/src/models/order/building-material/order-item_model.dart';
+import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
 
 class MyOrdersPage extends StatefulWidget {
   @override
@@ -118,41 +118,27 @@ class _OrderStatus extends Container {
       borderRadius: BorderRadius.circular(20),
       color: _color(status)
     ),
-    child: Text(_text(status), style: TextStyle(
+    child: Text(status.toString(), style: TextStyle(
       color: Colors.white,
       fontSize: 10
     ))
   );
 
-  static String _text(OrderStatus status) {
-    switch (status) {
-      case OrderStatus.dispatched:
-      case OrderStatus.active:
-        return 'Active';
-      case OrderStatus.pending:
-        return 'Pending';
-      case OrderStatus.closed:
-        return 'Completed';
-      case OrderStatus.rejected:
-        return 'Canceled';
-    }
-
-    return '';
-  }
   static Color _color(OrderStatus status) {
-    switch (status) {
-      case OrderStatus.dispatched:
-      case OrderStatus.active:
-        return Colors.green;
-      case OrderStatus.pending:
-        return Color(0xFFFF974D);
-      case OrderStatus.closed:
-        return Color(0xFF313F53);
-      case OrderStatus.rejected:
-        return Colors.red;
-    }
-
-    return null;
+    return Colors.red;
+    // switch (status) {
+    //   case OrderStatus.dispatched:
+    //   case OrderStatus.active:
+    //     return Colors.green;
+    //   case OrderStatus.pending:
+    //     return Color(0xFFFF974D);
+    //   case OrderStatus.closed:
+    //     return Color(0xFF313F53);
+    //   case OrderStatus.rejected:
+    //     return Colors.red;
+    // }
+    //
+    // return null;
   }
 }
 
@@ -213,6 +199,7 @@ class OrderItemTile extends StatelessWidget {
     dynamic product = item.item.product;
 
     if (item.item is DumpsterOrderItem) {
+      qty = (item.item as DumpsterOrderItem).qty;
       title = '${int.parse(product.size)} Yards';
       imageUrl = product.image.name;
     } else if (item.item is BuildingMaterialOrderItem) {

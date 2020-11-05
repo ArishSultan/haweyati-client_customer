@@ -19,68 +19,68 @@ class ScaffoldingOrderConfirmationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OrderConfirmationView(
-      order: _order,
-
-      children: [
-        HeaderView(
-          title: 'Hello User,',
-          subtitle: 'Please confirm your order details and your order reference number will be generated'
-        ),
-
-        _ScaffoldingOrderItemWidget(
-          context: context,
-          type: item.type.toString(),
-        ),
-
-        Padding(
-          padding: const EdgeInsets.only(bottom: 30),
-          child: OrderLocationView(
-            location: _order.location,
-            onEdit: () => Navigator.of(context).pop()
-          ),
-        ),
-
-        if (item.type == ScaffoldingType.single)
-          SteelScaffoldingPricingDetails(_order.total),
-        if (item.type == ScaffoldingType.patented)
-          SteelScaffoldingPricingDetails(_order.total),
-        if (item.type == ScaffoldingType.steel)
-          SteelScaffoldingPricingDetails(_order.total),
-
-        Padding(
-          padding: const EdgeInsets.only(top: 7),
-          child: Divider(height: 0, color: Colors.grey.shade700),
-        ),
-
-        Table(
-          columnWidths: {
-            0: FlexColumnWidth(3),
-            1: FlexColumnWidth(2),
-          },
-          defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
-          children: [
-            TableRow(children: [
-              Text('Delivery Fee', style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey,
-                fontFamily: 'Lato', height: 1.9
-              )),
-              RichPriceText(price: _order.deliveryFee)
-            ]),
-            TableRow(children: [
-              Text('Total', style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey,
-                fontFamily: 'Lato', height: 3
-              )),
-              RichPriceText(price: _order.total, fontSize: 17, fontWeight: FontWeight.bold),
-            ])
-          ]
-        )
-      ],
-
-      preProcess: () => _order.total = _order.total
+    return $OrderConfirmationView(
+      // order: _order,
+      //
+      // children: [
+      //   HeaderView(
+      //     title: 'Hello User,',
+      //     subtitle: 'Please confirm your order details and your order reference number will be generated'
+      //   ),
+      //
+      //   _ScaffoldingOrderItemWidget(
+      //     context: context,
+      //     type: item.type.toString(),
+      //   ),
+      //
+      //   Padding(
+      //     padding: const EdgeInsets.only(bottom: 30),
+      //     child: OrderLocationView(
+      //       location: _order.location,
+      //       onEdit: () => Navigator.of(context).pop()
+      //     ),
+      //   ),
+      //
+      //   if (item.type == ScaffoldingType.single)
+      //     SteelScaffoldingPricingDetails(_order.total),
+      //   if (item.type == ScaffoldingType.patented)
+      //     SteelScaffoldingPricingDetails(_order.total),
+      //   if (item.type == ScaffoldingType.steel)
+      //     SteelScaffoldingPricingDetails(_order.total),
+      //
+      //   Padding(
+      //     padding: const EdgeInsets.only(top: 7),
+      //     child: Divider(height: 0, color: Colors.grey.shade700),
+      //   ),
+      //
+      //   Table(
+      //     columnWidths: {
+      //       0: FlexColumnWidth(3),
+      //       1: FlexColumnWidth(2),
+      //     },
+      //     defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
+      //     children: [
+      //       TableRow(children: [
+      //         Text('Delivery Fee', style: TextStyle(
+      //           fontSize: 13,
+      //           color: Colors.grey,
+      //           fontFamily: 'Lato', height: 1.9
+      //         )),
+      //         RichPriceText(price: _order.deliveryFee)
+      //       ]),
+      //       TableRow(children: [
+      //         Text('Total', style: TextStyle(
+      //           fontSize: 12,
+      //           color: Colors.grey,
+      //           fontFamily: 'Lato', height: 3
+      //         )),
+      //         RichPriceText(price: _order.total, fontSize: 17, fontWeight: FontWeight.bold),
+      //       ])
+      //     ]
+      //   )
+      // ],
+      //
+      // preProcess: () => _order.total = _order.total
     );
   }
 }

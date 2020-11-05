@@ -21,7 +21,7 @@ class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
   void initState() {
     super.initState();
 
-    final profileId = AppData.instance().user.profile.id;
+    final profileId = AppData.instance().$user.profile.id;
     _code = profileId.substring(profileId.length - 5);
   }
 

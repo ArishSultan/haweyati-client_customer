@@ -4,9 +4,9 @@ import 'package:haweyati/src/common/models/serializable.dart';
 enum ServiceType {
   dumpsters,
   scaffoldings,
-  delivery_vehicles,
+  deliveryVehicles,
   buildingMaterials,
-  finishing_materials,
+  finishingMaterials,
 }
 
 class TimeSlot implements Serializable<String> {

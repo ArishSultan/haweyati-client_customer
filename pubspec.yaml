@@ -41,9 +41,13 @@ dependencies:
   # Payment related Plugins
   stripe_payment:
   flutter_credit_card:
+  pretty_dio_logger:
 
   # Network related Plugins
   dio:
+  retrofit:
+  json_annotation:
+  json_serializable:
 
   # Inter-App communication Plugins
   url_launcher:
@@ -57,6 +61,7 @@ dependencies:
 dev_dependencies:
   build_runner: ^1.10.4
   hive_generator: ^0.8.1
+  retrofit_generator:
 
   flutter_test:
     sdk: flutter
@@ -68,6 +73,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - assets/images/country-flags/
     - assets/images/home-page/
     - assets/images/features-page/
 

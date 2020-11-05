@@ -5,7 +5,7 @@ import 'package:haweyati/src/models/services/scaffolding/steel-scaffolding_model
 import 'package:haweyati/src/models/services/scaffolding/single-scaffolding_model.dart';
 import 'package:haweyati/src/models/services/scaffolding/patented-scaffolding_model.dart';
 
-// part 'order-item_model.g.dart';
+part 'order-item_model.g.dart';
 
 @HiveType(typeId: 50)
 class ScaffoldingOrderItem extends OrderItem {

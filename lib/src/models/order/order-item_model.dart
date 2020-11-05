@@ -3,10 +3,13 @@ import 'package:haweyati/src/common/models/json_serializable.dart';
 import 'package:hive/hive.dart';
 
 abstract class Orderable extends HiveObject implements JsonSerializable {}
-abstract class OrderItem extends HiveObject implements JsonSerializable {
+abstract class OrderItem<T extends Orderable> extends HiveObject implements JsonSerializable {
   @HiveField(0)
-  Orderable product;
-  OrderItem(this.product);
+  Orderable _product;
+  OrderItem(this._product);
+
+  T get product => _product;
+  set product(T t) => _product = t;
 
   @override
   @mustCallSuper

@@ -8,7 +8,7 @@ class EditButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: () => onPressed(),
       child: Wrap(children: [
         Image.asset(PenIcon, width: 15),
         Text('  Edit', style: TextStyle(color: Theme.of(context).primaryColor))

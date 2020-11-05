@@ -2,21 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/const.dart';
-import 'package:haweyati/src/models/order/building-material/order-item_model.dart';
-import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
-import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
-import 'package:haweyati/src/models/order/order-item_model.dart';
 import 'package:haweyati/src/routes.dart';
-import 'package:haweyati/src/services/haweyati-service.dart';
-import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
 import 'package:haweyati/src/models/order/order_model.dart';
-import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
+import 'package:haweyati/src/services/haweyati-service.dart';
 import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/ui/widgets/rich-price-text.dart';
+import 'package:haweyati/src/models/order/order-item_model.dart';
+import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
+import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
+import 'package:haweyati/src/models/order/building-material/order-item_model.dart';
+import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;
@@ -36,7 +36,7 @@ class OrderDetailPage extends StatelessWidget {
       children: [
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(5, 20, 5, 40),
-          sliver: SliverToBoxAdapter(child: _OrderDetailHeader(order.status.index)),
+          sliver: SliverToBoxAdapter(child: _OrderDetailHeader(order.status.value)),
         ),
 
         SliverToBoxAdapter(child: OrderMeta(order)),
@@ -64,15 +64,19 @@ class OrderDetailPage extends StatelessWidget {
 
                 RichPriceText(price: order.total - order.deliveryFee, fontSize: 13)
               ]),
-              TableRow(children: [
-                Text('Delivery Fee', style: TextStyle(
-                  height: 2, fontSize: 13,
-                  fontFamily: 'Lato',
-                  color: Colors.grey.shade600,
-                )),
-
-                RichPriceText(price: order.deliveryFee, fontSize: 13)
-              ])
+              // TableRow(children: [
+              //   Text('Delivery Fee', style: TextStyle(
+              //     height: 2, fontSize: 13,
+              //     fontFamily: 'Lato',
+              //     color: Colors.grey.shade600,
+              //   )),
+              //
+              //   // if (order.items.first.item is DumpsterOrderItem)
+              //   //   RichPriceText(price: order.deliveryFee * (order.items.first.item as DumpsterOrderItem).qty, fontSize: 13)
+              //   // else
+              //   //   RichPriceText(price: order.deliveryFee, fontSize: 13)
+              //
+              // ])
             ],
           ),
         ),
@@ -171,6 +175,8 @@ class _OrderItemWidget extends StatelessWidget {
   static int _qty(OrderItemHolder holder) {
     if (holder.item is BuildingMaterialOrderItem) {
       return (holder.item as BuildingMaterialOrderItem).qty;
+    } else if (holder.item is DumpsterOrderItem) {
+      return (holder.item as DumpsterOrderItem).qty;
     }
 
     return 1;

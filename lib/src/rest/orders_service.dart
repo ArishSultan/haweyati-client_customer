@@ -10,16 +10,19 @@ class OrdersService {
   final _service = EasyRest();
 
   Future<List<Order>> orders({String orderId}) async {
-    final id = AppData.instance().user?.id;
-    if (id != null) {
-      List<dynamic> data = await _service
-          .$getAll(endpoint: 'orders/dummy', query: {'customer': id, 'name': orderId});
-
-      return data.map((e) => Order.fromJson(e))?.toList();
-    } else {
-      return [];
-    }
+    // final id = AppData.instance().user?.id;
+    // if (id != null) {
+    //   List<dynamic> data = await _service
+    //       .$getAll(endpoint: 'orders/dummy', query: {'customer': id, 'name': orderId});
+    //
+    //   return data.map((e) => Order.fromJson(e))?.toList();
+    // } else {
+    //   return [];
+    // }
   }
+
+  Future<Order> $placeOrder(final $Order order) async =>
+      Order.fromJson(await _service.$post(endpoint: 'orders/dummy', payload: order));
 
   Future<Order> placeOrder(final Order order) async =>
     Order.fromJson(await _service.$post(endpoint: 'orders/dummy', payload: order));

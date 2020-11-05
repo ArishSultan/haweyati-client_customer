@@ -187,4 +187,44 @@ class AppLocalizationsEn extends AppLocalizations {
       other: '${count} Items',
     );
   }
+
+  @override
+  String nPieces(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+      
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      zero: 'None',
+      one: '1 Piece',
+      other: '${count} Pieces',
+    );
+  }
+
+  @override
+  String nDays(int count) {
+    final intl.NumberFormat countNumberFormat = intl.NumberFormat.compact(
+      locale: localeName,
+      
+    );
+    final String countString = countNumberFormat.format(count);
+
+    return intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      zero: 'None',
+      one: '1 Day',
+      other: '${count} Days',
+    );
+  }
+
+  @override
+  String get orderConfirmationPageTitle => 'Hello User,';
+
+  @override
+  String get orderConfirmationPageSubtitle => 'Please confirm your order details and your order reference number will be generated';
 }

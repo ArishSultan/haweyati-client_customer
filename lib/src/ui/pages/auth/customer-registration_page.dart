@@ -105,7 +105,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
               'name': _name,
               'scope': 'customer',
               'password': _password,
-              'email': DateTime.now(),
+              'email': '',
               'address': location.address,
               'contact' : widget?.contact,
               'latitude': location.latitude,
@@ -125,7 +125,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                 ..password = _password
               );
 
-              Navigator.of(context).pushNamed(HOME_PAGE);
+              Navigator.of(context).pop();
             } catch (e) {
               Navigator.pop(context);
               scaffoldKey.currentState.showSnackBar(

@@ -4,6 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 
+class OrderImagePicker extends StatefulWidget {
+  @override
+  _OrderImagePickerState createState() => _OrderImagePickerState();
+}
+
+class _OrderImagePickerState extends State<OrderImagePicker> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+
 class ImagePickerWidget extends StatefulWidget {
   final PickedFile initialImage;
   final Function(PickedFile) onImagePicked;

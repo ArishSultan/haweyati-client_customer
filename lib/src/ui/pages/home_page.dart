@@ -1,5 +1,6 @@
 import 'dart:ui';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/services/_new/auth_service.dart';
+import 'package:haweyati/src/services/_new/availability_service.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,10 +13,8 @@ import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
 import 'package:haweyati/src/common/widgets/badged-widget.dart';
 import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
-import 'package:haweyati/src/common/services/jwt-auth_service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
-import 'package:haweyati/src/services/service-availability_service.dart';
 import 'package:haweyati/src/models/services/finishing-material/model.dart';
 
 class HomePage extends StatefulWidget {
@@ -143,7 +142,7 @@ class _HomePageState extends State<HomePage> {
               if (_appData.isAuthenticated)
                 Padding(
                   padding: const EdgeInsets.only(top: 15),
-                  child: Center(child: Text(AppData.instance().user.name, style: TextStyle(
+                  child: Center(child: Text(AppData.instance().$user.name, style: TextStyle(
                     fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold
                   ))),
                 ),
@@ -214,8 +213,13 @@ class _HomePageState extends State<HomePage> {
                         );
 
                         try {
-                          await JwtAuthService.create().$signOut();
-                          Navigator.of(context).pop();
+                          await AuthService.signOut();
+                          Navigator.of(context)..pop()..pop();
+
+                          _scaffoldKey.currentState.showSnackBar(SnackBar(
+                            content: Text('You are now in guest mode.')
+                          ));
+
                           setState(() {});
                         } catch (err) {
                           Navigator.of(context).pop();
@@ -227,7 +231,20 @@ class _HomePageState extends State<HomePage> {
                     _ListTile(context,
                       icon: Icon(Icons.login, color: Colors.white),
                       title: lang.signIn,
-                      onPressed: () => Navigator.of(context).pushNamed(SIGN_IN_PAGE)
+                      onPressed: () async {
+                        await (Navigator.of(context)..pop()).pushNamed(SIGN_IN_PAGE);
+
+                        if (_appData.isAuthenticated) {
+                          setState(() {});
+
+                          _scaffoldKey.currentState.hideCurrentSnackBar(
+                            reason: SnackBarClosedReason.remove
+                          );
+                          _scaffoldKey.currentState.showSnackBar(SnackBar(
+                            content: Text('You are now Signed in as ${_appData.$user.name}')
+                          ));
+                        }
+                      }
                     )
                ]),
              ))

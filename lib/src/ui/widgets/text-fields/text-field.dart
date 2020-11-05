@@ -35,7 +35,7 @@ class HaweyatiTextField extends StatelessWidget {
       },
       scrollPadding: EdgeInsets.all(100),
       decoration: InputDecoration(
-        hintText: hint,
+        helperText: hint,
         labelText: label,
       ),
       initialValue: value,

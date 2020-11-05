@@ -18,24 +18,22 @@ class BuildingMaterialOrderItemAdapter
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return BuildingMaterialOrderItem(
-      size: fields[2] as String,
+      fields[2] as BuildingMaterialSize,
       qty: fields[1] as int,
       price: fields[3] as double,
-    )..product = fields[0] as Orderable;
+    );
   }
 
   @override
   void write(BinaryWriter writer, BuildingMaterialOrderItem obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(3)
       ..writeByte(1)
       ..write(obj.qty)
-      ..writeByte(2)
-      ..write(obj.size)
       ..writeByte(3)
       ..write(obj.price)
-      ..writeByte(0)
-      ..write(obj.product);
+      ..writeByte(2)
+      ..write(obj.size);
   }
 
   @override
