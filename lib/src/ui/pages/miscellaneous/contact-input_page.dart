@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/const.dart';
-import 'package:haweyati/src/ui/pages/otp-page.dart';
+import 'package:haweyati/src/ui/pages/auth/customer-registration_page.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/contact-input-field.dart';
-import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/utils/navigator.dart';
 
 class ContactInputPage extends StatefulWidget {
   @override
@@ -18,6 +17,13 @@ class _ContactInputPageState extends State<ContactInputPage> {
   var status = false;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+
+  @override
+  void initState() {
+    super.initState();
+    navigateTo(context, CustomerRegistration(contact: '+923006309211',));
+  }
 
   @override
   Widget build(BuildContext context) {

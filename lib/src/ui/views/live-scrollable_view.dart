@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class LiveScrollableView<T> extends StatefulWidget {
   final Widget header;
   final String title, subtitle;

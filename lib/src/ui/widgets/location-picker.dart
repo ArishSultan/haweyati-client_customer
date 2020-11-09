@@ -1,17 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:haweyati/src/models/location_model.dart';
-import 'package:haweyati/src/models/order/order_model.dart';
 import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
 import 'package:haweyati/src/ui/widgets/buttons/edit-button.dart';
 import 'package:haweyati/src/const.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/utils/navigator.dart';
+import 'package:haweyati_client_data_models/data.dart';
 
 import 'dark-container.dart';
 
 class OrderLocationPicker extends StatefulWidget {
-  final $Order order;
+  final Order order;
   final bool _allowEdit;
 
   OrderLocationPicker(this.order, [this._allowEdit = false]);

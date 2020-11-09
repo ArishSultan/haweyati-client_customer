@@ -8,7 +8,7 @@ import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/utils/validators.dart';
+import 'package:haweyati/src/utils/validations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../const.dart';

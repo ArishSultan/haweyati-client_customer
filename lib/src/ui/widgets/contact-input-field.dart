@@ -45,9 +45,7 @@ class _ContactInputFieldState extends State<ContactInputField> {
           focusNode: _node,
           controller: _controller,
           placeholder: '500303339 etc...',
-          placeholderStyle: TextStyle(
-            color: Colors.grey.shade400
-          ),
+          placeholderStyle: TextStyle(color: Colors.grey.shade400),
           onChanged: (value) {
             if (value.length > (_code.code == '+966' ? 8 : 9)) {
               widget.onChanged(_code.code + value, true);
@@ -73,11 +71,11 @@ class _ContactInputFieldState extends State<ContactInputField> {
             color: Colors.transparent,
           ),
           prefix: SizedBox(
-            width: 100,
+            width: _node.hasFocus ? 100 : 101,
             child: Row(
               children: [
                 SizedBox(
-                  width: 60,
+                  width: _node.hasFocus ? 60 : 61,
                   child: DropdownButtonHideUnderline(
                     child: ButtonTheme(
                       alignedDropdown: false,
@@ -86,10 +84,14 @@ class _ContactInputFieldState extends State<ContactInputField> {
                         selectedItemBuilder: (context) =>
                             List.generate(_codes.length, (index) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            padding: EdgeInsets.fromLTRB(
+                              _node.hasFocus ? 9 : 10,
+                              _node.hasFocus ? 0 : 2,
+                              10,
+                              _node.hasFocus ? 0 : 2,
+                            ),
                             child: Image.asset(
                               'assets/images/country-flags/' + _code.image,
-                              width: 24,
                             ),
                           );
                         }),

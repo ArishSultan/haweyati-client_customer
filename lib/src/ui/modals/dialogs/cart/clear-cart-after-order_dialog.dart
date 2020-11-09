@@ -1,11 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/data.dart';
-import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:haweyati_client_data_models/data.dart';
 
 class ClearCartAfterOrderDialog extends StatelessWidget {
-  final _appData = AppData.instance();
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

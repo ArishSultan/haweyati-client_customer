@@ -57,9 +57,7 @@ abstract class HaweyatiService<T> {
     return jsonDecode(encodedData).cast<Map<String, dynamic>>();
   }
 
-  static resolveImage(String url) {
-    return "$apiUrl/uploads/$url";
-  }
+  static resolveImage(String url) => '$apiUrl/uploads/$url';
 
   T parse(Map<String, dynamic> item);
 

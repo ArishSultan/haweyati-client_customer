@@ -1,0 +1,23 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/rest/_new/products/finishing-materials_rest.dart';
+import 'package:haweyati/src/rest/haweyati-service.dart';
+import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
+import 'package:haweyati/src/ui/views/order-confirmation_view.dart';
+import 'package:haweyati/src/ui/views/order-progress_view.dart';
+import 'package:haweyati/src/ui/views/product-detail_view.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/ui/widgets/counter.dart';
+import 'package:haweyati/src/ui/widgets/dark-container.dart';
+import 'package:haweyati/src/ui/widgets/details-table.dart';
+import 'package:haweyati/src/ui/widgets/location-picker.dart';
+import 'package:haweyati/src/ui/widgets/order-confirmation-item.dart';
+import 'package:haweyati/src/ui/widgets/service-list-tile.dart';
+import 'package:haweyati/src/ui/widgets/table-rows.dart';
+import 'package:haweyati/src/utils/navigator.dart';
+import 'package:haweyati_client_data_models/data.dart';
+
+part 'detail_pages.dart';
+part 'order_pages.dart';

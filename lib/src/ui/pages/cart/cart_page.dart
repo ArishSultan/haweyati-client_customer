@@ -1,16 +1,15 @@
 import 'package:haweyati/src/ui/widgets/cart/cart-item.dart';
+import 'package:haweyati_client_data_models/data.dart';
 
 import 'cart-order_page.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
-import 'package:haweyati/src/models/services/finishing-material/model.dart';
-import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
 
 class CartPage extends StatefulWidget {
   CartPage();
@@ -100,7 +99,7 @@ class _CartPageState extends State<CartPage> {
 
   void _placeOrder(context) async {
     navigateTo(context, CartOrderPage(_items
-      .map((e) => FinishingMaterialOrderItem(product: e))
+      .map((e) => FinishingMaterialOrderable(product: e))
       .toList()
     ));
   }

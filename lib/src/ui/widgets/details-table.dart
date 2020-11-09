@@ -14,6 +14,7 @@ class DetailsTableAlt extends Table {
   DetailsTableAlt(List<String> headers, List<String> details, [List<double> flexes = const [3, 2]])
       : super(
           columnWidths: _generateFlexes(flexes),
+          textBaseline: TextBaseline.alphabetic,
           defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
           children: [
             TableRow(children: headers.map((header) => Text(
@@ -31,6 +32,7 @@ class DetailsTableAlt extends Table {
 class DetailsTable extends Table {
   DetailsTable(List<TableRow> children)
       : super(
+          textBaseline: TextBaseline.alphabetic,
           columnWidths: {0: FlexColumnWidth(3), 1: FlexColumnWidth(2)},
           defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
           children: children,

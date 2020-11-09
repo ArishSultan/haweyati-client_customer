@@ -1,21 +1,17 @@
+import 'package:haweyati/src/rest/haweyati-service.dart';
+import 'package:haweyati/src/rest/orders_service.dart';
+import 'package:haweyati_client_data_models/data.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
-import 'package:haweyati/src/services/orders_service.dart';
+import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
-import 'package:haweyati/src/models/order/order_model.dart';
-import 'package:haweyati/src/services/haweyati-service.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
 import 'package:haweyati/src/ui/widgets/rich-price-text.dart';
-import 'package:haweyati/src/models/order/order-item_model.dart';
 import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
 import 'package:haweyati/src/ui/pages/orders/order-detail_page.dart';
-import 'package:haweyati/src/models/order/dumpster/order-item_model.dart';
-import 'package:haweyati/src/models/order/building-material/order-item_model.dart';
-import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
 
 class MyOrdersPage extends StatefulWidget {
   @override
@@ -37,8 +33,10 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
         child: CupertinoTextField(
           prefix: Padding(
             padding: const EdgeInsets.fromLTRB(15, 7, 5, 7),
-            child: Icon(CupertinoIcons.search,
-                size: 21, color: Colors.grey.shade400
+            child: Icon(
+              CupertinoIcons.search,
+              size: 21,
+              color: Colors.grey.shade400,
             ),
           ),
           style: TextStyle(fontSize: 15, color: Colors.grey.shade700),
@@ -50,7 +48,7 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
           placeholder: 'Item Name or order number',
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            color: Colors.grey.shade200
+            color: Colors.grey.shade200,
           ),
           onChanged: (val) async {
             _orderId = val;
@@ -61,13 +59,11 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
       loader: () => _service.orders(orderId: _orderId),
       builder: (context, order) => GestureDetector(
         onTap: () => navigateTo(context, OrderDetailPage(order)),
-        child: _OrderListTile(order)
+        child: _OrderListTile(order),
       ),
     );
 
-    return NoScrollView(
-      body: view
-    );
+    return NoScrollView(body: view);
   }
 }
 
@@ -85,17 +81,14 @@ class _OrderListTile extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 15),
           child: OrderMeta(order),
         ),
-
-        for (final item in order.items)
-          OrderItemTile(item),
-
+        for (final item in order.products) OrderItemTile(item),
         Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Row(children: [
-            Text('Total', style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey.shade600
-            )),
+            Text(
+              'Total',
+              style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+            ),
             Spacer(),
             RichPriceText(
               price: order.total,
@@ -109,20 +102,18 @@ class _OrderListTile extends StatelessWidget {
 }
 
 class _OrderStatus extends Container {
-  _OrderStatus(final OrderStatus status): super(
-    padding: const EdgeInsets.symmetric(
-      horizontal: 8,
-      vertical: 4.5
-    ),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(20),
-      color: _color(status)
-    ),
-    child: Text(status.toString(), style: TextStyle(
-      color: Colors.white,
-      fontSize: 10
-    ))
-  );
+  _OrderStatus(final OrderStatus status)
+      : super(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.5),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: _color(status),
+          ),
+          child: Text(
+            status.toString(),
+            style: TextStyle(color: Colors.white, fontSize: 10),
+          ),
+        );
 
   static Color _color(OrderStatus status) {
     return Colors.red;
@@ -143,73 +134,73 @@ class _OrderStatus extends Container {
 }
 
 class OrderMeta extends Row {
-  OrderMeta(Order order): super(children: [
-    Column(children: [
-      RichText(text: TextSpan(
-        text: 'Order Date - ',
-        style: TextStyle(
-          fontSize: 13,
-          color: Colors.grey.shade600
-        ),
-        children: [
-          TextSpan(
-            text: DateFormat('d MMM y,').add_jm().format(order.createdAt),
-            style: TextStyle(
-              fontSize: 13,
-              color: Color(0xFF313F53)
-            ),
-          )
-        ]
-      )),
-
-      SizedBox(height: 3),
-
-      RichText(text: TextSpan(
-        text: 'Order ID - ',
-        style: TextStyle(
-          fontSize: 13,
-          color: Colors.grey.shade600
-        ),
-        children: [
-          TextSpan(
-            text: order.number.toUpperCase(),
-            style: TextStyle(
-              fontSize: 13,
-              color: Color(0xFF313F53)
-            ),
-          )
-        ]
-      ))
-    ], crossAxisAlignment: CrossAxisAlignment.start),
-
-    Spacer(),
-    _OrderStatus(order.status)
-  ], crossAxisAlignment: CrossAxisAlignment.start);
+  OrderMeta(Order order)
+      : super(
+          children: [
+            Column(children: [
+              RichText(
+                text: TextSpan(
+                  text: 'Order Date - ',
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  children: [
+                    TextSpan(
+                      text: DateFormat('d MMM y,')
+                          .add_jm()
+                          .format(order.createdAt),
+                      style: TextStyle(fontSize: 13, color: Color(0xFF313F53)),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 3),
+              RichText(
+                text: TextSpan(
+                  text: 'Order ID - ',
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  children: [
+                    TextSpan(
+                      text: order.number.toUpperCase(),
+                      style: TextStyle(fontSize: 13, color: Color(0xFF313F53)),
+                    )
+                  ],
+                ),
+              )
+            ], crossAxisAlignment: CrossAxisAlignment.start),
+            Spacer(),
+            _OrderStatus(order.status)
+          ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+        );
 }
 
 class OrderItemTile extends StatelessWidget {
-  final OrderItemHolder item;
-  OrderItemTile(this.item);
+  final OrderProductHolder holder;
+  OrderItemTile(this.holder);
 
   @override
   Widget build(BuildContext context) {
     int qty = 1;
     String title;
     String imageUrl;
-    dynamic product = item.item.product;
 
-    if (item.item is DumpsterOrderItem) {
-      qty = (item.item as DumpsterOrderItem).qty;
-      title = '${int.parse(product.size)} Yards';
-      imageUrl = product.image.name;
-    } else if (item.item is BuildingMaterialOrderItem) {
-      qty = (item.item as BuildingMaterialOrderItem).qty;
-      title = product.name;
-      imageUrl = product.image.name;
-    } else if (item.item is FinishingMaterialOrderItem) {
-      qty = (item.item as FinishingMaterialOrderItem).qty;
-      title = product.name;
-      imageUrl = product.images.name;
+    if (holder.item is DumpsterOrderable) {
+      final item = holder.item as DumpsterOrderable;
+
+      qty = item.qty;
+      title = '${item.product.size} Yards';
+      imageUrl = item.product.image.name;
+    } else if (holder.item is BuildingMaterialOrderable) {
+      final item = holder.item as BuildingMaterialOrderable;
+
+      qty = item.qty;
+      title = item.product.name;
+      imageUrl = item.product.image.name;
+    } else if (holder.item is FinishingMaterialOrderable) {
+      final item = holder.item as FinishingMaterialOrderable;
+
+      qty = item.qty;
+      title = item.product.name;
+      imageUrl = item.product.image.name;
     }
 
     return ListTile(
@@ -223,16 +214,19 @@ class OrderItemTile extends StatelessWidget {
             BoxShadow(
               blurRadius: 10,
               spreadRadius: 1,
-              color: Colors.grey.shade500
+              color: Colors.grey.shade500,
             )
           ],
           image: DecorationImage(
             fit: BoxFit.cover,
-            image: NetworkImage(HaweyatiService.resolveImage(imageUrl))
-          )
+            image: NetworkImage(HaweyatiService.resolveImage(imageUrl)),
+          ),
         ),
       ),
-      title: Text(title.toString() ,style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Text(
+        title.toString(),
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
       subtitle: Text(AppLocalizations.of(context).nProducts(qty)),
     );
   }

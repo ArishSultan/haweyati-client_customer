@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
+import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati/src/ui/widgets/service-list-tile.dart';
-import 'package:haweyati/src/models/services/finishing-material/model.dart';
 
 class CartItem extends Dismissible {
   CartItem({
@@ -22,10 +22,10 @@ class CartItem extends Dismissible {
 
     onDismissed: (_) { onRemoved(); },
 
-    child: ServiceListItem(
+    child: ProductListTile(
       onTap: () {},
       name: item.name,
-      image: item.images.name,
+      image: item.image.name,
       margin: const EdgeInsets.all(0),
     )
   );

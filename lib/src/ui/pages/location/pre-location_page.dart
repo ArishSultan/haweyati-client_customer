@@ -10,7 +10,6 @@ import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 
-
 class PreLocationPage extends StatefulWidget {
   @override
   _PreLocationPageState createState() => _PreLocationPageState();
@@ -22,13 +21,15 @@ class _PreLocationPageState extends State<PreLocationPage> {
     return LocalizedView(
       builder: (context, lang) => NoScrollView(
         appBar: HaweyatiAppBar(
-          allowBack: false,
           hideHome: true,
           hideCart: true,
-          actions: [Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Center(child: LocalizationSelector()),
-          )],
+          allowBack: false,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Center(child: LocalizationSelector()),
+            )
+          ],
         ),
         body: DottedBackgroundView(
           padding: const EdgeInsets.fromLTRB(10, 0, 10, 30),
@@ -42,11 +43,14 @@ class _PreLocationPageState extends State<PreLocationPage> {
         ),
         bottom: FlatActionButton(
           label: lang.setYourLocation,
-          onPressed: () => processUserLocationPicking(context, onLocationPicked: () =>
-              Navigator
-                  .of(context)
-                  .pushNamedAndRemoveUntil(HOME_PAGE, (route) => false)
-          )
+          onPressed: () => processUserLocationPicking(
+            context,
+            onLocationPicked: () =>
+                Navigator.of(context).pushNamedAndRemoveUntil(
+              HOME_PAGE,
+              (route) => false,
+            ),
+          ),
         ),
       ),
     );

@@ -1,11 +1,10 @@
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:haweyati/src/data.dart';
 import 'package:location/location.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:app_settings/app_settings.dart';
+import 'package:haweyati/src/utils/navigator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:haweyati/src/models/location_model.dart' as model;
+import 'package:haweyati_client_data_models/data.dart' as model;
 import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
 import 'package:haweyati/src/ui/modals/dialogs/errors/location-permission_error-dialog.dart';
 
@@ -103,7 +102,7 @@ void processUserLocationPicking(BuildContext context, {
   );
 
   if (_pickedLocation != null) {
-    AppData.instance().location = _pickedLocation;
+    model.AppData().location = _pickedLocation;
     onLocationPicked();
   }
 }

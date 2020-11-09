@@ -125,7 +125,7 @@ class _HelplinePageState extends State<HelplinePage> {
         onPressed: _available ? () {
           _checkAvailability();
           if (_available) {
-            launchWhatsApp('', '');
+            launchWhatsApp('+923006309211', 'Your message here...');
           }
         } : null
       )

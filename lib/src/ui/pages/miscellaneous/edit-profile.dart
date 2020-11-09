@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/data.dart';
-import 'package:haweyati/src/models/location_model.dart';
-import 'package:haweyati/src/services/haweyati-service.dart';
+import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
-import 'package:haweyati/src/utils/validators.dart';
+import 'package:haweyati/src/utils/validations.dart';
+import 'package:haweyati_client_data_models/data.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -17,9 +16,9 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
-  String name = AppData.instance().$user.name;
+  String name = AppData().user.name;
   String imagePath;
-  Location location = AppData.instance().location;
+  Location location = AppData().location;
 
   final key = GlobalKey<ScaffoldState>();
   final form = GlobalKey<FormState>();
@@ -61,7 +60,7 @@ class _EditProfileState extends State<EditProfile> {
             LocationPicker(
               initialValue: location,
               onChanged: (location) {
-                AppData.instance().location = location;
+                AppData().location = location;
               },
             ),
           ])
@@ -82,7 +81,7 @@ class _EditProfileState extends State<EditProfile> {
               builder: (context) => WaitingDialog(message: 'Updating Profile...')
             );
 
-            final user = AppData.instance().$user;
+            final user = AppData().user;
             FormData profile = FormData.fromMap({
               '_id' : user.id,
               'personId' : user.profile.id,

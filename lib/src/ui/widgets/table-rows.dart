@@ -3,14 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:haweyati/src/ui/widgets/rich-price-text.dart';
 
 class DetailRow extends TableRow {
-  DetailRow(String label, String detail)
+  DetailRow(String label, String detail, [bool bold = true])
       : super(children: [
           Text(
             label,
             style: TextStyle(
-              fontSize: 16,
-              color: Color(0xFF313F53),
-              fontWeight: FontWeight.bold,
+              fontSize: bold ? 16: 12,
+              color: bold ? Color(0xFF313F53) : Colors.grey,
+              fontWeight: bold ? FontWeight.bold : FontWeight.normal,
             ),
           ),
           Text(

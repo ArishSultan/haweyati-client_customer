@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/const.dart';
-import 'package:haweyati/src/utils/date-formatter.dart';
-import 'package:haweyati/src/models/time-slot_model.dart';
-import 'package:haweyati/src/models/order/order_model.dart';
+import 'package:haweyati_client_data_models/data.dart';
+import 'package:haweyati/src/utils/formats.dart';
+import 'package:haweyati/src/rest/_new/time-slots_rest.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
-import 'package:haweyati/src/services/time-slots_service.dart';
 
 class DropOffPicker extends StatefulWidget {
-  final $Order order;
+  final Order order;
   final Function onReady;
   DropOffPicker(this.order, this.onReady);
 
@@ -93,7 +92,7 @@ class _DropOffPickerState extends State<DropOffPicker> {
                   child: Row(children: [
                     Expanded(
                       child: Text(
-                        widget.order.location.dropOffDate.formated,
+                        widget.order.location.dropOffDate.formatted,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey.shade800,
@@ -155,8 +154,10 @@ class _DropOffPickerState extends State<DropOffPicker> {
       ];
 
   _prepareFirstBuild() async {
-    final _slot = await TimeSlotsService().$getTimeSlotOf(widget.order.type);
+    final _slot = await TimeSlotsRest().getTimeSlotOf(widget.order.type);
     final startTime = DateTime.now().add(Duration(hours: 12));
+
+    print(_slot);
 
     _firstDate = TimeOfDay.fromDateTime(startTime) < _slot.to
         ? startTime

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:haweyati/src/const.dart';
-import 'package:haweyati/src/data.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
+import 'package:haweyati_client_data_models/data.dart';
 
 var _currentPageCache = 0;
 
@@ -18,7 +18,7 @@ class FeaturesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppData.instance().burnFuse();
+    AppData().burnFuse();
 
     return LocalizedView(
       builder: (context, lang) => NoScrollView(

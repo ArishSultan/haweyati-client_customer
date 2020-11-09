@@ -1,5 +1,7 @@
-import 'package:haweyati/src/data.dart';
-import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
+// import 'file:///home/arish/Workspace/Projects/haweyati/models/lib/data.dart';
+// import 'package:haweyati/src/common/services/easy-rest/easy-rest.dart';
+
+import 'package:haweyati_client_data_models/data.dart';
 
 class ScaffoldingPrice {
   int days;
@@ -26,8 +28,8 @@ class ScaffoldingPrice {
 }
 
 class ScaffoldingService {
-  final _service = EasyRest();
-  final _appData = AppData.instance();
+  final _service = null;
+  final _appData = AppData();
 
   Future<ScaffoldingPrice> steelScaffoldingPrice() async =>
       _parsePricing(await _getTypedScaffolding('Steel Scaffolding'));

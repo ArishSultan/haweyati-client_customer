@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:haweyati/src/data.dart';
-import 'package:haweyati/src/models/order/finishing-material/order-item_model.dart';
-import 'package:haweyati/src/models/order/order-item_model.dart';
-import 'package:haweyati/src/models/order/order-location_model.dart';
-import 'package:haweyati/src/models/order/order_model.dart';
-import 'package:haweyati/src/models/services/finishing-material/model.dart';
-import 'package:haweyati/src/models/services/finishing-material/options_model.dart';
-import 'package:haweyati/src/services/haweyati-service.dart';
-import 'package:haweyati/src/ui/pages/services/finishing-material/order-confirmation_page.dart';
-import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/counter.dart';
+import 'package:haweyati_client_data_models/data.dart';
+import 'package:haweyati/src/rest/haweyati-service.dart';
+import 'package:haweyati/src/utils/navigator.dart';
+import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
+import 'package:haweyati/src/ui/pages/products/finishing-material/finishing-material_pages.dart';
 
 class CartOrderPage extends StatefulWidget {
   CartOrderPage(this._items);
-  final List<FinishingMaterialOrderItem> _items;
+  final List<FinishingMaterialOrderable> _items;
 
   @override
   _CartOrderPageState createState() => _CartOrderPageState();
@@ -33,9 +27,7 @@ class _CartOrderPageState extends State<CartOrderPage> {
     return NoScrollView(
       appBar: HaweyatiAppBar(hideHome: true, hideCart: true),
       body: ListView.builder(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15, vertical: 10
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         itemCount: widget._items.length,
         itemBuilder: (context, index) => Dismissible(
           key: UniqueKey(),
@@ -45,8 +37,9 @@ class _CartOrderPageState extends State<CartOrderPage> {
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Icon(
-                    CupertinoIcons.trash, color: Colors.red,
-                    size: 30
+                  CupertinoIcons.trash,
+                  color: Colors.red,
+                  size: 30,
                 ),
               ),
             ),
@@ -64,48 +57,34 @@ class _CartOrderPageState extends State<CartOrderPage> {
             onChange: (val) {
               _count.value += val;
               print(_count.value);
-            }
+            },
           ),
         ),
       ),
-
       bottom: ValueListenableBuilder(
         valueListenable: _count,
         builder: (context, val, widget) => RaisedActionButton(
-          label: 'Proceed', onPressed: val > 0 ? _proceed: null,
+          label: 'Proceed',
+          onPressed: val > 0 ? _proceed : null,
         ),
-      )
+      ),
     );
   }
 
   _proceed() {
-    final items = widget._items
-      .where((element) => element.qty > 0)
-      .map((element) {
-        return OrderItemHolder(
-          item: element,
-          subtotal: element.qty * element.price
-        );
-      }).toList();
+    final order = Order(OrderType.finishingMaterial);
 
-    navigateTo(context, FinishingMaterialOrderConfirmationPage(Order(
-      OrderType.finishingMaterial,
-      items: items,
-      images: [],
-      location: OrderLocation()..update(AppData.instance().location),
-      total: items.fold(0, (sum, element) => sum + element.subtotal),
-    ), true));
+    widget._items.where((element) => element.qty > 0).forEach(
+        (element) => order.addProduct(element, element.qty * element.price));
+    navigateTo(context, FinishingMaterialOrderConfirmationPage(order, true));
   }
 }
 
 class _CartOrderItem extends StatefulWidget {
-  _CartOrderItem({
-    this.item,
-    this.onChange
-  });
+  _CartOrderItem({this.item, this.onChange});
 
   final Function(int val) onChange;
-  final FinishingMaterialOrderItem item;
+  final FinishingMaterialOrderable item;
 
   FinishingMaterial get product => item.product;
 
@@ -122,15 +101,15 @@ class _CartOrderItem extends StatefulWidget {
 class __CartOrderItemState extends State<_CartOrderItem> {
   @override
   Widget build(BuildContext context) {
-    widget.item.price = widget.product.price
-      = widget.product.price;
+    widget.item.price = widget.product.price = widget.product.price;
 
     return DarkContainer(
       margin: const EdgeInsets.only(bottom: 15),
-      child: _ListTile(widget.item, widget.onChange)
+      child: _ListTile(widget.item, widget.onChange),
     );
   }
 }
+
 class __CartOrderItemWithVariantsState extends State<_CartOrderItem> {
   bool _expanded = false;
   final _selectedVariant = <String, dynamic>{};
@@ -147,42 +126,34 @@ class __CartOrderItemWithVariantsState extends State<_CartOrderItem> {
   @override
   Widget build(BuildContext context) {
     widget.item.variants = _selectedVariant;
-    widget.item.price = widget.product.price
-      = widget.product.variantPrice(_selectedVariant);
+    widget.item.price =
+        widget.product.price = widget.product.variantPrice(_selectedVariant);
 
     return DarkContainer(
       child: Wrap(children: [
         _ListTile(widget.item, widget.onChange),
-
-        if (_expanded) Wrap(
-          children: _buildOptions(widget.product.options)
-        ),
-
+        if (_expanded) Wrap(children: _buildOptions(widget.product.options)),
         Divider(thickness: 1, height: 1),
         ConstrainedBox(
           constraints: BoxConstraints.expand(height: 25),
           child: FlatButton(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(8)
-              )
+              borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
             ),
             child: Transform.rotate(
               angle: _expanded ? 3.14 : 0,
-              child: Icon(Icons.keyboard_arrow_down, color: Colors.grey)
+              child: Icon(Icons.keyboard_arrow_down, color: Colors.grey),
             ),
-            onPressed: () => setState(() => _expanded = !_expanded)
-          )
+            onPressed: () => setState(() => _expanded = !_expanded),
+          ),
         )
       ]),
-      margin: const EdgeInsets.only(bottom: 15)
+      margin: const EdgeInsets.only(bottom: 15),
     );
   }
 
   _buildOptions(List<FinishingMaterialOption> options) {
-    final list = <Widget>[
-      Divider(thickness: 1, height: 1)
-    ];
+    final list = <Widget>[Divider(thickness: 1, height: 1)];
 
     for (final option in options) {
       list.add(Padding(
@@ -202,7 +173,6 @@ class __CartOrderItemWithVariantsState extends State<_CartOrderItem> {
                 _selectedVariant[option.name] = value;
               }),
             ),
-
             Text(value)
           ]),
         ));
@@ -229,36 +199,44 @@ class __CartOrderItemWithVariantsState extends State<_CartOrderItem> {
 }
 
 class _ListTile extends ListTile {
-  _ListTile(FinishingMaterialOrderItem item, Function onChange): super(
-    contentPadding: const EdgeInsets.all(10),
-    title: Text((item.product as FinishingMaterial).name),
-    subtitle: Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: Row(children: [
-        Expanded(child: Text(
-          '${(item.product as FinishingMaterial).price.toStringAsFixed(2)} SAR'
-        )),
-        Counter(initialValue: item.qty.toDouble(), onChange: (val) {
-          onChange(val.toInt() - item.qty);
-          item.qty = val.round();
-        })
-      ]),
-    ),
-    leading: Container(
-      width: 55,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        // shape: BoxShape.circle,
-        boxShadow: [BoxShadow(
-          spreadRadius: 1,
-          blurRadius: 10,
-          color: Colors.grey.shade500
-        )],
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(HaweyatiService.resolveImage((item.product as FinishingMaterial).images.name))
-        )
-      ),
-    )
-  );
+  _ListTile(FinishingMaterialOrderable item, Function onChange)
+      : super(
+          contentPadding: const EdgeInsets.all(10),
+          title: Text((item.product).name),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Row(children: [
+              Expanded(
+                child: Text('${(item.product).price.toStringAsFixed(2)} SAR'),
+              ),
+              Counter(
+                initialValue: item.qty.toDouble(),
+                onChange: (val) {
+                  onChange(val.toInt() - item.qty);
+                  item.qty = val.round();
+                },
+              )
+            ]),
+          ),
+          leading: Container(
+            width: 55,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              // shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  spreadRadius: 1,
+                  blurRadius: 10,
+                  color: Colors.grey.shade500,
+                )
+              ],
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(
+                  HaweyatiService.resolveImage((item.product).image.name),
+                ),
+              ),
+            ),
+          ),
+        );
 }

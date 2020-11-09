@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:hive/hive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:haweyati/src/models/notification_model.dart';
+// import 'package:haweyati/src/models/notification_model.dart';
 import 'package:path_provider/path_provider.dart';
 
 part 'notifications_service.g.dart';
@@ -110,10 +110,10 @@ Future _saveNotification(Map<String, dynamic> json) async {
   await file.writeAsString('Notification was recieved');
 
   if (Hive.isBoxOpen('notifications')) {
-    Hive.box<StoreableNotification>('notifications')
-      .add(StoreableNotification(
-      notification: notification
-    ));
+    // Hive.box<StoreableNotification>('notifications')
+    //   .add(StoreableNotification(
+    // notification: notification
+    // ));
     print('added');
   }
 }

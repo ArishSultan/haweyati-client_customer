@@ -4,7 +4,7 @@ import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/const.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/utils/navigator.dart';
 import 'package:hive/hive.dart';
 
 import 'payment-methods_page.dart';

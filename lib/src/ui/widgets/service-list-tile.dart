@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/services/haweyati-service.dart';
+import 'package:haweyati/src/rest/haweyati-service.dart';
 
-class ServiceListItem extends StatelessWidget {
+class ProductListTile extends StatelessWidget {
   final String name;
   final String image;
   final String detail;
@@ -11,7 +11,7 @@ class ServiceListItem extends StatelessWidget {
   final bool trailingIcon;
   final EdgeInsets margin;
 
-  ServiceListItem({
+  ProductListTile({
     this.image,
     this.detail,
     this.trailingIcon = false,

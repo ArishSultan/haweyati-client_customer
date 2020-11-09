@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/services/haweyati-service.dart';
+import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/pages/auth/sign-in_page.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/utils/navigator.dart';
 
 class ResetPasswordPage extends StatefulWidget {
   final String phoneNumber;

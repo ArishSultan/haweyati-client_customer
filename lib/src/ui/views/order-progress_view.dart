@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/models/order/order-item_model.dart';
-import 'package:haweyati/src/models/order/order_model.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
-import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 
 typedef OrderProgressBuilder = List<Widget> Function(BuildContext context);
-class OrderProgressView<T extends OrderItem> extends ScrollableView {
+class OrderProgressView<T extends OrderableProduct> extends ScrollableView {
   OrderProgressView({
     Key key,
     bool allow = true,
-    $Order<T> order,
+    Order<T> order,
     double progress = .25,
-    List<Widget> Function($Order order) builder,
-    List<Widget> children,
-    Function() onContinue,
-    Function($Order<T> order) $onContinue,
+    List<Widget> Function(Order order) builder,
+    Function(Order<T> order) onContinue,
   }): super(
     key: key,
     padding: const EdgeInsets.fromLTRB(15, 0, 15, 100),
@@ -27,11 +23,9 @@ class OrderProgressView<T extends OrderItem> extends ScrollableView {
     appBar: HaweyatiAppBar(progress: progress, confirmOrderCancel: true),
     bottom: RaisedActionButton(
       label: 'Continue',
-      onPressed: allow ? () => $onContinue(order) : null
+      onPressed: allow ? () => onContinue(order) : null
     ),
-  ) {
-    print('Allow: ' + allow.toString());
-  }
+  );
 
   OrderProgressView.sliver({
     Key key,

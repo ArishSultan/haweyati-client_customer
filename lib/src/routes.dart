@@ -1,32 +1,29 @@
-import 'data.dart';
 import 'package:flutter/widgets.dart';
-import 'package:haweyati/src/ui/pages/cart/cart_page.dart';
-import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
-import 'ui/pages/auth/sign-in_page.dart';
+import 'package:haweyati_client_data_models/data.dart';
+
 import 'ui/pages/home_page.dart';
-import 'ui/pages/location/locations-map_page.dart';
+import 'ui/pages/cart/cart_page.dart';
+import 'ui/pages/auth/sign-in_page.dart';
+import 'ui/pages/orders/my-orders_page.dart';
 import 'ui/pages/location/pre-location_page.dart';
+import 'ui/pages/miscellaneous/rewards_page.dart';
+import 'ui/pages/location/locations-map_page.dart';
 import 'ui/pages/miscellaneous/features_page.dart';
 import 'ui/pages/miscellaneous/helpline_page.dart';
-import 'ui/pages/miscellaneous/notifications_page.dart';
 import 'ui/pages/miscellaneous/rate-app_page.dart';
-import 'ui/pages/miscellaneous/rewards_page.dart';
 import 'ui/pages/miscellaneous/settings_page.dart';
+import 'ui/pages/miscellaneous/notifications_page.dart';
+import 'ui/pages/products/dumpster/dumpster_pages.dart';
 import 'ui/pages/miscellaneous/share-and-invite_page.dart';
 import 'ui/pages/miscellaneous/terms-and-conditions_page.dart';
-import 'ui/pages/services/building-material/categories-list_page.dart';
-import 'ui/pages/services/dumpster/list_page.dart';
-import 'ui/pages/services/finishing-material/categories-list_page.dart';
-import 'ui/pages/services/scaffolding/calculations/ceiling-calculation_page.dart';
-import 'ui/pages/services/scaffolding/calculations/facades-calculation_page.dart';
-import 'ui/pages/services/scaffolding/list_page.dart';
-import 'ui/pages/services/scaffolding/options/patented-options_page.dart';
-import 'ui/pages/services/scaffolding/options/steel-options_page.dart';
+import 'ui/pages/products/building-material/building-material_pages.dart';
+import 'ui/pages/products/finishing-material/finishing-material_pages.dart';
+
 
 final routes = <String, Widget Function(BuildContext)>{
   HOME_PAGE: (context) {
     /// Check whether the user is Authenticated
-    final _appData = AppData.instance();
+    final _appData = AppData();
 
     /// Check whether user location is saved.
     if (_appData.location != null) {
@@ -47,20 +44,20 @@ final routes = <String, Widget Function(BuildContext)>{
   LOCATION_PICKER_MAP_PAGE: (context) => LocationPickerMapPage(),
   
   /// Construction Dumpsters Routes.
-  DUMPSTERS_LIST_PAGE: (context) => DumpstersListPage(),
+  DUMPSTERS_LIST_PAGE: (context) => DumpstersPage(),
 
   /// Scaffolding Routes.
-  SCAFFOLDINGS_LIST_PAGE: (context) => ScaffoldingsListPage(),
-  FACADES_CALCULATION_PAGE: (context) => FacadesCalculationPage(),
-  CEILING_CALCULATION_PAGE: (context) => CeilingCalculationPage(),
-  STEEL_SCAFFOLDING_OPTIONS_PAGE: (context) => SteelScaffoldingOptionsPage(),
-  PATENTED_SCAFFOLDING_OPTIONS_PAGE: (context) => PatentedScaffoldingOptionsPage(),
+  // SCAFFOLDINGS_LIST_PAGE: (context) => ScaffoldingsListPage(),
+  // FACADES_CALCULATION_PAGE: (context) => FacadesCalculationPage(),
+  // CEILING_CALCULATION_PAGE: (context) => CeilingCalculationPage(),
+  // STEEL_SCAFFOLDING_OPTIONS_PAGE: (context) => SteelScaffoldingOptionsPage(),
+  // PATENTED_SCAFFOLDING_OPTIONS_PAGE: (context) => PatentedScaffoldingOptionsPage(),
 
   /// Building Material Routes.
-  BUILDING_MATERIALS_LIST_PAGE: (context) => BuildingMaterialCategoriesListPage(),
+  BUILDING_MATERIALS_LIST_PAGE: (context) => BuildingMaterialCategoriesPage(),
   
   /// Finishing Material Routes.
-  FINISHING_MATERIALS_LIST_PAGE: (context) => FinishingMaterialCategoriesListPage(),
+  FINISHING_MATERIALS_LIST_PAGE: (context) => FinishingMaterialCategoriesPage(),
   
   /// Miscellaneous Routes.
   ///
@@ -91,7 +88,7 @@ const NOTIFICATIONS_PAGE = '5';
 const SHARE_AND_INVITE_PAGE = '6';
 const TERMS_AND_CONDITIONS_PAGE = '7';
 
-const HOME_PAGE = '/';
+const HOME_PAGE = 'hom';
 const SIGN_IN_PAGE = '8';
 const REGISTRATION_PAGE = '9';
 const PRE_LOCATION_PAGE = '10';

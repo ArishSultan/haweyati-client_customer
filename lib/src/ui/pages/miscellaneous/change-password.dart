@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/data.dart';
-import 'package:haweyati/src/services/haweyati-service.dart';
+import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
+import 'package:haweyati_client_data_models/data.dart';
 
 class ChangePassword extends StatefulWidget {
   @override
@@ -42,7 +42,7 @@ class _ChangePasswordState extends State<ChangePassword> {
               onSaved: (val) => _oldPassword = val,
               context: context,
             ),
-              SizedBox(height: 15,),
+            SizedBox(height: 15),
             HaweyatiPasswordField(
               label: "New Password",
               validator: (value) {
@@ -53,14 +53,14 @@ class _ChangePasswordState extends State<ChangePassword> {
               onSaved: (val) => _newPassword = val,
               context: context,
             ),
-
-            SizedBox(height: 15,),
+            SizedBox(height: 15),
             HaweyatiPasswordField(
               label: "Confirm Password",
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please Enter Confirm Password';
-                } if (_newPassword != _confirmPassword) {
+                }
+                if (_newPassword != _confirmPassword) {
                   return 'New and Confirm Passwords not matched';
                 }
 
@@ -69,49 +69,51 @@ class _ChangePasswordState extends State<ChangePassword> {
               onSaved: (val) => _confirmPassword = val,
               context: context,
             ),
-            SizedBox(height: 15,),
+            SizedBox(
+              height: 15,
+            ),
           ]),
-        )
+        ),
       ),
-
       bottom: FlatActionButton(
         label: 'Change Password',
-
         onPressed: () async {
-          if(_formKey.currentState.validate()){
+          if (_formKey.currentState.validate()) {
             FocusScope.of(context).requestFocus(FocusNode());
             FocusScope.of(context).requestFocus(FocusNode());
 
             showDialog(
               context: context,
-              builder: (context) => WaitingDialog()
+              builder: (context) => WaitingDialog(),
             );
 
             var change = {
-              '_id': AppData.instance().$user.profile.id,
+              '_id': AppData().user.profile.id,
               'old': _oldPassword,
               'password': _newPassword,
             };
-            var res = await HaweyatiService.patch('persons/update-password', change);
+            var res = await HaweyatiService.patch(
+              'persons/update-password',
+              change,
+            );
             try {
               Navigator.pop(context);
-              key.currentState.showSnackBar(
-                SnackBar(content: Text('Your password has been updated successfully!'))
-              );
+              key.currentState.showSnackBar(SnackBar(
+                content: Text('Your password has been updated successfully!'),
+              ));
             } catch (e) {
               Navigator.pop(context);
               key.currentState.hideCurrentSnackBar();
-              key.currentState.showSnackBar(
-                SnackBar(content: Text(res.toString()))
-              );
+              key.currentState.showSnackBar(SnackBar(
+                content: Text(res.toString()),
+              ));
             }
-
           } else {
             setState(() {
-              autoValidate=true;
+              autoValidate = true;
             });
           }
-        }
+        },
       ),
     );
   }

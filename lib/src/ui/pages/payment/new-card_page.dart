@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/common/simple-form.dart';
-import 'package:haweyati/src/services/payment-service.dart';
+import 'package:haweyati/src/rest/payment-service.dart';
 import 'package:haweyati/src/ui/views/dotted-background_view.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
@@ -10,8 +10,6 @@ import 'package:haweyati/src/ui/widgets/text-fields/date-picker-field.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:stripe_payment/stripe_payment.dart';
-
-import 'payment-methods_page.dart';
 
 class NewCardPage extends StatefulWidget {
   final int amount;

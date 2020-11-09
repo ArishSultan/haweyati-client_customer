@@ -9,7 +9,8 @@ import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/dark-list-tile.dart';
 import 'package:haweyati/src/const.dart';
-import 'package:haweyati/src/utils/custom-navigator.dart';
+import 'package:haweyati/src/utils/navigator.dart';
+import 'package:haweyati_client_data_models/data.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -24,11 +25,12 @@ class SettingsPage extends StatelessWidget {
             subtitle: loremIpsum.substring(0, 70),
           ),
 
-          DarkListTile(
-            title: 'Profile',
-            trailing: Icon(CupertinoIcons.right_chevron),
-            onTap: () => navigateTo(context, EditProfile())
-          ),
+          if (AppData().isAuthenticated)
+            DarkListTile(
+              title: 'Profile',
+              trailing: Icon(CupertinoIcons.right_chevron),
+              onTap: () => navigateTo(context, EditProfile())
+            ),
           SizedBox(height: 15),
           DarkListTile(
             title: 'Notification',

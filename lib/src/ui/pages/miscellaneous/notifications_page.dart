@@ -5,14 +5,13 @@ import 'package:hive/hive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
-import 'package:haweyati/src/models/notification_model.dart';
 
 class NotificationsPage extends StatelessWidget {
-  final _box = Hive.box<StoreableNotification>('notifications');
+  // final _box = Hive.box<StoreableNotification>('notifications');
 
   @override
   Widget build(BuildContext context) {
-    List<StoreableNotification> list = _box.values.toList();
+    // List<StoreableNotification> list = _box.values.toList();
 
     return ScrollableView.sliver(
       appBar: HaweyatiAppBar(hideHome: true, hideCart: true),
@@ -22,16 +21,16 @@ class NotificationsPage extends StatelessWidget {
           subtitle: 'this is the history of all the notifications that you have received',
         )),
 
-        SliverList(delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            return ListTile(
-              leading: Icon(CupertinoIcons.news),
-              title: Text(list[index].notification.title ?? ''),
-              subtitle: Text(list[index].notification.body ?? ''),
-            );
-          },
-          childCount: list.length
-        ))
+        // SliverList(delegate: SliverChildBuilderDelegate(
+        //   (context, index) {
+        //     return ListTile(
+        //       leading: Icon(CupertinoIcons.news),
+        //       // title: Text(list[index].notification.title ?? ''),
+        //       // subtitle: Text(list[index].notification.body ?? ''),
+        //     );
+        //   },
+        //   // childCount: list.length
+        // ))
       ],
     );
   }

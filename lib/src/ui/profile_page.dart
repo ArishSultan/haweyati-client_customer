@@ -3,7 +3,7 @@
 // import 'package:haweyati/services/haweyati-service.dart';
 // import 'package:haweyati/src/utlis/hive-local-data.dart';
 // import 'package:haweyati/widgits/appBar.dart';
-// import 'package:haweyati/widgits/custom-navigator.dart';
+// import 'package:haweyati/widgits/navigator.dart';
 //
 // import 'pages/miscellaneous/edit-profile.dart';
 //

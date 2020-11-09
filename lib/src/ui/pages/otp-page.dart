@@ -10,41 +10,45 @@ import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 
-class OtpPage extends StatefulWidget {
-  final String phoneNumber;
-  OtpPage({this.phoneNumber});
+const _timer = 120;
+
+class OtpVerificationPage extends StatefulWidget {
+  final String phone;
+  OtpVerificationPage(this.phone);
 
   @override
-  OtpPageState createState() => OtpPageState();
+  OtpVerificationPageState createState() => OtpVerificationPageState();
 }
 
 class _OtpField extends Container {
-  _OtpField({
-    String text,
-  }): super(
-    width: 30, height: 45,
-    decoration: BoxDecoration(
-      color: Colors.grey.shade100,
-      borderRadius: BorderRadius.circular(4)
-    ),
-    child: Center(
-      child: Text(text, style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Colors.grey.shade600
-      )),
-    )
-  );
+  _OtpField(String text)
+      : super(
+          width: 30,
+          height: 45,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ),
+        );
 }
 
-class OtpPageState extends State<OtpPage> {
-  int resendToken;
+class OtpVerificationPageState extends State<OtpVerificationPage> {
+  String _verificationId;
 
   final _node = FocusNode();
   final _controller = TextEditingController();
   final _codes = List.filled(6, '', growable: false);
 
-  static String verificationId;
   final _auth = FirebaseAuth.instance;
   var _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -54,66 +58,58 @@ class OtpPageState extends State<OtpPage> {
     _controller.dispose();
   }
 
-  Future verifyNumber(String inputNo, BuildContext context, resendToken) async{
+  Future verifyNumber(String phoneNumber, BuildContext context) async {
     await _auth.verifyPhoneNumber(
-      phoneNumber: inputNo,
-      forceResendingToken: resendToken,
-      codeAutoRetrievalTimeout: (String verID) {
-        verificationId = verID;
+      phoneNumber: phoneNumber,
+      codeAutoRetrievalTimeout: (String verificationId) {
+        _verificationId = verificationId;
       },
-      codeSent: (String verID, [int forceCodeResend]) async {
-        verificationId = verID;
-        resendToken = forceCodeResend;
+      codeSent: (String verificationId, [int forceCodeResend]) async {
+        _verificationId = verificationId;
       },
-      timeout: const Duration(minutes: 2),
+      timeout: const Duration(seconds: _timer),
       verificationCompleted: (AuthCredential credential) async {
-        Navigator.pop(context, true);
+        Navigator.of(context).pop(true);
       },
-      verificationFailed: (FirebaseAuthException exception){
+      verificationFailed: (FirebaseAuthException exception) {
         print('${exception.message}');
-      }
+      },
     );
   }
-
 
   Future<bool> signInWithOTP(smsCode, verId) async {
     showDialog(
       context: context,
-      builder: (context) => WaitingDialog(message: 'Verifying OPT...')
+      builder: (context) => WaitingDialog(message: 'Verifying Phone Number'),
     );
 
-    print('here');
-    print(verId);
-    print(verificationId);
-    final credentials = PhoneAuthProvider.credential(
-      verificationId: verId, smsCode: smsCode
-    );
-
-    UserCredential result;
+    final credentials =
+        PhoneAuthProvider.credential(verificationId: verId, smsCode: smsCode);
 
     try {
-      result = await _auth.signInWithCredential(credentials);
+      final result = await _auth.signInWithCredential(credentials);
+
+      if (result?.user != null) {
+        Navigator.of(context).pop();
+
+        return true;
+      }
     } catch (e) {
       Navigator.of(context).pop();
 
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.red,
         content: Text(e.message, style: TextStyle(color: Colors.white)),
       ));
     }
-    if (result?.user != null) {
-      Navigator.of(context).pop();
 
-      return true;
-    } else {
-      return false;
-    }
+    return false;
   }
 
   @override
   void initState() {
     super.initState();
-    verifyNumber(widget.phoneNumber, context, resendToken);
+    verifyNumber(widget.phone, context);
   }
 
   @override
@@ -127,24 +123,28 @@ class OtpPageState extends State<OtpPage> {
             title: 'Verification',
             subtitle: 'Please type the verification code you received',
           ),
-
-          RichText(text: TextSpan(
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black
-            ),
-            text: widget.phoneNumber,
-            children: [TextSpan(
-              text: '  Change',
+          RichText(
+            text: TextSpan(
               style: TextStyle(
-                fontWeight: FontWeight.normal,
-                color: Theme.of(context).primaryColor
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
-              recognizer: TapGestureRecognizer()..onTap = () {
-                Navigator.of(context).pop();
-              }
-            )]
-          )),
+              text: widget.phone,
+              children: [
+                TextSpan(
+                  text: '  Change',
+                  style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.of(context).pop(false);
+                    },
+                )
+              ],
+            ),
+          ),
           Container(
             width: 220,
             padding: const EdgeInsets.only(top: 40),
@@ -186,12 +186,12 @@ class OtpPageState extends State<OtpPage> {
                   child: Container(
                     color: Colors.white,
                     child: Row(children: [
-                      _OtpField(text: _codes[0]),
-                      _OtpField(text: _codes[1]),
-                      _OtpField(text: _codes[2]),
-                      _OtpField(text: _codes[3]),
-                      _OtpField(text: _codes[4]),
-                      _OtpField(text: _codes[5]),
+                      _OtpField(_codes[0]),
+                      _OtpField(_codes[1]),
+                      _OtpField(_codes[2]),
+                      _OtpField(_codes[3]),
+                      _OtpField(_codes[4]),
+                      _OtpField(_codes[5]),
                     ], mainAxisAlignment: MainAxisAlignment.spaceBetween),
                   ),
                 ),
@@ -199,11 +199,10 @@ class OtpPageState extends State<OtpPage> {
             ),
           ),
           Spacer(),
-
           Padding(
             padding: const EdgeInsets.only(bottom: 15),
             child: _ResendTimer(onResend: () {
-              verifyNumber(widget.phoneNumber, context, resendToken);
+              verifyNumber(widget.phone, context);
             }),
           )
         ]),
@@ -212,8 +211,11 @@ class OtpPageState extends State<OtpPage> {
   }
 
   void matchOtp() async {
-    print(_controller.text);
-    if (await signInWithOTP(_controller.text, verificationId)) {
+    if (await signInWithOTP(_controller.text, _verificationId)) {
+      /// TODO:
+      /// Restore State of Guest User;
+      /// ----------------------------
+
       Navigator.of(context).pop(true);
     }
   }
@@ -228,6 +230,7 @@ class _ResendTimer extends StatefulWidget {
   @override
   __ResendTimerState createState() => __ResendTimerState();
 }
+
 class __ResendTimerState extends State<_ResendTimer> {
   var _allow = false;
   final _controller = StreamController.broadcast();
@@ -241,34 +244,34 @@ class __ResendTimerState extends State<_ResendTimer> {
   @override
   Widget build(BuildContext context) {
     return Wrap(children: [
-      Text("Didn't receive a code?", style: TextStyle(
-          color: Colors.grey.shade600
-      )),
+      Text(
+        "Didn't receive a code?",
+        style: TextStyle(color: Colors.grey.shade600),
+      ),
       SizedBox(height: 5),
-
       if (_allow)
         GestureDetector(
           onTap: () {
             widget.onResend();
 
-            setState(() {
-              _allow = false;
-            });
+            setState(() => _allow = false);
 
             _startCounter();
           },
-          child: Text('Resend Code', style: TextStyle(
-              color: Theme.of(context).primaryColor
-          ))
+          child: Text(
+            'Resend Code',
+            style: TextStyle(color: Theme.of(context).primaryColor),
+          ),
         )
       else
         StreamBuilder(
           stream: _controller.stream,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Text('Wait for ' + _buildTime(snapshot.data), style: TextStyle(
-                color: Theme.of(context).primaryColor
-              ));
+              return Text(
+                'Wait for ' + _buildTime(snapshot.data),
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              );
             } else {
               return Text('...');
             }
@@ -281,12 +284,13 @@ class __ResendTimerState extends State<_ResendTimer> {
     final _seconds = seconds % 60;
     final _minutes = seconds ~/ 60;
 
-    return _minutes.toString().padLeft(2, '0')
-        + ':' + _seconds.toString().padLeft(2, '0');
+    return _minutes.toString().padLeft(2, '0') +
+        ':' +
+        _seconds.toString().padLeft(2, '0');
   }
 
   void _startCounter() async {
-    var len = 120;
+    var len = _timer;
 
     while (len >= 0) {
       if (_controller.isClosed) return;
@@ -296,7 +300,9 @@ class __ResendTimerState extends State<_ResendTimer> {
       });
     }
 
-    setState(() { _allow = true; });
+    setState(() {
+      _allow = true;
+    });
   }
 
   @override
