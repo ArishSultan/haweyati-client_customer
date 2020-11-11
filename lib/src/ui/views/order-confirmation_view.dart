@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
+import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
 import 'package:haweyati/src/rest/_new/auth_service.dart';
+import 'package:haweyati/src/rest/orders_service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/order/unable-to-place-order_dialog.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/pages/auth/sign-in_page.dart';
@@ -11,6 +13,7 @@ import 'package:haweyati/src/ui/views/scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/details-table.dart';
+import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/ui/widgets/table-rows.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati/src/utils/phone-verification.dart';
@@ -76,47 +79,107 @@ class OrderConfirmationView<T extends OrderableProduct>
       bottom: RaisedActionButton(
         label: 'Proceed',
         onPressed: () async {
-          final _appData = AppData();
-          if (!_appData.isAuthenticated) {
-            /// Verify guest user;
-            final contact = "+923006309211";
-            final profile = await AuthService.getProfile(contact);
+          final location = await showDialog(
+              context: context,
+              builder: (context) => ConfirmationDialog(
+                    title: Text('Confirm our Location'),
+                    content: OrderLocationPicker(order, true),
+                  ));
 
-            if (profile.hasScope('customer')) {
-              if (!profile.isGuest) {
-                await navigateTo(context, SignInPage());
+          if (location != true) return;
+
+          if (order.payment == null) {
+            final result = await selectPayment(context, order.total);
+            if (result == null) {
+              _scaffoldKey.currentState
+                  .showSnackBar(PaymentMethodNotSelectedSnackBar());
+              return;
+            } else {
+              order.paymentType = result.method;
+              order.paymentIntentId = result.intentId;
+            }
+          }
+
+          showDialog(
+            context: context,
+            builder: (context) => WaitingDialog(message: 'Verifying Customer'),
+          );
+          final _appData = AppData();
+          if (_appData.isAuthenticated) {
+            if (_appData.user.profile.hasScope('guest')) {
+              final verify = getVerifiedPhoneNumber(context);
+              if (verify == null) {
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text('Phone Number not verified')
+                ));
+                return;
+              }
+              order.customer = _appData.user;
+            } else {
+              order.customer = _appData.user;
+            }
+          } else {
+            final number = await getPhoneNumber(context);
+            if (number == null) {
+              _scaffoldKey.currentState.showSnackBar(SnackBar(
+                content: Text('Enter a valid phone number'),
+              ));
+              return;
+            }
+
+            final result =
+            await AuthService.prepareForRegistration(context, number);
+
+            if (result[0] == CustomerRegistrationType.new_) {
+              final verify = verifyPhoneNumber(context, number);
+              if (verify == null) {
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text('Phone Number not verified')
+                ));
+                return;
+              }
+
+              showDialog(
+                context: context,
+                builder: (context) =>
+                    WaitingDialog(message: 'Registering Guest'),
+              );
+
+              final _guest = await AuthService.createGuest(
+                Customer()
+                  ..profile = Profile(contact: number)
+                  ..location = _appData.location,
+              );
+              AppData().user = _guest;
+              order.customer = _guest;
+            } else if (result[0] == CustomerRegistrationType.fromGuest) {
+              final verify = verifyPhoneNumber(context, number);
+              if (verify == null) {
+                _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    content: Text('Phone Number not verified')
+                ));
+                return;
+              }
+
+              showDialog(
+                context: context,
+                builder: (context) =>
+                    WaitingDialog(message: 'Registering Guest'),
+              );
+
+              order.customer = await AuthService.getCustomer(number);
+              _appData.user = order.customer;
+            } else if (result[0] == CustomerRegistrationType.fromExisting ||
+                result[0] == CustomerRegistrationType.noNeed) {
+              await navigateTo(context, SignInPage());
+              if (_appData.isAuthenticated) {
+                order.customer = _appData.user;
+              } else {
+                return;
               }
             }
-            // final contact = await getVerifiedPhoneNumber(context);
-            // print(contact);
-            return;
-            // await navigateTo(context, SignInPage());
-
-            if (!_appData.isAuthenticated) return;
           }
-
-          order.customer = AppData().user;
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-
-          // if (preProcess != null) await preProcess();
-
-          final result = await navigateTo(
-            context,
-            PaymentMethodPage(
-              amount: order.total.toInt(),
-            ),
-          );
-
-          if (result == null) {
-            _scaffoldKey.currentState
-                .showSnackBar(PaymentMethodNotSelectedSnackBar());
-            return;
-          }
-
-          order.payment = OrderPayment(
-            type: result.method,
-            intentId: result.intentId,
-          );
+          Navigator.of(context).pop();
 
           showDialog(
             context: context,
@@ -124,10 +187,10 @@ class OrderConfirmationView<T extends OrderableProduct>
             builder: (context) => WaitingDialog(message: 'Placing your order'),
           );
 
+          Order _order;
           try {
-            var _service;
-            //= OrdersService();
-            final _order = await _service.$placeOrder(order);
+            print(order.customer);
+            _order = await OrdersService().placeOrder(order);
 
             // _order.images = [];
             // for (final image in order.images) {
@@ -143,7 +206,6 @@ class OrderConfirmationView<T extends OrderableProduct>
             // }
 
             Navigator.of(context).pop();
-            navigateTo(context, OrderPlacedPage(_order, () async {}));
           } catch (e) {
             Navigator.of(context).pop();
 
@@ -153,8 +215,21 @@ class OrderConfirmationView<T extends OrderableProduct>
               builder: (context) => UnableToPlaceOrderDialog(e),
             );
           }
-        },
-      ),
+
+          if (_order != null) {
+            navigateTo(context, OrderPlacedPage(_order, () async {}));
+          }
+        }
+      )
     );
   }
 }
+
+Future<PaymentResponse> selectPayment(
+  BuildContext context,
+  double payment,
+) async =>
+    (await navigateTo(context, PaymentMethodPage(amount: payment.round())))
+        as PaymentResponse;
+
+verifyLocation() {}

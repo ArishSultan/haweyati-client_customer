@@ -55,24 +55,23 @@ class _SignInPageState extends State<SignInPage> {
               key: _key,
               waitingDialog: WaitingDialog(message: 'Signing in ...'),
               onError: (err) async {
-                print('Error Occurred');
-                // if (err is UnAuthorizedError) {
-                //   await showDialog(
-                //     context: context,
-                //     builder: (context) {
-                //       return AlertDialog(
-                //         title: Text('Unable To Sign in'),
-                //         content: Text(
-                //           'No Customer account is associated with the provided credentials'
-                //           '\n\n'
-                //           'Please provide the correct credentials or just register yourself as a customer'
-                //         ),
-                //       );
-                //     }
-                //   );
-                // }
-
                 if (err is DioError) {
+                  if (err.response.statusCode == 401) {
+                    await showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Unable To Sign in'),
+                          content: Text(
+                            'No Customer account is associated with the provided Credentials'
+                            '\n\n'
+                            'Please provide correct Credentials or Register Yourself as a Customer'
+                          ),
+                        );
+                      }
+                    );
+                  }
+
                   if (err.response.statusCode == 404) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(
@@ -95,11 +94,9 @@ class _SignInPageState extends State<SignInPage> {
                     title: lang.signIn,
                     subtitle: lang.enterCredentials,
                   ),
-
                   ContactInputField((value, status) {
                     _data.username = value;
                   }),
-
                   Padding(
                     padding: const EdgeInsets.only(top: 15, bottom: 15),
                     child: HaweyatiPasswordField(
@@ -110,7 +107,6 @@ class _SignInPageState extends State<SignInPage> {
                           value.isEmpty ? 'Provide your Password' : null,
                     ),
                   ),
-
                   Align(
                     alignment: Alignment.topRight,
                     child: Padding(
@@ -139,56 +135,92 @@ class _SignInPageState extends State<SignInPage> {
                 padding: const EdgeInsets.only(bottom: 30),
                 child: GestureDetector(
                   onTap: () async {
-                    navigateTo(context, CustomerRegistration(contact: '+923006309211',));
+                    final number = await getPhoneNumber(context);
+                    if (number == null) {
+                      _scaffoldKey.currentState.showSnackBar(SnackBar(
+                        content: Text('No Number was provided'),
+                      ));
+                      return;
+                    }
 
-                    // final number = await getVerifiedPhoneNumber(context);
-                    // if (number == null) return;
-                    //
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (context) =>
-                    //       WaitingDialog(message: 'Preparing for Registration'),
-                    // );
-                    // final profile = await AuthService.getProfile(number);
-                    // Navigator.of(context).pop();
-                    //
-                    // if (number == null) {
-                    //   await navigateTo(
-                    //     context,
-                    //     CustomerRegistration(contact: number),
-                    //   );
-                    //
-                    //   if (AppData().isAuthenticated)
-                    //     Navigator.of(context).pop();
-                    // } else {
-                    //   if (profile.hasScope('customer')) {
-                    //     /// Check if guest Id;
-                    //
-                    //     ScaffoldMessenger.of(context).showSnackBar(
-                    //       SnackBar(
-                    //         content: Text('You are a customer already.'),
-                    //       ),
-                    //     );
-                    //   } else {
-                    //     final result = await showConfirmationDialog(
-                    //       context: context,
-                    //       builder: (context) => ConfirmationDialog(
-                    //         content: Text(
-                    //           'This contact is already linked to other accounts'
-                    //           ' i.e. Driver or Supplier\nDo You also want to'
-                    //           'link a customer account to this number?',
-                    //         ),
-                    //       ),
-                    //     );
-                    //
-                    //     if (result ?? false) {
-                    //       await AuthService.registerCustomer(Customer()
-                    //         ..profile = profile
-                    //         ..location = AppData().location
-                    //       );
-                    //     }
-                    //   }
-                    // }
+                    print("Number is: ");
+                    print(number);
+                    showDialog(
+                      context: context,
+                      builder: (context) => WaitingDialog(message: 'Preparing for Registration'),
+                    );
+                    final registerType =
+                        await AuthService.prepareForRegistration(
+                            context, number);
+                    print("RegistrationType: " + registerType.toString());
+                    Navigator.of(context).pop();
+
+                    if (registerType[0] == CustomerRegistrationType.noNeed) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          content: Text(
+                            'You are already a customer please Sign in or use '
+                            'Forgot password button',
+                          ),
+                        ),
+                      );
+                    } else {
+                      if (registerType[0] == CustomerRegistrationType.fromExisting) {
+                        final flag = await showDialog(
+                          context: context,
+                          builder: (context) => ConfirmationDialog(
+                            title: Text('NOTE!'),
+                            content: Text('Your customer account will be linked to the business account!'),
+                          )
+                        );
+
+                        if (flag == true) {
+                          final verify = await verifyPhoneNumber(context, number);
+                          if (verify == null) {
+                            _scaffoldKey.currentState.showSnackBar(SnackBar(
+                              content: Text('Phone not verified')
+                            ));
+                            return;
+                          }
+
+                          navigateTo(context, CustomerRegistration(
+                            contact: number,
+                            profile: registerType[1],
+                            type: registerType[0],
+                          ));
+                        }
+                      }
+
+                      if (registerType[0] == CustomerRegistrationType.fromGuest) {
+                        final verify = await verifyPhoneNumber(context, number);
+                        if (verify == null) {
+                          _scaffoldKey.currentState.showSnackBar(SnackBar(
+                              content: Text('Phone not verified')
+                          ));
+                        }
+
+                        navigateTo(context, CustomerRegistration(
+                          contact: number,
+                          profile: registerType[1],
+                          type: registerType[0],
+                        ));
+                      }
+
+                      if (registerType[0] == CustomerRegistrationType.new_) {
+                        final verify = await verifyPhoneNumber(context, number);
+                        if (verify == null) {
+                          _scaffoldKey.currentState.showSnackBar(SnackBar(
+                              content: Text('Phone not verified')
+                          ));
+                        }
+
+                        navigateTo(context, CustomerRegistration(
+                          contact: number,
+                          type: registerType[0],
+                        ));
+                      }
+                    }
                   },
                   child: Text(
                     'Register Yourself',
@@ -201,8 +233,8 @@ class _SignInPageState extends State<SignInPage> {
         ),
         extendBody: true,
         floatingActionButton: FloatingActionButton(
-          heroTag: 'none',
           elevation: 0,
+          heroTag: 'none',
           child: Transform.rotate(
             angle: AppLocalizations.of(context).localeName == 'ar' ? 3.14 : 0,
             child: Image.asset(NextFeatureIcon, width: 30),

@@ -13,6 +13,8 @@ import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati_client_data_models/data.dart';
 
 class SettingsPage extends StatelessWidget {
+  final _appData = AppData();
+
   @override
   Widget build(BuildContext context) {
     return NoScrollView(
@@ -24,24 +26,24 @@ class SettingsPage extends StatelessWidget {
             title: 'Settings',
             subtitle: loremIpsum.substring(0, 70),
           ),
-
-          if (AppData().isAuthenticated)
+          if (_appData.isAuthenticated &&
+              _appData.user.profile.hasScope('customer'))
             DarkListTile(
               title: 'Profile',
               trailing: Icon(CupertinoIcons.right_chevron),
-              onTap: () => navigateTo(context, EditProfile())
+              onTap: () => navigateTo(context, EditProfile()),
             ),
           SizedBox(height: 15),
           DarkListTile(
             title: 'Notification',
             trailing: Icon(CupertinoIcons.right_chevron),
-            onTap: () => AppSettings.openAppSettings()
+            onTap: () => AppSettings.openAppSettings(),
           ),
           SizedBox(height: 15),
           DarkListTile(
             title: 'Change Password',
             trailing: Icon(CupertinoIcons.right_chevron),
-            onTap: () => navigateTo(context, ChangePassword())
+            onTap: () => navigateTo(context, ChangePassword()),
           )
         ]),
       ),

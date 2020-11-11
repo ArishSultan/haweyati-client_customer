@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:haweyati/src/rest/_new/auth_service.dart';
 import 'package:haweyati/src/routes.dart';
+import 'package:haweyati/src/ui/pages/auth/customer-registration_page.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
@@ -41,7 +43,7 @@ class OrderPlacedPage extends StatelessWidget {
               title: 'Thank You',
               subtitle:
                   'Your order has been placed. Your order reference '
-                  'number is ${order.number.toUpperCase()}',
+                  'number is ${order.number?.toUpperCase()}',
             ),
             GestureDetector(
               child: Text(
@@ -52,10 +54,41 @@ class OrderPlacedPage extends StatelessWidget {
             )
           ], mainAxisAlignment: MainAxisAlignment.center),
         ),
-        bottom: FlatActionButton(
-          label: 'Home',
-          onPressed: () => Navigator.of(context)
-              .popUntil((route) => route.settings.name == HOME_PAGE),
+        //Todo Haroon
+        bottom: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+           if(!AppData().user.profile.hasScope('guest')) FlatActionButton(
+                label: 'Home',
+                onPressed: () {
+                  Navigator.of(context).popUntil((route) => false);
+                  Navigator.of(context).pushNamed(HOME_PAGE);
+                }
+            )
+            else Column(
+              children: [
+                FlatActionButton(
+                    label: 'Register as Customer',
+                    onPressed: () {
+                      Navigator.of(context).popUntil((route) => false);
+                      navigateTo(context, CustomerRegistration(
+                        contact: AppData().user.profile.username,
+                        profile: AppData().user.profile,
+                        type: CustomerRegistrationType.fromGuest,
+                      ));
+
+                    }
+                ),
+                FlatActionButton(
+                    label: 'Continue as Guest',
+                    onPressed: () {
+                      Navigator.of(context).popUntil((route) => false);
+                      Navigator.of(context).pushNamed(HOME_PAGE);
+                    }
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

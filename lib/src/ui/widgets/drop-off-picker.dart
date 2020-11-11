@@ -37,7 +37,7 @@ class _DropOffPickerState extends State<DropOffPicker> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           return Column(
             children: snapshot.connectionState == ConnectionState.done
-                ? _loadedChildren
+                ? (_intervals != null ? _loadedChildren : _errorChildren)
                 : _loadingChildren,
             crossAxisAlignment: CrossAxisAlignment.start,
           );
@@ -49,7 +49,7 @@ class _DropOffPickerState extends State<DropOffPicker> {
   List<Widget> get _loadingChildren => <Widget>[
         Padding(
           padding: const EdgeInsets.only(left: 11),
-          child: _Title('Drop-off Date'),
+          child: _Title('Drop-off Details'),
         ),
         Expanded(
           child: DarkContainer(
@@ -66,6 +66,24 @@ class _DropOffPickerState extends State<DropOffPicker> {
           ),
         ),
       ];
+
+  List<Widget> get _errorChildren => <Widget>[
+    Padding(
+      padding: const EdgeInsets.only(left: 11),
+      child: _Title('Drop-off Details'),
+    ),
+    Expanded(
+      child: DarkContainer(
+        margin: const EdgeInsets.only(top: 20),
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          children: [
+            Text('No Timeslot available'),
+          ],
+        ),
+      ),
+    ),
+  ];
 
   List<Widget> get _loadedChildren => <Widget>[
         Row(children: [
@@ -178,6 +196,7 @@ class _DropOffPickerState extends State<DropOffPicker> {
     }
 
     _intervals = _slot.intervals(widget.order.location.dropOffDate);
+    print(_intervals);
     if (_intervals.isNotEmpty) {
       widget.order.location.dropOffTime ??= _intervals.first;
     }

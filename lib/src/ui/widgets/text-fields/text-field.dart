@@ -9,6 +9,7 @@ class HaweyatiTextField extends StatelessWidget {
   final String value;
   final IconData icon;
   final int maxLength;
+  final bool disabled;
   final EdgeInsets scrollPadding;
   final Function(String) onSaved;
   final Function(String) validator;
@@ -19,6 +20,7 @@ class HaweyatiTextField extends StatelessWidget {
     this.hint,
     this.maxLength,
     this.value,
+    this.disabled = false,
     this.scrollPadding = const EdgeInsets.all(100),
     this.label, this.icon, this.onSaved,
     this.dense = false, this.validator,
@@ -28,6 +30,7 @@ class HaweyatiTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: !disabled,
       keyboardType: keyboardType,
       textInputAction: TextInputAction.next,
       onFieldSubmitted: (v) {
@@ -48,8 +51,9 @@ class HaweyatiTextField extends StatelessWidget {
 }
 
 class HaweyatiPasswordField extends StatefulWidget {
-  final IconData icon;
   final String label;
+  final bool disabled;
+  final IconData icon;
   final BuildContext context;
   final TextInputType keyboardType;
   final EdgeInsets scrollPadding;
@@ -60,6 +64,7 @@ class HaweyatiPasswordField extends StatefulWidget {
   HaweyatiPasswordField({
     this.icon,
     this.label,
+    this.disabled = false,
     this.scrollPadding = const EdgeInsets.all(100),
     this.keyboardType,
     this.context,
@@ -87,6 +92,7 @@ class _HaweyatiPasswordFieldState extends State<HaweyatiPasswordField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: !widget.disabled,
       focusNode: _node,
       obscureText: _show,
       keyboardType: widget.keyboardType,

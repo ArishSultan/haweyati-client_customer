@@ -6,14 +6,25 @@ import 'package:haweyati/src/ui/pages/otp-page.dart';
 import 'package:haweyati/src/ui/widgets/contact-input-field.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 
+Future verifyPhoneNumber(BuildContext context, String phone) async {
+  final isVerified = await navigateTo(context, OtpVerificationPage(phone));
+  if (isVerified == null) {
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(
+      content: Text("Phone Verification Canceled"),
+    ));
+  } else if (!isVerified) {
+    Navigator.of(context).pop();
+    return null;
+  }
+
+  return phone;
+}
+Future getPhoneNumber(context) => navigateTo(context, ContactInputPage());
+
 Future getVerifiedPhoneNumber(BuildContext context) async {
   final phone = await navigateTo(context, ContactInputPage());
   if (phone == null) {
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(
-      content: Text("You didn't enter a Phone Number"),
-    ));
-
-    return 0;
+    return null;
   }
 
   final isVerified = await navigateTo(context, OtpVerificationPage(phone));

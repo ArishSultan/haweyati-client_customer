@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
+import 'package:haweyati/src/ui/widgets/rating-bar.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -167,22 +168,11 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                  if (_appData.isAuthenticated)
+                  if (_appData.isAuthenticated && _appData.user.profile.hasScope('customer'))
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Center(
-                        child: FlatButton.icon(
-                          onPressed: null,
-                          icon: Image.asset(
-                            StarIconOutlined,
-                            width: 20,
-                            height: 20,
-                          ),
-                          label: Text(
-                            'Rated 5.0',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
+                        child: StarRating()
                       ),
                     )
                   else
@@ -235,7 +225,7 @@ class _HomePageState extends State<HomePage> {
                           ));
                           // }
                         }),
-                        if (_appData.isAuthenticated)
+                        if (_appData.isAuthenticated && _appData.user.profile.hasScope('customer'))
                           _ListTile(
                             context,
                             image: LogoutIcon,

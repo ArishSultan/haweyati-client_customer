@@ -1,26 +1,24 @@
+import 'package:haweyati/src/const.dart';
 import 'package:haweyati_client_data_models/data.dart';
+import 'package:retrofit/retrofit.dart';
 
-class OrdersService {
-  Future<List<Order>> orders({String orderId}) async {
-    // final id = AppData.instance().user?.id;
-    // if (id != null) {
-    //   List<dynamic> data = await _service
-    //       .$getAll(endpoint: 'orders/dummy', query: {'customer': id, 'name': orderId});
-    //
-    //   return data.map((e) => Order.fromJson(e))?.toList();
-    // } else {
-    //   return [];
-    // }
-  }
+import '_new/_config.dart';
 
-  // Future<Order> placeOrder(final Order order) async =>
-  //     Order.fromJson(await _service.$post(endpoint: 'orders/dummy', payload: order));
-  //
-  // Future<String> addImage(String id, String sort, String path) async {
-  //   return (await Dio().patch('$apiUrl/orders/add-image', data: FormData.fromMap({
-  //     'id': id, 'sort': sort,
-  //     'image': await MultipartFile.fromFile(path)
-  //   }))).data as String;
-  //   _service.$patch(endpoint: 'orders/add-image', payload: )
-  // }
+part 'orders_service.g.dart';
+
+@RestApi(baseUrl: apiUrl)
+abstract class OrdersService {
+  factory OrdersService() => _OrdersService(defaultDio);
+
+  @POST('/orders/dummy')
+  Future<Order> placeOrder(@Body() Order order);
+
+  @PATCH('/orders/cancel/{id}')
+  Future<void> cancelOrder(@Path('id') String id);
+
+  @GET('/orders/dummy')
+  Future<List<Order>> orders({
+    @Query('customer') String id,
+    @Query('name') String orderId,
+  });
 }

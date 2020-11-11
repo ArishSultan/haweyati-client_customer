@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/rest/orders_service.dart';
 import 'package:haweyati/src/routes.dart';
+import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/details-table.dart';
 import 'package:haweyati/src/ui/widgets/table-rows.dart';
@@ -16,10 +18,15 @@ import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/ui/widgets/rich-price-text.dart';
 import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
 
-class OrderDetailPage extends StatelessWidget {
+class OrderDetailPage extends StatefulWidget {
   final Order order;
   OrderDetailPage(this.order);
 
+  @override
+  _OrderDetailPageState createState() => _OrderDetailPageState();
+}
+
+class _OrderDetailPageState extends State<OrderDetailPage> {
   @override
   Widget build(BuildContext context) {
     return ScrollableView.sliver(
@@ -29,30 +36,53 @@ class OrderDetailPage extends StatelessWidget {
         IconButton(
           icon: Image.asset(CustomerCareIcon, width: 20),
           onPressed: () => Navigator.of(context).pushNamed(HELPLINE_PAGE),
-        )
+        ),
+        if (widget.order.status == OrderStatus.pending ||
+            widget.order.status == OrderStatus.approved)
+          IconButton(
+            icon: Icon(Icons.dnd_forwardslash),
+            onPressed: () async {
+              showDialog(
+                context: context,
+                builder: (context) => WaitingDialog(message: 'Canceling Order')
+              );
+
+              await OrdersService().cancelOrder(widget.order.id);
+              widget.order.status = OrderStatus.canceled;
+              Navigator.of(context).pop();
+
+              setState(() {});
+            },
+          ),
       ]),
       children: [
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(5, 20, 5, 40),
           sliver: SliverToBoxAdapter(
-            child: _OrderDetailHeader(order.status.index),
+            child: Center(
+              child: SizedBox(
+                width: 320,
+                child: _OrderDetailHeader(widget.order.status.index),
+              ),
+            ),
           ),
         ),
-        SliverToBoxAdapter(child: OrderMeta(order)),
+        SliverToBoxAdapter(child: OrderMeta(widget.order)),
         SliverPadding(
           padding: const EdgeInsets.only(bottom: 15, top: 25),
           sliver: SliverToBoxAdapter(
-            child: LocationPicker(initialValue: order.location),
+            child: LocationPicker(initialValue: widget.order.location),
           ),
         ),
         SliverList(
           delegate: SliverChildBuilderDelegate(
-            (context, index) => _OrderProductWidget(order.products[index]),
-            childCount: order.products.length,
+            (context, index) => _OrderProductWidget(widget.order.products[index]),
+            childCount: widget.order.products.length,
           ),
         ),
         SliverToBoxAdapter(
           child: Table(
+            textBaseline: TextBaseline.alphabetic,
             defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
             children: [
               TableRow(children: [
@@ -66,7 +96,7 @@ class OrderDetailPage extends StatelessWidget {
                   ),
                 ),
                 RichPriceText(
-                  price: order.total - order.deliveryFee,
+                  price: (widget.order.total - (widget.order.deliveryFee ?? 0)),
                   fontSize: 13,
                 )
               ]),
@@ -100,12 +130,13 @@ class OrderDetailPage extends StatelessWidget {
                 ),
               ),
               RichPriceText(
-                price: order.total,
+                price: widget.order.total,
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
               )
             ])
-          ], defaultVerticalAlignment: TableCellVerticalAlignment.baseline),
+          ],             textBaseline: TextBaseline.alphabetic,
+              defaultVerticalAlignment: TableCellVerticalAlignment.baseline),
         )
       ],
     );
@@ -133,7 +164,7 @@ class _OrderProductWidget extends StatelessWidget {
         ),
         RichPriceText(price: holder.subtotal, fontWeight: FontWeight.bold)
       ])
-    ], defaultVerticalAlignment: TableCellVerticalAlignment.baseline);
+    ], textBaseline: TextBaseline.alphabetic, defaultVerticalAlignment: TableCellVerticalAlignment.baseline);
   }
 
   @override
@@ -186,7 +217,7 @@ class OrderProductTile extends StatelessWidget {
       imageUrl = product.image.name;
     } else if (item.item is FinishingMaterialOrderable) {
       title = product.name;
-      imageUrl = product.images.name;
+      imageUrl = product.image.name;
     }
 
     return ListTile(

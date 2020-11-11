@@ -56,9 +56,15 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
           },
         ),
       ),
-      loader: () => _service.orders(orderId: _orderId),
+      loader: () => _service.orders(
+        id: AppData().user.id,
+        orderId: _orderId,
+      ),
       builder: (context, order) => GestureDetector(
-        onTap: () => navigateTo(context, OrderDetailPage(order)),
+        onTap: () async {
+          await navigateTo(context, OrderDetailPage(order));
+          setState(() {});
+        },
         child: _OrderListTile(order),
       ),
     );
@@ -110,7 +116,7 @@ class _OrderStatus extends Container {
             color: _color(status),
           ),
           child: Text(
-            status.toString(),
+            status.value,
             style: TextStyle(color: Colors.white, fontSize: 10),
           ),
         );
@@ -187,14 +193,14 @@ class OrderItemTile extends StatelessWidget {
       final item = holder.item as DumpsterOrderable;
 
       qty = item.qty;
-      title = '${item.product.size} Yards';
+      title = '${item.product?.size} Yards';
       imageUrl = item.product.image.name;
     } else if (holder.item is BuildingMaterialOrderable) {
       final item = holder.item as BuildingMaterialOrderable;
 
       qty = item.qty;
-      title = item.product.name;
-      imageUrl = item.product.image.name;
+      title = item.product?.name;
+      imageUrl = item.product?.image?.name;
     } else if (holder.item is FinishingMaterialOrderable) {
       final item = holder.item as FinishingMaterialOrderable;
 

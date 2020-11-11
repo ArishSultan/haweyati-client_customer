@@ -18,13 +18,6 @@ class _ContactInputPageState extends State<ContactInputPage> {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-
-  @override
-  void initState() {
-    super.initState();
-    navigateTo(context, CustomerRegistration(contact: '+923006309211',));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
