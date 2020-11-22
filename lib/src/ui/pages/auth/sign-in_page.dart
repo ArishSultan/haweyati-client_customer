@@ -113,10 +113,16 @@ class _SignInPageState extends State<SignInPage> {
                       padding: const EdgeInsets.only(bottom: 300),
                       child: GestureDetector(
                         onTap: () async {
-                          verifyPhoneAndNavigateTo(
+                          var num = verifyPhoneAndNavigateTo(
                             context,
                             (phone) => ResetPasswordPage(phoneNumber: phone),
                           );
+
+                          // if (num == null) {
+                          //   _scaffoldKey.currentState.showSnackBar(SnackBar(
+                          //     content: Text('No Number was Entered'),
+                          //   ));
+                          // }
                         },
                         child: Text(
                           lang.forgotPassword,
@@ -143,8 +149,6 @@ class _SignInPageState extends State<SignInPage> {
                       return;
                     }
 
-                    print("Number is: ");
-                    print(number);
                     showDialog(
                       context: context,
                       builder: (context) => WaitingDialog(message: 'Preparing for Registration'),
@@ -152,7 +156,6 @@ class _SignInPageState extends State<SignInPage> {
                     final registerType =
                         await AuthService.prepareForRegistration(
                             context, number);
-                    print("RegistrationType: " + registerType.toString());
                     Navigator.of(context).pop();
 
                     if (registerType[0] == CustomerRegistrationType.noNeed) {
@@ -198,6 +201,7 @@ class _SignInPageState extends State<SignInPage> {
                           _scaffoldKey.currentState.showSnackBar(SnackBar(
                               content: Text('Phone not verified')
                           ));
+                          return;
                         }
 
                         navigateTo(context, CustomerRegistration(

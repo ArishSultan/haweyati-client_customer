@@ -261,6 +261,12 @@ class _FinishingMaterialPageState extends State<FinishingMaterialPage> {
   @override
   Widget build(BuildContext context) {
     return ProductDetailView(
+      shareableData: ShareableData(
+        id: widget.item.id,
+        type: OrderType.dumpster,
+        socialMediaTitle: widget.item.name,
+        socialMediaDescription: widget.item.description
+      ),
       title: widget.item.name,
       image: widget.item.image.name,
       description: widget.item.description,

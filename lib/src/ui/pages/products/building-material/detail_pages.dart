@@ -15,6 +15,31 @@ class BuildingMaterialCategoriesPage extends StatelessWidget {
           return ProductListTile(
             name: data.name,
             image: data.image.name,
+            onTap: () => navigateTo(context, BuildingMaterialSubCategoriesPage(data)),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class BuildingMaterialSubCategoriesPage extends StatelessWidget {
+  final BuildingMaterialBase product;
+  final _service = BuildingMaterialsRest();
+  BuildingMaterialSubCategoriesPage(this.product);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HaweyatiAppBar(hideHome: true),
+      body: LiveScrollableView<BuildingMaterialBase>(
+        title: 'Building Material',
+        subtitle: loremIpsum.substring(0, 70),
+        loader: () => _service.getSubCategories(product.id),
+        builder: (context, BuildingMaterialBase data) {
+          return ProductListTile(
+            name: data.name,
+            image: data.image.name,
             onTap: () => navigateTo(context, BuildingMaterialsPage(data)),
           );
         },
@@ -57,6 +82,12 @@ class BuildingMaterialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProductDetailView(
+      shareableData: ShareableData(
+        id: item.id,
+        type: OrderType.dumpster,
+        socialMediaTitle: item.name,
+        socialMediaDescription: item.description
+      ),
       title: item.name,
       image: item.image.name,
       price: TextSpan(

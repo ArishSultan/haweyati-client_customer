@@ -15,8 +15,8 @@ Future verifyPhoneAndNavigateTo(
 ) async {
   while (true) {
     final phone = await getVerifiedPhoneNumber(context);
-    if (phone == 0) {
-      Navigator.of(context).pop();
+    if (phone == null) {
+      // Navigator.of(context).pop();
       return;
     }
     if (phone != null) {

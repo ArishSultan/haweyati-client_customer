@@ -27,8 +27,16 @@ class DumpsterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final title = '${dumpster.size} Yards Container';
+
     return ProductDetailView(
-      title: '${dumpster.size} Yards Container',
+      shareableData: ShareableData(
+        id: dumpster.id,
+        type: OrderType.dumpster,
+        socialMediaTitle: title,
+        socialMediaDescription: dumpster.description
+      ),
+      title: title,
       image: dumpster.image.name,
       price: TextSpan(
         text: '${dumpster.pricing.first.rent.toStringAsFixed(2)} SAR',

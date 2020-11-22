@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
+import 'package:haweyati/src/services/dynamic-links_service.dart';
 import 'package:haweyati/src/ui/widgets/rating-bar.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +33,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+
+    DynamicLinksService.initiate(context);
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
   }
 
