@@ -19,5 +19,5 @@ abstract class BuildingMaterialsRest {
   Future<List<BuildingMaterialBase>> getCategories();
 
   @GET('/building-material-sub-category/getbyparent/{id}')
-  Future<List<BuildingMaterialBase>> getSubCategories(String id);
+  Future<List<BuildingMaterialBase>> getSubCategories(@Path() String id);
 }
