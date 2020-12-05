@@ -58,22 +58,20 @@ class _SignInPageState extends State<SignInPage> {
                 if (err is DioError) {
                   if (err.response.statusCode == 401) {
                     await showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text('Unable To Sign in'),
-                          content: Text(
-                            'No Customer account is associated with the provided Credentials'
-                            '\n\n'
-                            'Please provide correct Credentials or Register Yourself as a Customer'
-                          ),
-                        );
-                      }
-                    );
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text('Unable To Sign in'),
+                            content: Text(
+                                'No Customer account is associated with the provided Credentials'
+                                '\n\n'
+                                'Please provide correct Credentials or Register Yourself as a Customer'),
+                          );
+                        });
                   }
 
                   if (err.response.statusCode == 404) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    Scaffold.of(context).showSnackBar(SnackBar(
                       content: Text(
                           'No Customer account was found, Please Register'),
                     ));
@@ -151,7 +149,8 @@ class _SignInPageState extends State<SignInPage> {
 
                     showDialog(
                       context: context,
-                      builder: (context) => WaitingDialog(message: 'Preparing for Registration'),
+                      builder: (context) =>
+                          WaitingDialog(message: 'Preparing for Registration'),
                     );
                     final registerType =
                         await AuthService.prepareForRegistration(
@@ -169,60 +168,65 @@ class _SignInPageState extends State<SignInPage> {
                         ),
                       );
                     } else {
-                      if (registerType[0] == CustomerRegistrationType.fromExisting) {
+                      if (registerType[0] ==
+                          CustomerRegistrationType.fromExisting) {
                         final flag = await showDialog(
-                          context: context,
-                          builder: (context) => ConfirmationDialog(
-                            title: Text('NOTE!'),
-                            content: Text('Your customer account will be linked to the business account!'),
-                          )
-                        );
+                            context: context,
+                            builder: (context) => ConfirmationDialog(
+                                  title: Text('NOTE!'),
+                                  content: Text(
+                                      'Your customer account will be linked to the business account!'),
+                                ));
 
                         if (flag == true) {
-                          final verify = await verifyPhoneNumber(context, number);
+                          final verify =
+                              await verifyPhoneNumber(context, number);
                           if (verify == null) {
-                            _scaffoldKey.currentState.showSnackBar(SnackBar(
-                              content: Text('Phone not verified')
-                            ));
+                            _scaffoldKey.currentState.showSnackBar(
+                                SnackBar(content: Text('Phone not verified')));
                             return;
                           }
 
-                          navigateTo(context, CustomerRegistration(
-                            contact: number,
-                            profile: registerType[1],
-                            type: registerType[0],
-                          ));
+                          navigateTo(
+                              context,
+                              CustomerRegistration(
+                                contact: number,
+                                profile: registerType[1],
+                                type: registerType[0],
+                              ));
                         }
                       }
 
-                      if (registerType[0] == CustomerRegistrationType.fromGuest) {
+                      if (registerType[0] ==
+                          CustomerRegistrationType.fromGuest) {
                         final verify = await verifyPhoneNumber(context, number);
                         if (verify == null) {
-                          _scaffoldKey.currentState.showSnackBar(SnackBar(
-                              content: Text('Phone not verified')
-                          ));
+                          _scaffoldKey.currentState.showSnackBar(
+                              SnackBar(content: Text('Phone not verified')));
                           return;
                         }
-
-                        navigateTo(context, CustomerRegistration(
-                          contact: number,
-                          profile: registerType[1],
-                          type: registerType[0],
-                        ));
+                        navigateTo(
+                            context,
+                            CustomerRegistration(
+                              contact: number,
+                              profile: registerType[1],
+                              type: registerType[0],
+                            ));
                       }
 
                       if (registerType[0] == CustomerRegistrationType.new_) {
                         final verify = await verifyPhoneNumber(context, number);
                         if (verify == null) {
-                          _scaffoldKey.currentState.showSnackBar(SnackBar(
-                              content: Text('Phone not verified')
-                          ));
+                          _scaffoldKey.currentState.showSnackBar(
+                              SnackBar(content: Text('Phone not verified')));
                         }
 
-                        navigateTo(context, CustomerRegistration(
-                          contact: number,
-                          type: registerType[0],
-                        ));
+                        navigateTo(
+                            context,
+                            CustomerRegistration(
+                              contact: number,
+                              type: registerType[0],
+                            ));
                       }
                     }
                   },

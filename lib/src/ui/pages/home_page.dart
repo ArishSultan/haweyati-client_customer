@@ -43,12 +43,11 @@ class _HomePageState extends State<HomePage> {
     return WillPopScope(
       onWillPop: () async {
         final result = await showDialog(
-          context: context,
-          child: ConfirmationDialog(
-            title: Text('Are you sure?'),
-            content: Text('App will be closed.'),
-          )
-        );
+            context: context,
+            child: ConfirmationDialog(
+              title: Text('Are you sure?'),
+              content: Text('App will be closed.'),
+            ));
 
         return result == true;
       },
@@ -104,8 +103,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8, bottom: 20),
-                    child:
-                        Text(lang.explore, style: TextStyle(color: Colors.white)),
+                    child: Text(lang.explore,
+                        style: TextStyle(color: Colors.white)),
                   ),
                   Directionality(
                     textDirection: TextDirection.ltr,
@@ -143,7 +142,8 @@ class _HomePageState extends State<HomePage> {
               color: Color(0xFF313F53),
               constraints: BoxConstraints.expand(),
               child: Padding(
-                padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                padding:
+                    EdgeInsets.only(top: MediaQuery.of(context).padding.top),
                 child: Column(children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.only(left: 10, top: 5, right: 10),
@@ -171,12 +171,11 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                  if (_appData.isAuthenticated && _appData.user.profile.hasScope('customer'))
+                  if (_appData.isAuthenticated &&
+                      _appData.user.profile.hasScope('customer'))
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
-                      child: Center(
-                        child: StarRating()
-                      ),
+                      child: Center(child: StarRating()),
                     )
                   else
                     SizedBox(height: 50),
@@ -223,12 +222,13 @@ class _HomePageState extends State<HomePage> {
                           // if (await inAppReview.isAvailable()) {
                           //   inAppReview.requestReview();
                           // } else {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          Scaffold.of(context).showSnackBar(SnackBar(
                             content: Text('App Review is not available yet.'),
                           ));
                           // }
                         }),
-                        if (_appData.isAuthenticated && _appData.user.profile.hasScope('customer'))
+                        if (_appData.isAuthenticated &&
+                            _appData.user.profile.hasScope('customer'))
                           _ListTile(
                             context,
                             image: LogoutIcon,
@@ -245,9 +245,11 @@ class _HomePageState extends State<HomePage> {
                                 await AuthService.signOut();
                                 Navigator.of(context)..pop()..pop();
 
-                                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                                  content: Text('You are now in guest mode.'),
-                                ));
+                                _scaffoldKey.currentState.showSnackBar(
+                                  SnackBar(
+                                    content: Text('You are now in guest mode.'),
+                                  ),
+                                );
 
                                 setState(() {});
                               } catch (err) {
@@ -264,10 +266,9 @@ class _HomePageState extends State<HomePage> {
                             onPressed: () async {
                               await (Navigator.of(context)..pop())
                                   .pushNamed(SIGN_IN_PAGE);
-
-                              if (_appData.isAuthenticated) {
+                              if (_appData.isAuthenticated &&
+                                  !_appData.user.profile.isGuest) {
                                 setState(() {});
-
                                 _scaffoldKey.currentState.hideCurrentSnackBar(
                                   reason: SnackBarClosedReason.remove,
                                 );
@@ -358,6 +359,7 @@ class _ServiceContainerDetail {
 class _ServiceContainer extends StatelessWidget {
   final String service;
   final AppLocalizations lang;
+
   _ServiceContainer(this.service, this.lang);
 
   static final _map = {

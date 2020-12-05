@@ -14,6 +14,7 @@ const _timer = 120;
 
 class OtpVerificationPage extends StatefulWidget {
   final String phone;
+
   OtpVerificationPage(this.phone);
 
   @override
@@ -97,7 +98,7 @@ class OtpVerificationPageState extends State<OtpVerificationPage> {
     } catch (e) {
       Navigator.of(context).pop();
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      Scaffold.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.red,
         content: Text(e.message, style: TextStyle(color: Colors.white)),
       ));

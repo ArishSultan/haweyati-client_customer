@@ -1,5 +1,6 @@
 import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/rest/orders_service.dart';
+import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -69,12 +70,19 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
       ),
     );
 
-    return NoScrollView(body: view);
+    return NoScrollView(
+      body: view,
+      appBar: HaweyatiAppBar(
+        hideCart: true,
+        hideHome: true,
+      ),
+    );
   }
 }
 
 class _OrderListTile extends StatelessWidget {
   final Order order;
+
   _OrderListTile(this.order);
 
   @override
@@ -181,6 +189,7 @@ class OrderMeta extends Row {
 
 class OrderItemTile extends StatelessWidget {
   final OrderProductHolder holder;
+
   OrderItemTile(this.holder);
 
   @override

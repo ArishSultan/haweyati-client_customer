@@ -23,9 +23,10 @@ void main() async {
   //   }
   // });
 
-  runApp(HaweyatiApp(
-    locale: LocaleData.locale,
-    status: await _appData.isFuseBurnt
-  ));
+  runApp(
+    HaweyatiApp(
+      locale: LocaleData.locale,
+      status: await _appData.isFuseBurnt,
+    ),
+  );
 }
-

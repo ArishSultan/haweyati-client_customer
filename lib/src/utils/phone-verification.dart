@@ -9,7 +9,7 @@ import 'package:haweyati/src/utils/navigator.dart';
 Future verifyPhoneNumber(BuildContext context, String phone) async {
   final isVerified = await navigateTo(context, OtpVerificationPage(phone));
   if (isVerified == null) {
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(
+    Scaffold.of(context)?.showSnackBar(SnackBar(
       content: Text("Phone Verification Canceled"),
     ));
   } else if (!isVerified) {
@@ -29,7 +29,7 @@ Future getVerifiedPhoneNumber(BuildContext context) async {
 
   final isVerified = await navigateTo(context, OtpVerificationPage(phone));
   if (isVerified == null) {
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(
+    Scaffold.of(context)?.showSnackBar(SnackBar(
       content: Text("Your Phone Number wasn't verified"),
     ));
   } else if (!isVerified) {

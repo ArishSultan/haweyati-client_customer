@@ -21,5 +21,5 @@ import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati_client_data_models/models/products/building-material_model.dart';
 import 'package:haweyati_client_data_models/models/shareable-data_model.dart';
 
-part 'detail_pages.dart';
+part  'detail_pages.dart';
 part 'order_pages.dart';

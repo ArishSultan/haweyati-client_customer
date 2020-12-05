@@ -52,8 +52,8 @@ class HaweyatiApp extends Theme {
                 locale: value,
                 routes: routes,
                 debugShowCheckedModeBanner: false,
-                home: ScaffoldMessenger(
-                  child: Builder(builder: (context) {
+                home: Scaffold(
+                  body: Builder(builder: (context) {
                     if (status) {
                       return HomePage();
                     } else {
@@ -63,8 +63,7 @@ class HaweyatiApp extends Theme {
                 ),
                 // initialRoute: status ? HOME_PAGE : FEATURES_PAGE,
                 supportedLocales: AppLocalizations.supportedLocales,
-                localizationsDelegates:
-                    AppLocalizations.localizationsDelegates,
+                localizationsDelegates: AppLocalizations.localizationsDelegates,
               );
             },
           ),

@@ -96,316 +96,160 @@ abstract class AppLocalizations {
     Locale('en')
   ];
 
-  /// No description provided for @ourServices.
-  ///
-  /// In en, this message translates to:
-  /// **'Our Services'**
+  // No description provided in @ourServices
   String get ourServices;
 
-  /// No description provided for @ourServicesDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Renting different sizes of construction dumpsters and different types of scaffolding. By just easy steps, it will be delivered to your site.'**
+  // No description provided in @ourServicesDescription
   String get ourServicesDescription;
 
-  /// No description provided for @ourProducts.
-  ///
-  /// In en, this message translates to:
-  /// **'Our Products'**
+  // No description provided in @ourProducts
   String get ourProducts;
 
-  /// No description provided for @ourProductsDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'You can buy any building & finishing materials as per your location & time schedule without contacting with any person.'**
+  // No description provided in @ourProductsDescription
   String get ourProductsDescription;
 
-  /// No description provided for @ourTrucks.
-  ///
-  /// In en, this message translates to:
-  /// **'Our Trucks'**
+  // No description provided in @ourTrucks
   String get ourTrucks;
 
-  /// No description provided for @ourTrucksDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Need to transfer your materials?Rent the right truck type to suit your materials volume with the right price'**
+  // No description provided in @ourTrucksDescription
   String get ourTrucksDescription;
 
-  /// No description provided for @paymentAndSecurity.
-  ///
-  /// In en, this message translates to:
-  /// **'Payment & Security'**
+  // No description provided in @paymentAndSecurity
   String get paymentAndSecurity;
 
-  /// No description provided for @paymentAndSecurityDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Pay with Mada, Visa/Mater Card and Apple pay for a secure & hands free deals, or choose cash on delivery option.'**
+  // No description provided in @paymentAndSecurityDescription
   String get paymentAndSecurityDescription;
 
-  /// No description provided for @skip.
-  ///
-  /// In en, this message translates to:
-  /// **'Skip'**
+  // No description provided in @skip
   String get skip;
 
-  /// No description provided for @getStarted.
-  ///
-  /// In en, this message translates to:
-  /// **'Get Started'**
+  // No description provided in @getStarted
   String get getStarted;
 
-  /// No description provided for @location.
-  ///
-  /// In en, this message translates to:
-  /// **'Location'**
+  // No description provided in @location
   String get location;
 
-  /// No description provided for @locationDescription.
-  ///
-  /// In en, this message translates to:
-  /// **'Please select your site location. This location will be used to show the services & delivering your items. You can edit this location at any time.'**
+  // No description provided in @locationDescription
   String get locationDescription;
 
-  /// No description provided for @setYourLocation.
-  ///
-  /// In en, this message translates to:
-  /// **'Set Your Location'**
+  // No description provided in @setYourLocation
   String get setYourLocation;
 
-  /// No description provided for @useLocation.
-  ///
-  /// In en, this message translates to:
-  /// **'Use Location?'**
+  // No description provided in @useLocation
   String get useLocation;
 
-  /// No description provided for @useLocationMessage1.
-  ///
-  /// In en, this message translates to:
-  /// **'This app wants to change your device settings.'**
+  // No description provided in @useLocationMessage1
   String get useLocationMessage1;
 
-  /// No description provided for @useLocationMessage2.
-  ///
-  /// In en, this message translates to:
-  /// **'Use Wifi and mobile networks for location'**
+  // No description provided in @useLocationMessage2
   String get useLocationMessage2;
 
-  /// No description provided for @learnMore.
-  ///
-  /// In en, this message translates to:
-  /// **'Learn More'**
+  // No description provided in @learnMore
   String get learnMore;
 
-  /// No description provided for @fetchingCurrentCoordinates.
-  ///
-  /// In en, this message translates to:
-  /// **'Fetching Current Coordinates'**
+  // No description provided in @fetchingCurrentCoordinates
   String get fetchingCurrentCoordinates;
 
-  /// No description provided for @fetchingLocationData.
-  ///
-  /// In en, this message translates to:
-  /// **'Fetching Location Data'**
+  // No description provided in @fetchingLocationData
   String get fetchingLocationData;
 
-  /// No description provided for @changingLanguage.
-  ///
-  /// In en, this message translates to:
-  /// **'Changing Language'**
+  // No description provided in @changingLanguage
   String get changingLanguage;
 
-  /// No description provided for @yes.
-  ///
-  /// In en, this message translates to:
-  /// **'YES'**
+  // No description provided in @yes
   String get yes;
 
-  /// No description provided for @no.
-  ///
-  /// In en, this message translates to:
-  /// **'NO'**
+  // No description provided in @no
   String get no;
 
-  /// No description provided for @hello.
-  ///
-  /// In en, this message translates to:
-  /// **'Hello'**
+  // No description provided in @hello
   String get hello;
 
-  /// No description provided for @explore.
-  ///
-  /// In en, this message translates to:
-  /// **'Explore our products and services'**
+  // No description provided in @explore
   String get explore;
 
-  /// No description provided for @myOrders.
-  ///
-  /// In en, this message translates to:
-  /// **'My Order'**
+  // No description provided in @myOrders
   String get myOrders;
 
-  /// No description provided for @settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Settings'**
+  // No description provided in @settings
   String get settings;
 
-  /// No description provided for @inviteFriends.
-  ///
-  /// In en, this message translates to:
-  /// **'Invite Friends'**
+  // No description provided in @inviteFriends
   String get inviteFriends;
 
-  /// No description provided for @rewards.
-  ///
-  /// In en, this message translates to:
-  /// **'Rewards'**
+  // No description provided in @rewards
   String get rewards;
 
-  /// No description provided for @termsAndConditions.
-  ///
-  /// In en, this message translates to:
-  /// **'Terms & Conditions'**
+  // No description provided in @termsAndConditions
   String get termsAndConditions;
 
-  /// No description provided for @rateApp.
-  ///
-  /// In en, this message translates to:
-  /// **'Rate App'**
+  // No description provided in @rateApp
   String get rateApp;
 
-  /// No description provided for @signOut.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign out'**
+  // No description provided in @signOut
   String get signOut;
 
-  /// No description provided for @signIn.
-  ///
-  /// In en, this message translates to:
-  /// **'Sign in'**
+  // No description provided in @signIn
   String get signIn;
 
-  /// No description provided for @enterCredentials.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter your Credentials'**
+  // No description provided in @enterCredentials
   String get enterCredentials;
 
-  /// No description provided for @signingIn.
-  ///
-  /// In en, this message translates to:
-  /// **'Signing In'**
+  // No description provided in @signingIn
   String get signingIn;
 
-  /// No description provided for @signingOut.
-  ///
-  /// In en, this message translates to:
-  /// **'Signing Out'**
+  // No description provided in @signingOut
   String get signingOut;
 
-  /// No description provided for @show.
-  ///
-  /// In en, this message translates to:
-  /// **'Show'**
+  // No description provided in @show
   String get show;
 
-  /// No description provided for @hide.
-  ///
-  /// In en, this message translates to:
-  /// **'Hide'**
+  // No description provided in @hide
   String get hide;
 
-  /// No description provided for @yourPhone.
-  ///
-  /// In en, this message translates to:
-  /// **'Your Phone'**
+  // No description provided in @yourPhone
   String get yourPhone;
 
-  /// No description provided for @yourPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Your Password'**
+  // No description provided in @yourPassword
   String get yourPassword;
 
-  /// No description provided for @forgotPassword.
-  ///
-  /// In en, this message translates to:
-  /// **'Forgot Password?'**
+  // No description provided in @forgotPassword
   String get forgotPassword;
 
-  /// No description provided for @scaffoldings.
-  ///
-  /// In en, this message translates to:
-  /// **'Scaffoldings'**
+  // No description provided in @scaffoldings
   String get scaffoldings;
 
-  /// No description provided for @buildingMaterials.
-  ///
-  /// In en, this message translates to:
-  /// **'Building Materials'**
+  // No description provided in @buildingMaterials
   String get buildingMaterials;
 
-  /// No description provided for @finishingMaterials.
-  ///
-  /// In en, this message translates to:
-  /// **'Finishing Materials'**
+  // No description provided in @finishingMaterials
   String get finishingMaterials;
 
-  /// No description provided for @constructionDumpsters.
-  ///
-  /// In en, this message translates to:
-  /// **'Construction Dumpsters'**
+  // No description provided in @constructionDumpsters
   String get constructionDumpsters;
 
-  /// No description provided for @vehicles.
-  ///
-  /// In en, this message translates to:
-  /// **'Vehicles'**
+  // No description provided in @vehicles
   String get vehicles;
 
-  /// No description provided for @price.
-  ///
-  /// In en, this message translates to:
-  /// **'{price}'**
+  // No description provided in @price
   String price(double price);
 
-  /// No description provided for @nProducts.
-  ///
-  /// In en, this message translates to:
-  /// **'{count,plural, =1{1 Product} other{{count} Products}}'**
+  // No description provided in @nProducts
   String nProducts(int count);
 
-  /// No description provided for @nItem.
-  ///
-  /// In en, this message translates to:
-  /// **'{count,plural,=0{No Items} =1{1 Item} other{{count} Items}}'**
+  // No description provided in @nItem
   String nItem(int count);
 
-  /// No description provided for @nPieces.
-  ///
-  /// In en, this message translates to:
-  /// **'{count,plural, =0{None} =1{1 Piece} other{{count} Pieces}}'**
+  // No description provided in @nPieces
   String nPieces(int count);
 
-  /// No description provided for @nDays.
-  ///
-  /// In en, this message translates to:
-  /// **'{count,plural, =0{None} =1{1 Day} other{{count} Days}}'**
+  // No description provided in @nDays
   String nDays(int count);
 
-  /// No description provided for @orderConfirmationPageTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Hello User,'**
+  // No description provided in @orderConfirmationPageTitle
   String get orderConfirmationPageTitle;
 
-  /// No description provided for @orderConfirmationPageSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Please confirm your order details and your order reference number will be generated'**
+  // No description provided in @orderConfirmationPageSubtitle
   String get orderConfirmationPageSubtitle;
 }
 
@@ -426,13 +270,13 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
 
 AppLocalizations _lookupAppLocalizations(Locale locale) {
   
-
-
-// Lookup logic when only language code is specified.
-switch (locale.languageCode) {
-  case 'ar': return AppLocalizationsAr();
+  
+  
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'ar': return AppLocalizationsAr();
     case 'en': return AppLocalizationsEn();
-}
+  }
 
   assert(false, 'AppLocalizations.delegate failed to load unsupported locale "$locale"');
   return null;
