@@ -2,6 +2,7 @@ part of 'building-material_pages.dart';
 
 class BuildingMaterialOrderSelectionPage extends StatefulWidget {
   final BuildingMaterial product;
+
   BuildingMaterialOrderSelectionPage(this.product);
 
   @override
@@ -11,7 +12,6 @@ class BuildingMaterialOrderSelectionPage extends StatefulWidget {
 
 class _BuildingMaterialOrderSelectionPageState
     extends State<BuildingMaterialOrderSelectionPage> {
-
   final _item1 = BuildingMaterialOrderable(BuildingMaterialSize.yards12);
   final _item2 = BuildingMaterialOrderable(BuildingMaterialSize.yards20);
   final _order = Order<BuildingMaterialOrderable>(OrderType.buildingMaterial);
@@ -23,54 +23,54 @@ class _BuildingMaterialOrderSelectionPageState
     _item1.product = BuildingMaterial.from(widget.product);
     _item2.product = BuildingMaterial.from(widget.product);
 
-    _item1.price = widget.product.price12;
-    _item2.price = widget.product.price20;
+    // _item1.price = widget.product.pricing.first.price.first.price;
+    // _item2.price = widget.product.pricing.first.price.first.price;
   }
 
   @override
   Widget build(BuildContext context) {
     return OrderProgressView(
-      order: _order,
-      allow: _item1.qty > 0 || _item2.qty > 0,
-      builder: (order) {
-        return <Widget>[
-          HeaderView(
-            title: 'Product Details',
-            subtitle: loremIpsum.substring(0, 70),
-          ),
-          _ContainerDescription(text: 'Small Container', size: '12 Yards'),
-          _ContainerSelection(
-            price: _item1.price,
-            qty: _item1.qty.toDouble(),
-            onChanged: (count) => setState(() => _item1.qty = count.toInt()),
-          ),
-          _ContainerDescription(text: 'Big Container', size: '20 Yards'),
-          _ContainerSelection(
-            price: _item2.price,
-            qty: _item2.qty.toDouble(),
-            onChanged: (count) => setState(() => _item2.qty = count.toInt()),
-          ),
-        ];
-      },
-      onContinue: (order) {
-        order.clearProducts();
+        order: _order,
+        allow: _item1.qty > 0 || _item2.qty > 0,
+        builder: (order) {
+          return <Widget>[
+            HeaderView(
+              title: 'Product Details',
+              subtitle: loremIpsum.substring(0, 70),
+            ),
+            _ContainerDescription(text: 'Small Container', size: '12 Yards'),
+            _ContainerSelection(
+              price: _item1.price,
+              qty: _item1.qty.toDouble(),
+              onChanged: (count) => setState(() => _item1.qty = count.toInt()),
+            ),
+            _ContainerDescription(text: 'Big Container', size: '20 Yards'),
+            _ContainerSelection(
+              price: _item2.price,
+              qty: _item2.qty.toDouble(),
+              onChanged: (count) => setState(() => _item2.qty = count.toInt()),
+            ),
+          ];
+        },
+        onContinue: (order) {
+          order.clearProducts();
 
-        if (_item1.qty > 0) {
-          order.addProduct(_item1, _item1.price * _item1.qty);
-        }
+          if (_item1.qty > 0) {
+            order.addProduct(_item1, _item1.price * _item1.qty);
+          }
 
-        if (_item2.qty > 0) {
-          order.addProduct(_item2, _item2.price * _item2.qty);
-        }
+          if (_item2.qty > 0) {
+            order.addProduct(_item2, _item2.price * _item2.qty);
+          }
 
-        navigateTo(context, BuildingMaterialTimeAndLocationPage(_order));
-      }
-    );
+          navigateTo(context, BuildingMaterialTimeAndLocationPage(_order));
+        });
   }
 }
 
 class BuildingMaterialTimeAndLocationPage extends StatefulWidget {
   final Order _order;
+
   BuildingMaterialTimeAndLocationPage(this._order);
 
   @override
@@ -126,6 +126,7 @@ class _BuildingMaterialTimeAndLocationPageState
 
 class BuildingMaterialOrderConfirmationPage extends StatelessWidget {
   final Order<BuildingMaterialOrderable> _order;
+
   BuildingMaterialOrderConfirmationPage(this._order);
 
   @override
@@ -136,7 +137,8 @@ class BuildingMaterialOrderConfirmationPage extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(bottom: 15),
           child: OrderConfirmationItem(
-            title: holder.item.product.name + ' (${holder.item.size.exToString()})',
+            title: holder.item.product.name +
+                ' (${holder.item.size.exToString()})',
             image: holder.item.product.image.name,
             table: DetailsTableAlt([
               'Price',
