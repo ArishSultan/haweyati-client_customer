@@ -156,6 +156,7 @@ class OtpVerificationPageState extends State<OtpVerificationPage> {
                   child: TextFormField(
                     maxLength: 6,
                     maxLengthEnforced: true,
+                    keyboardType: TextInputType.number,
                     focusNode: _node,
                     controller: _controller,
                     onChanged: (val) {
