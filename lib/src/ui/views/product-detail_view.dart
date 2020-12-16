@@ -71,6 +71,7 @@ class ProductDetailView extends StatelessWidget {
                 child: Image.network(
                   HaweyatiService.resolveImage(image),
                   height: 250,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),

@@ -92,8 +92,8 @@ class BuildingMaterialPage extends StatelessWidget {
       image: item.image.name,
       price: TextSpan(
         text: ''
-            '${item.price12.toStringAsFixed(2)} SAR - '
-            '${item.price20.toStringAsFixed(2)} SAR',
+            '${item.price12?.toStringAsFixed(2)} SAR - '
+            '${item.price20?.toStringAsFixed(2)} SAR',
         style: TextStyle(color: Color(0xFF313F53)),
         children: [
           TextSpan(

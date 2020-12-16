@@ -213,7 +213,7 @@ class _ContainerSelection extends DarkContainer {
                   ),
                   Spacer(),
                   Text(
-                    '${price.toStringAsFixed(2)} SAR',
+                    '${price?.toStringAsFixed(2)} SAR',
                     style: TextStyle(
                       color: Color(0xFF313F53),
                     ),
