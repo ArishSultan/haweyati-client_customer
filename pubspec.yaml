@@ -12,6 +12,7 @@ dependencies:
 
   in_app_review:
 
+
   # Internationalization (i18n) Support.
   flutter_localizations:
     sdk: flutter
@@ -67,6 +68,7 @@ dev_dependencies:
   build_runner: ^1.10.4
   hive_generator: ^0.8.1
   retrofit_generator:
+  flutter_native_splash:
 
   flutter_test:
     sdk: flutter
@@ -90,3 +92,10 @@ flutter:
     - family: Helvetica
       fonts:
         - asset: assets/fonts/Helvetica.ttf
+
+flutter_native_splash:
+  image: assets/images/haweyati_logo.png
+  color: "ffffff"
+  fill: false
+  android_disable_fullscreen: true
+
