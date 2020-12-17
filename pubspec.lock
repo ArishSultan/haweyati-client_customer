@@ -360,8 +360,8 @@ packages:
   haweyati_client_data_models:
     dependency: "direct main"
     description:
-      path: "E:/Flutter'sProjects/haweyati-client_data-models"
-      relative: false
+      path: "../haweyati-client_data-models"
+      relative: true
     source: path
     version: "0.0.0"
   hive:

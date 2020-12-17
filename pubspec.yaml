@@ -61,7 +61,7 @@ dependencies:
 
   # Application packages
   haweyati_client_data_models:
-    path: E:/Flutter'sProjects/haweyati-client_data-models
+    path: ../haweyati-client_data-models
 
 dev_dependencies:
   build_runner: ^1.10.4
