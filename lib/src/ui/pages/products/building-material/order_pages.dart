@@ -12,56 +12,71 @@ class BuildingMaterialOrderSelectionPage extends StatefulWidget {
 
 class _BuildingMaterialOrderSelectionPageState
     extends State<BuildingMaterialOrderSelectionPage> {
-  final _item1 = BuildingMaterialOrderable(BuildingMaterialSize.yards12);
-  final _item2 = BuildingMaterialOrderable(BuildingMaterialSize.yards20);
+  // final _item1 = BuildingMaterialOrderable();
+  // final _item2 = BuildingMaterialOrderable(BuildingMaterialSize.yards20);
+  List<BuildingMaterialOrderable> items = [];
   final _order = Order<BuildingMaterialOrderable>(OrderType.buildingMaterial);
-
+  List<BMPrice> pricing;
   @override
   void initState() {
     super.initState();
-
-    _item1.product = BuildingMaterial.from(widget.product);
-    _item2.product = BuildingMaterial.from(widget.product);
-
+    // _item1.product = BuildingMaterial.from(widget.product);
+    // _item2.product = BuildingMaterial.from(widget.product);
+    // print(widget.product.pricing.first.price.length);
+    pricing = widget.product.pricing.first.price;
+    pricing.forEach((element) => items.add(BuildingMaterialOrderable(price: element,product: widget.product)));
     // _item1.price = widget.product.pricing.first.price.first.price;
     // _item2.price = widget.product.pricing.first.price.first.price;
   }
+
+  bool allowToProceed() => items.any((element) => element.qty != 0);
 
   @override
   Widget build(BuildContext context) {
     return OrderProgressView(
         order: _order,
-        allow: _item1.qty > 0 || _item2.qty > 0,
+        allow: allowToProceed(),
         builder: (order) {
           return <Widget>[
             HeaderView(
               title: 'Product Details',
               subtitle: loremIpsum.substring(0, 70),
             ),
-            _ContainerDescription(text: 'Small Container', size: '12 Yards'),
-            _ContainerSelection(
-              price: _item1.price,
-              qty: _item1.qty.toDouble(),
-              onChanged: (count) => setState(() => _item1.qty = count.toInt()),
+            for(int i=0; i<pricing.length; ++i)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _ContainerDescription(text: pricing[i].unit, size: ''),
+                _ContainerSelection(
+                  price:  pricing[i].price,
+                  qty: items[i].qty.toDouble(),
+                  onChanged: (count) => setState(() => items[i].qty = count.toInt()),
+                ),
+              ],
             ),
-            _ContainerDescription(text: 'Big Container', size: '20 Yards'),
-            _ContainerSelection(
-              price: _item2.price,
-              qty: _item2.qty.toDouble(),
-              onChanged: (count) => setState(() => _item2.qty = count.toInt()),
-            ),
+
+            // _ContainerDescription(text: 'Big Container', size: ''),
+            // _ContainerSelection(
+            //   price: _item2.price,
+            //   qty: _item2.qty.toDouble(),
+            //   onChanged: (count) => setState(() => _item2.qty = count.toInt()),
+            // ),
           ];
         },
         onContinue: (order) {
           order.clearProducts();
-
-          if (_item1.qty > 0) {
-            order.addProduct(_item1, _item1.price * _item1.qty);
-          }
-
-          if (_item2.qty > 0) {
-            order.addProduct(_item2, _item2.price * _item2.qty);
-          }
+          items.forEach((element) {
+            if(element.qty > 0){
+              order.addProduct(element, element.price.price * element.qty);
+            }
+          });
+          // if (_item1.qty > 0) {
+          //   order.addProduct(_item1, _item1.price * _item1.qty);
+          // }
+          //
+          // if (_item2.qty > 0) {
+          //   order.addProduct(_item2, _item2.price * _item2.qty);
+          // }
 
           navigateTo(context, BuildingMaterialTimeAndLocationPage(_order));
         });
@@ -138,13 +153,13 @@ class BuildingMaterialOrderConfirmationPage extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 15),
           child: OrderConfirmationItem(
             title: holder.item.product.name +
-                ' (${holder.item.size.exToString()})',
+                ' (${holder.item.price.unit})',
             image: holder.item.product.image.name,
             table: DetailsTableAlt([
               'Price',
               'Container'
             ], [
-              '${holder.item.price.toStringAsFixed(0)} SAR',
+              '${holder.item.price.price.toStringAsFixed(0)} SAR',
               lang.nPieces(holder.item.qty)
             ]),
           ),
@@ -155,12 +170,12 @@ class BuildingMaterialOrderConfirmationPage extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 20),
           child: DetailsTable([
             DetailRow(
-              '${holder.item.product.name} (${holder.item.size.exToString()})',
+              '${holder.item.product.name} (${holder.item.price.unit})',
               lang.nPieces(holder.item.qty),
             ),
             PriceRow(
               'Price ${lang.nPieces(holder.item.qty)}',
-              holder.item.price * holder.item.qty,
+              holder.item.price.price * holder.item.qty,
             )
           ]),
         );

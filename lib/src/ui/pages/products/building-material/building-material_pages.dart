@@ -19,6 +19,7 @@ import 'package:haweyati/src/ui/widgets/table-rows.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati_client_data_models/models/products/building-material_model.dart';
+import 'package:haweyati_client_data_models/models/products/building_material_price_model.dart';
 import 'package:haweyati_client_data_models/models/shareable-data_model.dart';
 
 part  'detail_pages.dart';
