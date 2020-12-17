@@ -15,7 +15,8 @@ class BuildingMaterialCategoriesPage extends StatelessWidget {
           return ProductListTile(
             name: data.name,
             image: data.image.name,
-            onTap: () => navigateTo(context, BuildingMaterialSubCategoriesPage(data)),
+            onTap: () =>
+                navigateTo(context, BuildingMaterialSubCategoriesPage(data)),
           );
         },
       ),
@@ -26,6 +27,7 @@ class BuildingMaterialCategoriesPage extends StatelessWidget {
 class BuildingMaterialSubCategoriesPage extends StatelessWidget {
   final BuildingMaterialBase product;
   final _service = BuildingMaterialsRest();
+
   BuildingMaterialSubCategoriesPage(this.product);
 
   @override
@@ -63,10 +65,25 @@ class BuildingMaterialsPage extends StatelessWidget {
         subtitle: product.description,
         loader: () => _service.get(AppData().city, product.id),
         builder: (context, BuildingMaterial data) {
+          String detail = '';
+          if (data.pricing.first.price.length == 1)
+            detail = '${data.pricing.first.price.first.price} SAR';
+          else {
+            double maxPrice, minPrice;
+            maxPrice = minPrice = data.pricing.first.price.first.price;
+            data.pricing.first.price.forEach((element) {
+              if (maxPrice < element.price) maxPrice = element.price;
+              if (minPrice > element.price) minPrice = element.price;
+            });
+            if (maxPrice == minPrice)
+              detail = '$maxPrice SAR';
+            else
+              detail = '$minPrice - $maxPrice SAR';
+          }
           return ProductListTile(
             name: data.name,
             image: data.image.name,
-            detail: '${data.price12} - ${data.price20} SAR',
+            detail: detail,
             onTap: () => navigateTo(context, BuildingMaterialPage(data)),
           );
         },
@@ -77,23 +94,36 @@ class BuildingMaterialsPage extends StatelessWidget {
 
 class BuildingMaterialPage extends StatelessWidget {
   final BuildingMaterial item;
+
   BuildingMaterialPage(this.item);
 
   @override
   Widget build(BuildContext context) {
+    String detail = '';
+    if (item.pricing.first.price.length == 1)
+      detail = '${item.pricing.first.price.first.price} SAR';
+    else {
+      double maxPrice, minPrice;
+      maxPrice = minPrice = item.pricing.first.price.first.price;
+      item.pricing.first.price.forEach((element) {
+        if (maxPrice < element.price) maxPrice = element.price;
+        if (minPrice > element.price) minPrice = element.price;
+      });
+      if (maxPrice == minPrice)
+        detail = '$maxPrice SAR';
+      else
+        detail = '$minPrice - $maxPrice SAR';
+    }
     return ProductDetailView(
       shareableData: ShareableData(
-        id: item.id,
-        type: OrderType.dumpster,
-        socialMediaTitle: item.name,
-        socialMediaDescription: item.description
-      ),
+          id: item.id,
+          type: OrderType.dumpster,
+          socialMediaTitle: item.name,
+          socialMediaDescription: item.description),
       title: item.name,
       image: item.image.name,
       price: TextSpan(
-        text: ''
-            '${item.price12.toStringAsFixed(2)} SAR - '
-            '${item.price20.toStringAsFixed(2)} SAR',
+        text: detail,
         style: TextStyle(color: Color(0xFF313F53)),
         children: [
           TextSpan(

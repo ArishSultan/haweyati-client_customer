@@ -12,5 +12,5 @@ abstract class NotificationRest {
   @GET('fcm/get-history/{id}')
   Future<List<NotificationRequest>> _get(@Path('id') String id);
 
-  Future<List<NotificationRequest>> get() => _get(AppData().user.id);
+  // Future<List<NotificationRequest>> get() => _get(AppData().user.id);
 }

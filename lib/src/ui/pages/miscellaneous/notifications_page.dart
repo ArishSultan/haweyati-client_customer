@@ -20,7 +20,7 @@ class NotificationsPage extends StatelessWidget {
       ),
       body: LiveScrollableView(
         key: _key,
-        loader: NotificationRest()?.get ?? [],
+        loader: NotificationRest() ?? [],
         builder: (context, _) {
           return ListTile(
             title: Text('Title'),

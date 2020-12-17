@@ -9,7 +9,7 @@ part of 'notification_rest.dart';
 class _NotificationRest implements NotificationRest {
   _NotificationRest(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://178.128.16.246:4000';
+    baseUrl ??= 'http://192.168.18.4:4000';
   }
 
   final Dio _dio;
@@ -35,9 +35,5 @@ class _NotificationRest implements NotificationRest {
             NotificationRequest.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
-  }
-
-  @override
-  Future<List<NotificationRequest>> get() {
   }
 }
