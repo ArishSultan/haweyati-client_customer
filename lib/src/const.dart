@@ -49,6 +49,7 @@ const FeatureImage4 = '$_image/features-page/feature-4.png';
 /// FeaturesPage Images
 
 // const apiUrl = "http:///${kReleaseMode ? '178.128.16.246' : '192.168.100.103'}:4000";
+// const apiUrl = "http://192.168.100.205:4000";
 const apiUrl = "http://192.168.18.4:4000";
 // const apiUrl = "http://178.128.16.246:4000";
 const boldText = const TextStyle(fontWeight: FontWeight.bold);

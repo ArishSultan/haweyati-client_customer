@@ -33,8 +33,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    DynamicLinksService.initiate(context);
+    //Todo: Commenting dynamics link temporarily
+    // DynamicLinksService.initiate(context);
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
   }
 

@@ -35,7 +35,7 @@ class OrderConfirmationItem extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Row(children: [
-            Image.network(HaweyatiService.resolveImage(image), height: 60),
+            Image.network(HaweyatiService.resolveImage(image), height: 60,width: 60,),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 10),

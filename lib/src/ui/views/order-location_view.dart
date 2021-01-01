@@ -49,7 +49,7 @@ class OrderLocationView extends DarkContainer {
             children: [
               TableRow(children: [
                 Text('Drop-off Date', style: TextStyle(fontSize: 13, color: Colors.grey)),
-                Text('Drop-off Time', style: TextStyle(fontSize: 13, color: Colors.grey)),
+              if(location.dropOffTime == null) SizedBox() else Text('Drop-off Time', style: TextStyle(fontSize: 13, color: Colors.grey)),
               ]),
 
               TableRow(children: [
@@ -57,7 +57,7 @@ class OrderLocationView extends DarkContainer {
                   padding: const EdgeInsets.only(top: 5),
                   child: Text(location.dropOffDate.formatted, style: TextStyle(fontSize: 13, color: Color(0xFF313F53))),
                 ),
-                Text(location.dropOffTime.toString(), style: TextStyle(fontSize: 13, color: Color(0xFF313F53))),
+                if(location.dropOffTime == null) SizedBox() else   Text(location.dropOffTime.toString(), style: TextStyle(fontSize: 13, color: Color(0xFF313F53))),
               ])
             ],
           ),

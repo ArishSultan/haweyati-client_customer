@@ -22,7 +22,7 @@ class _FinishingMaterialServiceDetailPageState
     super.initState();
 
     _order.location = OrderLocation()..update(AppData().location);
-
+    //Todo: When a variant is selected it's volume is not included, it should be sent.
     if (widget.item.variants?.isNotEmpty ?? false) {
       for (final option in widget.item.options) {
         final values = option.values;
@@ -32,7 +32,7 @@ class _FinishingMaterialServiceDetailPageState
 
       final element = widget.item.variants?.firstWhere((element) {
         for (final key in element.keys) {
-          if (key == 'price') continue;
+          if (key == 'price' || key == 'volume' || key == 'weight') continue;
 
           if (_selectedVariants[key] != element[key]) return false;
         }
@@ -41,9 +41,11 @@ class _FinishingMaterialServiceDetailPageState
       }, orElse: () => null);
 
       if (element != null) {
+        print("1 assigned");
         _item.price = double.tryParse(element['price']) ?? 0.0;
       }
     } else {
+      print("1 assigned");
       _item.price = widget.item.price;
     }
 
@@ -112,7 +114,7 @@ class _FinishingMaterialServiceDetailPageState
                 ),
                 Spacer(),
                 Text(
-                  '${_item.price.toStringAsFixed(2)} SAR',
+                  '${_item.price?.toStringAsFixed(2)} SAR',
                   style: TextStyle(
                     color: Color(0xFF313F53),
                   ),
@@ -195,7 +197,7 @@ class _FinishingMaterialServiceDetailPageState
 
     final element = widget.item.variants?.firstWhere((element) {
       for (final key in element.keys) {
-        if (key == 'price') continue;
+        if (key == 'price' || key == 'volume' || key == 'weight') continue;
 
         if (_selectedVariants[key] != element[key]) return false;
       }

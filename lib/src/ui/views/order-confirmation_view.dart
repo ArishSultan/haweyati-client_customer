@@ -7,6 +7,7 @@ import 'package:haweyati/src/ui/modals/dialogs/order/unable-to-place-order_dialo
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/pages/auth/sign-in_page.dart';
 import 'package:haweyati/src/ui/pages/orders/order-placed_page.dart';
+import 'package:haweyati/src/ui/pages/otp-page.dart';
 import 'package:haweyati/src/ui/pages/payment/payment-methods_page.dart';
 import 'package:haweyati/src/ui/snack-bars/payment/not-selected_snack-bar.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
@@ -107,22 +108,38 @@ class OrderConfirmationView<T extends OrderableProduct>
           final _appData = AppData();
           if (_appData.isAuthenticated) {
             if (_appData.user.profile.hasScope('guest')) {
-              final verify = getVerifiedPhoneNumber(context);
+              var guestPhone = _appData.user.profile.contact;
+
+              var verify;
+              if(guestPhone !=null || guestPhone.isNotEmpty)
+                verify = await verifyPhoneNumber(context, guestPhone);
+              else
+                verify = await getVerifiedPhoneNumber(context);
+
               if (verify == null) {
-                _scaffoldKey.currentState.showSnackBar(SnackBar(
-                    content: Text('Phone Number not verified')
-                ));
+                Navigator.of(context).pop();
+                // _scaffoldKey.currentState.showSnackBar(SnackBar(
+                //     content: Text('Phone Number not verified')
+                // ));
                 return;
               }
               order.customer = _appData.user;
             } else {
+              if (order.paymentType == 'COD') {
+                final verify = await verifyPhoneNumber(context,AppData().user.profile.contact);
+                if(verify == null) {
+                  Navigator.pop(context);
+                  return;
+                }
+              }
               order.customer = _appData.user;
             }
           } else {
             final number = await getPhoneNumber(context);
             if (number == null) {
+              Navigator.pop(context);
               _scaffoldKey.currentState.showSnackBar(SnackBar(
-                content: Text('Enter a valid phone number'),
+                content: Text('You need to verify phone number to proceed with order.'),
               ));
               return;
             }
@@ -131,7 +148,7 @@ class OrderConfirmationView<T extends OrderableProduct>
             await AuthService.prepareForRegistration(context, number);
 
             if (result[0] == CustomerRegistrationType.new_) {
-              final verify = verifyPhoneNumber(context, number);
+              final verify = await verifyPhoneNumber(context, number);
               if (verify == null) {
                 _scaffoldKey.currentState.showSnackBar(SnackBar(
                     content: Text('Phone Number not verified')
@@ -153,8 +170,9 @@ class OrderConfirmationView<T extends OrderableProduct>
               AppData().user = _guest;
               order.customer = _guest;
             } else if (result[0] == CustomerRegistrationType.fromGuest) {
-              final verify = verifyPhoneNumber(context, number);
+              final verify = await verifyPhoneNumber(context, number);
               if (verify == null) {
+                Navigator.pop(context);
                 _scaffoldKey.currentState.showSnackBar(SnackBar(
                     content: Text('Phone Number not verified')
                 ));

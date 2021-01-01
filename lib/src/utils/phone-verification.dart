@@ -9,9 +9,11 @@ import 'package:haweyati/src/utils/navigator.dart';
 Future verifyPhoneNumber(BuildContext context, String phone) async {
   final isVerified = await navigateTo(context, OtpVerificationPage(phone));
   if (isVerified == null) {
-    Scaffold.of(context)?.showSnackBar(SnackBar(
-      content: Text("Phone Verification Canceled"),
-    ));
+    //Todo: Scaffold context issues
+    // Scaffold.of(context)?.showSnackBar(SnackBar(
+    //   content: Text("Phone Verification Canceled"),
+    // ));
+    return;
   } else if (!isVerified) {
     Navigator.of(context).pop();
     return null;
