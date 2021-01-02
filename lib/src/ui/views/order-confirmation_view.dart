@@ -106,6 +106,7 @@ class OrderConfirmationView<T extends OrderableProduct>
             builder: (context) => WaitingDialog(message: 'Verifying Customer'),
           );
           final _appData = AppData();
+          print("Auth status ${_appData.isAuthenticated}");
           if (_appData.isAuthenticated) {
             if (_appData.user.profile.hasScope('guest')) {
               var guestPhone = _appData.user.profile.contact;
@@ -207,7 +208,7 @@ class OrderConfirmationView<T extends OrderableProduct>
 
           Order _order;
           try {
-            print(order.customer);
+            // print(order.customer);
             _order = await OrdersService().placeOrder(order);
 
             // _order.images = [];
@@ -225,6 +226,7 @@ class OrderConfirmationView<T extends OrderableProduct>
 
             Navigator.of(context).pop();
           } catch (e) {
+            if(Navigator.canPop(context))
             Navigator.of(context).pop();
 
             showDialog(
@@ -232,6 +234,7 @@ class OrderConfirmationView<T extends OrderableProduct>
               barrierDismissible: false,
               builder: (context) => UnableToPlaceOrderDialog(e),
             );
+            throw e;
           }
 
           if (_order != null) {

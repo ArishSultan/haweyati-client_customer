@@ -385,7 +385,7 @@ class _ServiceContainer extends StatelessWidget {
     ),
     'Delivery Vehicle': _ServiceContainerDetail(
       title: (lang) => lang.vehicles,
-      page: '/scaffoldings-list',
+      page: DELIVERY_VEHICLES_PAGE,
       image: DeliveryVehiclesServiceImage,
     )
   };
