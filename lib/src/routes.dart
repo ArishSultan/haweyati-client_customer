@@ -19,6 +19,7 @@ import 'ui/pages/miscellaneous/share-and-invite_page.dart';
 import 'ui/pages/miscellaneous/terms-and-conditions_page.dart';
 import 'ui/pages/products/building-material/building-material_pages.dart';
 import 'ui/pages/products/finishing-material/finishing-material_pages.dart';
+import 'ui/pages/products/single-scaffolding/single-scaffolding_pages.dart';
 
 
 final routes = <String, Widget Function(BuildContext)>{
@@ -51,7 +52,7 @@ final routes = <String, Widget Function(BuildContext)>{
   DELIVERY_VEHICLES_PAGE: (context) => DeliveryVehiclesPage(),
 
   /// Scaffolding Routes.
-  // SCAFFOLDINGS_LIST_PAGE: (context) => ScaffoldingsListPage(),
+  SCAFFOLDINGS_LIST_PAGE: (context) => SingleScaffoldingsPage(),
   // FACADES_CALCULATION_PAGE: (context) => FacadesCalculationPage(),
   // CEILING_CALCULATION_PAGE: (context) => CeilingCalculationPage(),
   // STEEL_SCAFFOLDING_OPTIONS_PAGE: (context) => SteelScaffoldingOptionsPage(),

@@ -5,7 +5,7 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
 
   final _item = DeliveryVehicleOrderable();
   final _order = Order<DeliveryVehicleOrderable>(OrderType.deliveryVehicle);
-
+  final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
   DeliveryVehicleSelectionPage(this._deliveryVehicle) {
     _item.product = _deliveryVehicle;
   }
@@ -14,6 +14,7 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return OrderProgressView(
       order: _order,
+      // key: key,
       builder: (order) {
         return <Widget>[
           HeaderView(
@@ -83,7 +84,16 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
       },
       // allow: _item.pickUpLocation !=null && _order.location !=null,
       onContinue:  (order) async {
+        // if(_item.pickUpLocation == null || _order.location == null){
+        //  key.currentState.showSnackBar(SnackBar(content: Text("Please select pickup location.")));
+        //   return;
+        // }
         order.clearProducts();
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WaitingDialog(message: 'Processing'),
+        );
         var _rest = await EstimatedPriceRest().getPrice({
           'vehicle' : _deliveryVehicle.id,
           'pickUpLat' : _item.pickUpLocation.latitude,
@@ -91,6 +101,7 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
           'dropOffLat' : _order.location.latitude,
           'dropOffLng' : _order.location.longitude,
         });
+        Navigator.pop(context);
         _item.distance = _rest.distance;
         _order.addProduct(
           _item, _rest.price,
@@ -185,7 +196,7 @@ class DeliveryVehicleOrderConfirmationPage extends StatelessWidget {
             'Quantity',
             'Days'
           ], [
-            '${_order.total} SAR',
+            '${holder.subtotal} SAR',
             lang.nPieces(holder.item.qty),
             "1"
           ], [
