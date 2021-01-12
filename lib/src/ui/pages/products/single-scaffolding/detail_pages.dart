@@ -58,7 +58,7 @@ class SingleScaffoldingPage extends StatelessWidget {
         label: 'Buy Now',
         onPressed: () => navigateTo(
           context,
-          DumpsterOrderSelectionPage(scaffolding),
+          SingleScaffoldingSelectionPage(scaffolding),
         ),
       ),
     );

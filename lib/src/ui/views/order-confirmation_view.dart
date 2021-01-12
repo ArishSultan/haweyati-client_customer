@@ -72,10 +72,33 @@ class OrderConfirmationView<T extends OrderableProduct>
           PriceRow('Subtotal', order.subtotal),
         ]),
         Divider(),
+        if(order.type == OrderType.scaffolding || order.type == OrderType.buildingMaterial) DetailsTable([
+          TableRow(
+            children: [
+              Text(
+                "Delivery Fee",
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey,
+                  fontFamily: 'Lato',
+                  height: 1.9,
+                ),
+              ),
+              Text('Pending',
+                style: TextStyle(
+                  color: Color(0xFF313F53),
+                  fontSize: 14,
+                  fontFamily: 'Lato',
+                ),
+                textAlign: TextAlign.right,
+              )
+            ]
+          )
+        ]),
         DetailsTable([
           PercentRow('Value Added Tax (VAT)', Order.vat),
           TotalPriceRow(order.total)
-        ])
+        ]),
       ],
       bottom: RaisedActionButton(
         label: 'Proceed',
@@ -83,21 +106,24 @@ class OrderConfirmationView<T extends OrderableProduct>
           final location = await showDialog(
               context: context,
               builder: (context) => ConfirmationDialog(
-                    title: Text('Confirm our Location'),
+                    title: Text('Confirm your Location'),
                     content: OrderLocationPicker(order, true),
                   ));
 
           if (location != true) return;
 
           if (order.payment == null) {
-            final result = await selectPayment(context, order.total);
-            if (result == null) {
-              _scaffoldKey.currentState
-                  .showSnackBar(PaymentMethodNotSelectedSnackBar());
-              return;
-            } else {
-              order.paymentType = result.method;
-              order.paymentIntentId = result.intentId;
+            print(order.type);
+            if(order.type != OrderType.scaffolding && order.type != OrderType.buildingMaterial){
+              final result = await selectPayment(context, order.total);
+              if (result == null) {
+                _scaffoldKey.currentState
+                    .showSnackBar(PaymentMethodNotSelectedSnackBar());
+                return;
+              } else {
+                order.paymentType = result.method;
+                order.paymentIntentId = result.intentId;
+              }
             }
           }
 

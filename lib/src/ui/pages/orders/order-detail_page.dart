@@ -7,7 +7,10 @@ import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/rest/orders_service.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
+import 'package:haweyati/src/ui/snack-bars/payment/not-selected_snack-bar.dart';
+import 'package:haweyati/src/ui/views/order-confirmation_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/details-table.dart';
 import 'package:haweyati/src/ui/widgets/table-rows.dart';
 import 'package:haweyati_client_data_models/data.dart';
@@ -31,7 +34,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   Widget build(BuildContext context) {
     return ScrollableView.sliver(
       showBackground: true,
-      padding: const EdgeInsets.fromLTRB(15, 0, 15, 30),
+      padding: const EdgeInsets.fromLTRB(15, 0, 15, 70),
       appBar: HaweyatiAppBar(actions: [
         IconButton(
           icon: Image.asset(CustomerCareIcon, width: 20),
@@ -55,6 +58,39 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             },
           ),
       ]),
+      bottom: (widget.order.deliveryFee!=null && widget.order.paymentType == null) ?
+      FlatActionButton(
+        label: 'Proceed Payment',
+        onPressed: () async {
+          var order = widget.order;
+          final result = await selectPayment(context, order.total);
+          if (result == null) {
+            //Todo: Snackbar
+            // Scaffold.of(context)
+            //     .showSnackBar(PaymentMethodNotSelectedSnackBar());
+            return;
+          } else {
+            order.paymentType = result.method;
+            order.paymentIntentId = result.intentId;
+          }
+
+          showDialog(context: context,builder: (context){
+            return WaitingDialog(
+              message: 'Processing order',
+            );
+          });
+
+          await OrdersService().processPayment({
+            '_id' : order.id,
+            'paymentType' : order.paymentType,
+            'paymentIntentId' : order.paymentIntentId,
+          });
+
+          Navigator.pop(context);
+          Navigator.pop(context);
+
+        },
+      ) : widget.order.deliveryFee == null ? Text("Order is awaiting confirmation from supplier") :SizedBox(),
       children: [
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(5, 20, 5, 40),

@@ -16,6 +16,9 @@ abstract class OrdersService {
   @PATCH('/orders/cancel/{id}')
   Future<void> cancelOrder(@Path('id') String id);
 
+  @PATCH('/orders/process-payment')
+  Future<void> processPayment(@Body() Map<String,dynamic> body);
+
   @GET('/orders/dummy')
   Future<List<Order>> orders({
     @Query('customer') String id,

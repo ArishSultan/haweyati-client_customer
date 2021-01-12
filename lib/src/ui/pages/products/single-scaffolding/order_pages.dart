@@ -1,11 +1,11 @@
 part of 'single-scaffolding_pages.dart';
 
-class DumpsterOrderSelectionPage extends StatelessWidget {
+class SingleScaffoldingSelectionPage extends StatelessWidget {
   final SingleScaffolding _singleScaffolding;
   final _item = SingleScaffoldingOrderable();
   final _order = Order<SingleScaffoldingOrderable>(OrderType.scaffolding);
 
-  DumpsterOrderSelectionPage(this._singleScaffolding) {
+  SingleScaffoldingSelectionPage(this._singleScaffolding) {
     _item.product = _singleScaffolding;
   }
 
@@ -165,14 +165,14 @@ class DumpsterOrderSelectionPage extends StatelessWidget {
         order.clearProducts();
         var subtotal = 0.0;
         subtotal+= _item.product.rent + (_item.days * _item.product.extraDayRent);
-        subtotal+= _item.mesh == null ? 0 : (_item.mesh == 'half' ? _item.product.mesh.half * _item.meshQty :  _item.product.mesh.full * _item.meshQty);
+        subtotal+= _item.mesh == null ? 0 : _item.product.meshPrice(_item.mesh) * _item.meshQty;
+        _item.meshQty = _item.mesh == null ? null : _item.meshQty;
+        _item.days = _item.product.days + _item.days;
         subtotal+= _item.wheels * _item.product.wheels;
         subtotal+= _item.connections * _item.product.connections;
-        //
-        // _item.extraDaysPrice = _item.product.extraDayRent * _item.extraDays;
         _order.addProduct(
           _item,
-          (_item.product.rent * _item.days+1) * _item.qty,
+          subtotal,
         );
 
         navigateTo(context, DumpsterOrderTimeAndLocationPage(_order));
@@ -211,6 +211,8 @@ class _MeshSelectorState extends State<MeshSelector> {
                       setState(() {
                         selectedMesh=val;
                       });
+                        widget.onMeshTypeChanged(null);
+                        widget.onQuantityChanged(null);
                     }
                 ),
               ),
@@ -219,11 +221,12 @@ class _MeshSelectorState extends State<MeshSelector> {
               title: Text("Half"),
                 dense: true,
                 subtitle: Text("(${widget.item.pricing.first.mesh.half} SAR)"),
-                value: 'Half',
+                value: 'half',
               groupValue: selectedMesh,
               onChanged: (String val) {
                 setState(() {
                   selectedMesh=val;
+                  widget.onMeshTypeChanged(val);
                 });
               }
             ),
@@ -234,13 +237,11 @@ class _MeshSelectorState extends State<MeshSelector> {
                 dense: true,
                 subtitle: Text("(${widget.item.pricing.first.mesh.full} SAR)"),
                 groupValue: selectedMesh,
-                value: 'Full',
+                value: 'full',
                 onChanged: (String val) {
                   setState(() {
                     selectedMesh=val;
                     widget.onMeshTypeChanged(val);
-                    if(val == null)
-                      widget.onQuantityChanged(null);
                   });
                 }
             ),
@@ -336,15 +337,15 @@ class _DumpsterOrderTimeAndLocationPageState
       },
       onContinue: (order) async {
         await _formKey.currentState.submit();
-        navigateTo(context, DumpsterOrderConfirmationPage(order));
+        navigateTo(context, SingleScaffoldingOrderConfirmationPage(order));
       },
     );
   }
 }
 
-class DumpsterOrderConfirmationPage extends StatelessWidget {
+class SingleScaffoldingOrderConfirmationPage extends StatelessWidget {
   final Order<SingleScaffoldingOrderable> _order;
-  DumpsterOrderConfirmationPage(this._order);
+  SingleScaffoldingOrderConfirmationPage(this._order);
 
   @override
   Widget build(BuildContext context) {
@@ -359,8 +360,8 @@ class DumpsterOrderConfirmationPage extends StatelessWidget {
             'Quantity',
             'Days'
           ], [
-            '${holder.item.product.rent.round()} SAR/'
-                '${holder.item.product.days} days',
+            '${holder.subtotal} SAR/'
+                '${holder.item.product.days + holder.item.days} days',
             lang.nPieces(holder.item.qty),
             (holder.item.product.days + holder.item.days).toString()
           ], [
@@ -371,6 +372,7 @@ class DumpsterOrderConfirmationPage extends StatelessWidget {
         );
       }).toList(),
       pricingBuilder: (lang, order) => order.products.map((holder) {
+        print( holder.item.days);
         return DetailsTable([
           DetailRow(holder.item.product.type,
             lang.nPieces(holder.item.qty),
@@ -379,11 +381,21 @@ class DumpsterOrderConfirmationPage extends StatelessWidget {
             'Price (${lang.nDays(holder.item.product.days)})',
             holder.item.product.rent * holder.item.qty,
           ),
-          if (holder.item.days > 1)
             PriceRow(
-              'Extra (${lang.nDays(holder.item.days-1)})',
-              (holder.item.days-1 * holder.item.qty).toDouble(),
+              'Extra (${lang.nDays(holder.item.days)})',
+              (holder.item.days * holder.item.product.extraDayRent).toDouble(),
             ),
+         if(holder.item.mesh !=null) PriceRow(
+              'Mesh (${holder.item.meshQty} ${holder.item.mesh})',
+              holder.item.product.meshPrice(holder.item.mesh) * holder.item.meshQty,),
+          PriceRow(
+            'Connections (${holder.item.connections} Sets of 4)',
+            holder.item.connections * holder.item.product.connections
+          ),
+          PriceRow(
+              'Wheels (${holder.item.wheels}  Sets of 4)',
+              holder.item.wheels * holder.item.product.wheels
+          ),
         ]);
       }).toList(),
     );

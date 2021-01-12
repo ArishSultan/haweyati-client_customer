@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
 import 'package:haweyati/src/common/simple-form.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/rest/_new/estimated-price_service.dart';
@@ -21,6 +22,7 @@ import 'package:haweyati/src/ui/widgets/image-picker-widget.dart';
 import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/ui/widgets/order-confirmation-item.dart';
 import 'package:haweyati/src/ui/widgets/pickup-location_picker.dart';
+import 'package:haweyati/src/ui/widgets/rich-price-text.dart';
 import 'package:haweyati/src/ui/widgets/service-list-tile.dart';
 import 'package:haweyati/src/ui/widgets/table-rows.dart';
 import 'package:haweyati/src/utils/navigator.dart';

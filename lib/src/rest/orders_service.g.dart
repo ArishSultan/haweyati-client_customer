@@ -54,6 +54,25 @@ class _OrdersService implements OrdersService {
   }
 
   @override
+  Future<void> processPayment(body) async {
+    ArgumentError.checkNotNull(body, 'body');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(body ?? <String, dynamic>{});
+    _data.removeWhere((k, v) => v == null);
+    await _dio.request<void>('/orders/process-payment',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'PATCH',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    return null;
+  }
+
+  @override
   Future<List<Order<OrderableProduct<Purchasable>>>> orders(
       {id, orderId}) async {
     const _extra = <String, dynamic>{};

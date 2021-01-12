@@ -19,10 +19,10 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
         return <Widget>[
           HeaderView(
             title: 'Service Details',
-            subtitle: loremIpsum.substring(0, 0),
+            subtitle: loremIpsum.substring(0, 80),
           ),
           DarkContainer(
-            padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
+            padding: const EdgeInsets.fromLTRB(20, 10, 10, 10),
             child: Column(
               children: [
                 Row(children: [
@@ -37,41 +37,25 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10),
-                      child: Text(
-                        _deliveryVehicle.name,
-                        style: TextStyle(
-                          color: Color(0xFF313F53),
-                          fontWeight: FontWeight.bold,
+                      child: ListTile(
+                        title: Text(
+                          _deliveryVehicle.name,
+                          style: TextStyle(
+                            color: Color(0xFF313F53),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        subtitle: Text(
+                         "Volumetric Weight:  " +  _deliveryVehicle.volumetricWeight.toString(),
+                          style: TextStyle(
+                            color: Color(0xFF313F53),
+                            fontSize: 12
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ]),
-                Table(
-                  textBaseline: TextBaseline.alphabetic,
-                  defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
-                  children: [
-                  TableRow(
-                      children: [
-                        Text("Min Weight",style: TextStyle(color: Colors.grey,fontSize: 13),),
-                        Text("Max Weight",style: TextStyle(color: Colors.grey,fontSize: 13),),
-                        Text("Min Volume",style: TextStyle(color: Colors.grey,fontSize: 13),),
-                        Text("Max Volume",style: TextStyle(color: Colors.grey,fontSize: 13),),
-                      ]
-                  ),
-                  TableRow(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top:8.0),
-                          child: Text(_deliveryVehicle.minWeight.toString(),textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: Color(0xFF313F53))),
-                        ),
-                        Text(_deliveryVehicle.maxWeight.toString(),textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: Color(0xFF313F53))),
-                        Text(_deliveryVehicle.minVolume.toString(),textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: Color(0xFF313F53))),
-                        Text(_deliveryVehicle.maxVolume.toString(),textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: Color(0xFF313F53))),
-                      ]
-                  ),
-                ],
-                )
               ],
             ),
           ),
@@ -84,10 +68,10 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
       },
       // allow: _item.pickUpLocation !=null && _order.location !=null,
       onContinue:  (order) async {
-        // if(_item.pickUpLocation == null || _order.location == null){
-        //  key.currentState.showSnackBar(SnackBar(content: Text("Please select pickup location.")));
-        //   return;
-        // }
+        if(_item.pickUpLocation == null || _order.location == null){
+         key.currentState.showSnackBar(SnackBar(content: Text("Please select pickup location.")));
+          return;
+        }
         order.clearProducts();
         showDialog(
           context: context,
@@ -102,6 +86,42 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
           'dropOffLng' : _order.location.longitude,
         });
         Navigator.pop(context);
+
+        final location = await showDialog(
+            context: context,
+            builder: (context) => ConfirmationDialog(
+              title: Text('Proceed'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DetailsTable([
+                    PriceRow(
+                      'Price',
+                      _rest.price,
+                    ),
+                    PriceRow(
+                      'Price per km',
+                      _item.product.deliveryCharges,
+                    ),
+                    TableRow(
+                        children: [
+                          Text("Distance",style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey,
+                            fontFamily: 'Lato',
+                            height: 1.9,
+                          ),),
+                          Text(_rest.distance.toString() + " km",textAlign: TextAlign.right,),
+                        ]
+                    )
+                  ]),
+                ],
+              ),
+            ));
+
+        if (location != true) return;
+
+
         _item.distance = _rest.distance;
         _order.addProduct(
           _item, _rest.price,
@@ -216,6 +236,21 @@ class DeliveryVehicleOrderConfirmationPage extends StatelessWidget {
             'Price',
             _order.subtotal,
           ),
+          PriceRow(
+            'Price per km',
+            holder.item.product.deliveryCharges,
+          ),
+          TableRow(
+            children: [
+              Text("Distance",style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey,
+                fontFamily: 'Lato',
+                height: 1.9,
+              ),),
+              Text(holder.item.distance.toString() + " km",textAlign: TextAlign.right,),
+            ]
+          )
         ]);
       }).toList(),
     );

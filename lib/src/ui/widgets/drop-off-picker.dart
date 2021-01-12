@@ -172,7 +172,7 @@ class _DropOffPickerState extends State<DropOffPicker> {
       ];
 
   _prepareFirstBuild() async {
-    final _slot = await TimeSlotsRest().getTimeSlotOf(widget.order.type);
+    _slot = await TimeSlotsRest().getTimeSlotOf(widget.order.type);
     final startTime = DateTime.now().add(Duration(hours: 12));
 
     print(_slot);
