@@ -16,6 +16,7 @@ class ProductDetailView extends StatelessWidget {
   final Widget bottom;
   final TextSpan price;
   final String shareLink;
+  final bool assetImage;
   final String description;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -29,6 +30,7 @@ class ProductDetailView extends StatelessWidget {
     this.shareLink,
     this.description,
     this.shareableData,
+    this.assetImage=false,
   });
 
   @override
@@ -68,8 +70,12 @@ class ProductDetailView extends StatelessWidget {
             SizedBox(
               height: 250,
               child: Center(
-                child: Image.network(
+                child: !assetImage ? Image.network(
                   HaweyatiService.resolveImage(image),
+                  height: 250,
+                  fit: BoxFit.cover,
+                ) : Image.asset(
+                  image,
                   height: 250,
                   fit: BoxFit.cover,
                 ),

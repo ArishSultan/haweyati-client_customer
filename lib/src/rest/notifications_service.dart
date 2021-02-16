@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:haweyati/src/rest/haweyati-service.dart';
+import 'package:haweyati_client_data_models/data.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -95,6 +98,7 @@ class NotificationsService {
       ..body = json['notification']['body']
       ..title = json['notification']['title'];
 
+
     return next(notification, null, _context);
   }
 
@@ -124,4 +128,105 @@ Future _saveNotification(Map<String, dynamic> json) async {
     // ));
     print('added');
   }
+
+
+
+}
+
+
+
+openNotificationDialog(BuildContext context, List<String> notification,[bool popTwoTimes=false]) {
+  showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text(notification[0]),
+        content: Column(
+          children: <Widget>[
+            Text(notification[1]),
+            Align(
+              alignment: Alignment.topRight,
+              child: MaterialButton(child: Text("Ok"),onPressed: (){
+                if(popTwoTimes){
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                }else {
+                  Navigator.pop(context);
+                }
+              },
+                minWidth: 0,
+              ),
+            ),
+          ],
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+        ),
+      )
+  );
+}
+
+
+class TempNotificationService{
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
+  void setup(BuildContext context){
+    firebaseCloudMessaging_Listeners(context);
+    updateProfileFcmToken();
+  }
+
+  Future<String> getToken() async {
+    return await _firebaseMessaging.getToken();
+  }
+
+
+  Future updateProfileFcmToken() async {
+    if(AppData().isAuthenticated)
+    return await HaweyatiService.patch('persons/update-token', {
+      '_id': AppData().user.profile.id,
+      'token': await getToken(),
+    });
+  }
+
+
+  List<String> transformNotificationMessage(Map<String, dynamic> message){
+    if (Platform.isAndroid) {
+      return [message['notification']['title'],message['notification']['body']];
+    } else if (Platform.isIOS) {
+      print(message['aps']['alert']['title']);
+      return [message['aps']['alert']['title'], message['aps']['alert']['body']];
+    }
+  }
+
+  void firebaseCloudMessaging_Listeners(BuildContext context) {
+    if (Platform.isIOS) iOS_Permission();
+
+    _firebaseMessaging.configure(
+//      onBackgroundMessage: myBackgroundMessageHandler,
+      onMessage: (Map<String, dynamic> message) async {
+        print('on message $message');
+        openNotificationDialog(context, transformNotificationMessage(message));
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('on resume $message');
+        openNotificationDialog(context,transformNotificationMessage(message));
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('on launch $message');
+        openNotificationDialog(context, transformNotificationMessage(message));
+      },
+//
+    );
+  }
+
+  void iOS_Permission() {
+    _firebaseMessaging.requestNotificationPermissions(
+        IosNotificationSettings(sound: true, badge: true, alert: true)
+    );
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings)
+    {
+      print("Settings registered: $settings");
+    });
+  }
+
 }

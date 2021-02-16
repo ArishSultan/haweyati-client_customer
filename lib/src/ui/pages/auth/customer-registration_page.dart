@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/routes.dart';
@@ -146,6 +147,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                         name: _name,
                         password: _password,
                         contact: widget.contact,
+                        deviceToken: await FirebaseMessaging().getToken()
                       )
                       ..location = AppData().location;
 
@@ -157,6 +159,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                           name: _name,
                           password: _password,
                           contact: widget.contact,
+                            deviceToken: await FirebaseMessaging().getToken()
                         )
                         ..location = AppData().location;
                       await AuthService.registerGuest(customer);

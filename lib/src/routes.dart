@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:haweyati/src/ui/pages/products/delivery-vehicle/delivery-vehicle_pages.dart';
+import 'package:haweyati/src/ui/pages/products/delivery-vehicle/delivery_vehicle_booking-map_page.dart';
 import 'package:haweyati_client_data_models/data.dart';
 
 import 'ui/pages/home_page.dart';
@@ -49,7 +50,8 @@ final routes = <String, Widget Function(BuildContext)>{
   DUMPSTERS_LIST_PAGE: (context) => DumpstersPage(),
 
   /// Delivery Vehicles Routes.
-  DELIVERY_VEHICLES_PAGE: (context) => DeliveryVehiclesPage(),
+  DELIVERY_VEHICLES_PAGE: (context) => DeliveryVehicleMapPage(),
+  // DELIVERY_VEHICLES_PAGE: (context) => DeliveryVehiclesPage(),
 
   /// Scaffolding Routes.
   SCAFFOLDINGS_LIST_PAGE: (context) => SingleScaffoldingsPage(),
@@ -62,7 +64,7 @@ final routes = <String, Widget Function(BuildContext)>{
   BUILDING_MATERIALS_LIST_PAGE: (context) => BuildingMaterialCategoriesPage(),
   
   /// Finishing Material Routes.
-  FINISHING_MATERIALS_LIST_PAGE: (context) => FinishingMaterialCategoriesPage(),
+  FINISHING_MATERIALS_LIST_PAGE: (context) => FinishingMaterialShops(),
   
   /// Miscellaneous Routes.
   ///

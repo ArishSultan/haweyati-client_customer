@@ -2,7 +2,8 @@ part of 'finishing-material_pages.dart';
 
 class FinishingMaterialServiceDetailPage extends StatefulWidget {
   final FinishingMaterial item;
-  FinishingMaterialServiceDetailPage(this.item);
+  final Supplier supplier;
+  FinishingMaterialServiceDetailPage(this.item,this.supplier);
 
   @override
   _FinishingMaterialServiceDetailPageState createState() =>
@@ -13,7 +14,7 @@ class _FinishingMaterialServiceDetailPageState
     extends State<FinishingMaterialServiceDetailPage> {
   final _order = Order<FinishingMaterialOrderable>(OrderType.finishingMaterial);
   final _item = FinishingMaterialOrderable();
-
+  Map<String,dynamic> selectedVariantObj = {};
   final _selectedVariants = <String, String>{};
   final _availableVariants = <String, List<String>>{};
 
@@ -32,8 +33,8 @@ class _FinishingMaterialServiceDetailPageState
 
       final element = widget.item.variants?.firstWhere((element) {
         for (final key in element.keys) {
-          if (key == 'price' || key == 'volume' || key == 'weight') continue;
-
+          if (key == 'price' || key =='cbmWidth' || key == 'volumetricWeight' ||
+              key == 'cbmLength' || key == 'cbmHeight') continue;
           if (_selectedVariants[key] != element[key]) return false;
         }
 
@@ -41,11 +42,10 @@ class _FinishingMaterialServiceDetailPageState
       }, orElse: () => null);
 
       if (element != null) {
-        print("1 assigned");
+        selectedVariantObj = element;
         _item.price = double.tryParse(element['price']) ?? 0.0;
       }
     } else {
-      print("1 assigned");
       _item.price = widget.item.price;
     }
 
@@ -138,9 +138,9 @@ class _FinishingMaterialServiceDetailPageState
           ? () {
               _order.clearProducts();
 
-              _item.variants = _selectedVariants;
+              _item.variants = selectedVariantObj;
               _order.addProduct(_item, _item.price * _item.qty);
-
+              _order.supplier = widget.supplier;
               navigateTo(
                   context, FinishingMaterialOrderConfirmationPage(_order));
             }
@@ -197,7 +197,8 @@ class _FinishingMaterialServiceDetailPageState
 
     final element = widget.item.variants?.firstWhere((element) {
       for (final key in element.keys) {
-        if (key == 'price' || key == 'volume' || key == 'weight') continue;
+        if (key == 'price' || key =='cbmWidth' || key == 'volumetricWeight' ||
+            key == 'cbmLength' || key == 'cbmHeight') continue;
 
         if (_selectedVariants[key] != element[key]) return false;
       }
@@ -206,6 +207,7 @@ class _FinishingMaterialServiceDetailPageState
     }, orElse: () => null);
 
     if (element != null) {
+      selectedVariantObj = element;
       _item.price = double.tryParse(element['price']) ?? 0.0;
     }
 
@@ -228,7 +230,7 @@ class FinishingMaterialOrderConfirmationPage extends StatelessWidget {
           title: holder.item.product.name,
           image: holder.item.product.image.name,
           table: DetailsTable([
-            ..._buildVariants(holder.item.variants),
+            ...buildVariants(holder.item.variants),
             DetailRow('Quantity', lang.nPieces(holder.item.qty), false),
             PriceRow('Price', holder.item.price),
             DetailRow('', ''),
@@ -240,27 +242,4 @@ class FinishingMaterialOrderConfirmationPage extends StatelessWidget {
     );
   }
 
-  static _buildVariants(Map<String, dynamic> variants) {
-    final list = [];
-
-    variants.forEach((key, value) {
-      list.add(TableRow(children: [
-        Text(
-          key,
-          style: TextStyle(
-            height: 1.6,
-            fontSize: 13,
-            color: Colors.grey,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(color: Color(0xFF313F53)),
-          textAlign: TextAlign.right,
-        )
-      ]));
-    });
-
-    return list;
-  }
 }

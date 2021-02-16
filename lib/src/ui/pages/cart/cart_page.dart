@@ -1,5 +1,6 @@
 import 'package:haweyati/src/ui/widgets/cart/cart-item.dart';
 import 'package:haweyati_client_data_models/data.dart';
+import 'package:haweyati_client_data_models/models/user/supplier_model.dart';
 
 import 'cart-order_page.dart';
 import 'package:hive/hive.dart';
@@ -113,4 +114,5 @@ class _CartPageState extends State<CartPage> {
 
     return (await Future.wait(getProducts())).toList();
   }
+
 }

@@ -21,7 +21,11 @@ class OrderPlacedPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => Future.value(false),
+      onWillPop: () async {
+        Navigator.of(context).popUntil((route) => false);
+        Navigator.of(context).pushNamed(HOME_PAGE);
+        return false;
+      },
       child: NoScrollView(
         appBar: HaweyatiAppBar(
           allowBack: false,
@@ -70,7 +74,7 @@ class OrderPlacedPage extends StatelessWidget {
                 FlatActionButton(
                     label: 'Register as Customer',
                     onPressed: () {
-                      Navigator.of(context).popUntil((route) => false);
+                      // Navigator.of(context).popUntil((route) => false);
                       navigateTo(context, CustomerRegistration(
                         contact: AppData().user.profile.username,
                         profile: AppData().user.profile,

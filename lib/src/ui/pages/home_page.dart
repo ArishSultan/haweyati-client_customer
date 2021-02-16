@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
+import 'package:haweyati/src/rest/notifications_service.dart';
 import 'package:haweyati/src/services/dynamic-links_service.dart';
 import 'package:haweyati/src/ui/widgets/rating-bar.dart';
 import 'package:hive/hive.dart';
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
     //Todo: Commenting dynamics link temporarily
     // DynamicLinksService.initiate(context);
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
+    TempNotificationService().setup(context);
   }
 
   @override
@@ -266,6 +268,8 @@ class _HomePageState extends State<HomePage> {
                             onPressed: () async {
                               await (Navigator.of(context)..pop())
                                   .pushNamed(SIGN_IN_PAGE);
+                              print("Is Guest");
+                              print(_appData.user.profile.isGuest);
                               if (_appData.isAuthenticated &&
                                   !_appData.user.profile.isGuest) {
                                 setState(() {});

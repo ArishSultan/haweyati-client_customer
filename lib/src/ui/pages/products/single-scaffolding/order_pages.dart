@@ -24,8 +24,8 @@ class SingleScaffoldingSelectionPage extends StatelessWidget {
             child: Row(children: [
               Padding(
                 padding: const EdgeInsets.only(right: 20),
-                child: Image.network(
-                  HaweyatiService.resolveImage("6af31fbbec4b8a614867f206833cd21a"),
+                child: Image.asset(
+                  "assets/images/singleScaffolding.png",
                   width: 50,
                   height: 50,
                 ),
@@ -198,53 +198,46 @@ class _MeshSelectorState extends State<MeshSelector> {
   Widget build(BuildContext context) {
     return  Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        Wrap(
             children: [
-              Expanded(
-                child: RadioListTile(
-                    title: Text("None"),
-                    value: null,
-                    dense: true,
-                    groupValue: selectedMesh,
-                    onChanged: (String val) {
-                      setState(() {
-                        selectedMesh=val;
-                      });
-                        widget.onMeshTypeChanged(null);
-                        widget.onQuantityChanged(null);
-                    }
-                ),
+              RadioListTile(
+                  title: Text("None"),
+                  value: null,
+                  dense: true,
+                  groupValue: selectedMesh,
+                  onChanged: (String val) {
+                    setState(() {
+                      selectedMesh=val;
+                    });
+                      widget.onMeshTypeChanged(null);
+                      widget.onQuantityChanged(null);
+                  }
               ),
-          Expanded(
-            child: RadioListTile(
-              title: Text("Half"),
-                dense: true,
-                subtitle: Text("(${widget.item.pricing.first.mesh.half} SAR)"),
-                value: 'half',
+          RadioListTile(
+            title: Text("Half"),
+              dense: true,
+              subtitle: Text("(${widget.item.pricing.first.mesh.half} SAR)"),
+              value: 'half',
+            groupValue: selectedMesh,
+            onChanged: (String val) {
+              setState(() {
+                selectedMesh=val;
+                widget.onMeshTypeChanged(val);
+              });
+            }
+          ),
+          RadioListTile(
+              title: Text("Full"),
+              dense: true,
+              subtitle: Text("(${widget.item.pricing.first.mesh.full} SAR)"),
               groupValue: selectedMesh,
+              value: 'full',
               onChanged: (String val) {
                 setState(() {
                   selectedMesh=val;
                   widget.onMeshTypeChanged(val);
                 });
               }
-            ),
-          ),
-          Expanded(
-            child: RadioListTile(
-                title: Text("Full"),
-                dense: true,
-                subtitle: Text("(${widget.item.pricing.first.mesh.full} SAR)"),
-                groupValue: selectedMesh,
-                value: 'full',
-                onChanged: (String val) {
-                  setState(() {
-                    selectedMesh=val;
-                    widget.onMeshTypeChanged(val);
-                  });
-                }
-            ),
           ),
         ]),
         if(selectedMesh != null)  Padding(
@@ -354,7 +347,8 @@ class SingleScaffoldingOrderConfirmationPage extends StatelessWidget {
       itemsBuilder: (lang, order) => order.products.map((holder) {
         return OrderConfirmationItem(
           title: holder.item.product.type,
-          image: "6af31fbbec4b8a614867f206833cd21a",
+          assetImage: true,
+          image: "assets/images/singleScaffolding.png",
           table: DetailsTableAlt([
             'Price',
             'Quantity',

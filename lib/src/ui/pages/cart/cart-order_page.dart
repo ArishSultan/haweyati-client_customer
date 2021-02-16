@@ -10,6 +10,8 @@ import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/pages/products/finishing-material/finishing-material_pages.dart';
+import 'package:haweyati_client_data_models/models/user/supplier_model.dart';
+import 'package:hive/hive.dart';
 
 class CartOrderPage extends StatefulWidget {
   CartOrderPage(this._items);
@@ -21,6 +23,11 @@ class CartOrderPage extends StatefulWidget {
 
 class _CartOrderPageState extends State<CartOrderPage> {
   final _count = ValueNotifier(0);
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,13 +78,19 @@ class _CartOrderPageState extends State<CartOrderPage> {
     );
   }
 
-  _proceed() {
-    final order = Order(OrderType.finishingMaterial);
+  _proceed() async {
+    final order = Order<FinishingMaterialOrderable>(OrderType.finishingMaterial);
 
+    Box<Supplier> box = await Hive.openBox('supplier');
+    order.supplier =box.getAt(0);
+    await box.close();
+    print(widget._items.where((element) => element.qty > 0).toList().map((e) =>
+    e.variants == null || e?.variants?.isEmpty ? e.price : e.variants['price']).toList());
     widget._items.where((element) => element.qty > 0).forEach(
         (element) => order.addProduct(element, element.qty * element.price));
     navigateTo(context, FinishingMaterialOrderConfirmationPage(order, true));
   }
+
 }
 
 class _CartOrderItem extends StatefulWidget {
@@ -101,7 +114,10 @@ class _CartOrderItem extends StatefulWidget {
 class __CartOrderItemState extends State<_CartOrderItem> {
   @override
   Widget build(BuildContext context) {
+    print("Temp test");
+    print(widget.item.price);
     widget.item.price = widget.product.price = widget.product.price;
+    print(widget.item.price);
 
     return DarkContainer(
       margin: const EdgeInsets.only(bottom: 15),
@@ -111,7 +127,7 @@ class __CartOrderItemState extends State<_CartOrderItem> {
 }
 
 class __CartOrderItemWithVariantsState extends State<_CartOrderItem> {
-  bool _expanded = false;
+  var _expanded = false;
   final _selectedVariant = <String, dynamic>{};
 
   @override
@@ -125,9 +141,11 @@ class __CartOrderItemWithVariantsState extends State<_CartOrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    widget.item.variants = _selectedVariant;
-    widget.item.price =
-        widget.product.price = widget.product.variantPrice(_selectedVariant);
+    final variant = widget.product.variant(_selectedVariant);
+    widget.item.variants = variant.second;
+    widget.item.price = variant.first;
+    widget.item.product.price = variant.first;
+    print(widget.item.variants);
 
     return DarkContainer(
       child: Wrap(children: [

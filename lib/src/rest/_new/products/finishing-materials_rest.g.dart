@@ -9,7 +9,7 @@ part of 'finishing-materials_rest.dart';
 class _FinishingMaterialsRest implements FinishingMaterialsRest {
   _FinishingMaterialsRest(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.18.4:4000';
+    baseUrl ??= 'http://192.168.100.205:4000';
   }
 
   final Dio _dio;
@@ -62,12 +62,13 @@ class _FinishingMaterialsRest implements FinishingMaterialsRest {
   }
 
   @override
-  Future<List<FinishingMaterialBase>> getCategories() async {
+  Future<List<FinishingMaterialBase>> getCategories(supplier) async {
+    ArgumentError.checkNotNull(supplier, 'supplier');
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<List<dynamic>>(
-        '/finishing-material-category',
+        '/finishing-materials/categories-supplier/$supplier',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -78,6 +79,32 @@ class _FinishingMaterialsRest implements FinishingMaterialsRest {
     var value = _result.data
         .map((dynamic i) =>
             FinishingMaterialBase.fromJson(i as Map<String, dynamic>))
+        .toList();
+    return value;
+  }
+
+  @override
+  Future<List<Supplier>> getShops(city, lat, lng) async {
+    ArgumentError.checkNotNull(city, 'city');
+    ArgumentError.checkNotNull(lat, 'lat');
+    ArgumentError.checkNotNull(lng, 'lng');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'city': city,
+      r'lat': lat,
+      r'lng': lng
+    };
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<List<dynamic>>('/suppliers/fm-suppliers',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    var value = _result.data
+        .map((dynamic i) => Supplier.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }

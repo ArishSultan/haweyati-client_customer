@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
+import 'package:haweyati/src/rest/_new/_config.dart';
 import 'package:haweyati/src/rest/_new/auth_service.dart';
+import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/rest/orders_service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/order/unable-to-place-order_dialog.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
@@ -19,6 +21,7 @@ import 'package:haweyati/src/ui/widgets/table-rows.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati/src/utils/phone-verification.dart';
 import 'package:haweyati_client_data_models/data.dart';
+import 'package:hive/hive.dart';
 
 import 'header_view.dart';
 import 'order-location_view.dart';
@@ -113,8 +116,7 @@ class OrderConfirmationView<T extends OrderableProduct>
           if (location != true) return;
 
           if (order.payment == null) {
-            print(order.type);
-            if(order.type != OrderType.scaffolding && order.type != OrderType.buildingMaterial){
+            if(order.type != OrderType.scaffolding && order.type != OrderType.buildingMaterial && order.type != OrderType.finishingMaterial){
               final result = await selectPayment(context, order.total);
               if (result == null) {
                 _scaffoldKey.currentState
@@ -139,7 +141,9 @@ class OrderConfirmationView<T extends OrderableProduct>
 
               var verify;
               if(guestPhone !=null || guestPhone.isNotEmpty)
-                verify = await verifyPhoneNumber(context, guestPhone);
+                //TODO
+                verify = true;
+                // verify = await verifyPhoneNumber(context, guestPhone);
               else
                 verify = await getVerifiedPhoneNumber(context);
 
@@ -153,7 +157,9 @@ class OrderConfirmationView<T extends OrderableProduct>
               order.customer = _appData.user;
             } else {
               if (order.paymentType == 'COD') {
-                final verify = await verifyPhoneNumber(context,AppData().user.profile.contact);
+                //TODO
+                // final verify = await verifyPhoneNumber(context,AppData().user.profile.contact);
+                final verify = true;
                 if(verify == null) {
                   Navigator.pop(context);
                   return;
@@ -175,11 +181,14 @@ class OrderConfirmationView<T extends OrderableProduct>
             await AuthService.prepareForRegistration(context, number);
 
             if (result[0] == CustomerRegistrationType.new_) {
-              final verify = await verifyPhoneNumber(context, number);
+              //TODO
+              final verify = true;
+              // final verify = await verifyPhoneNumber(context, number);
               if (verify == null) {
                 _scaffoldKey.currentState.showSnackBar(SnackBar(
                     content: Text('Phone Number not verified')
                 ));
+                Navigator.pop(context);
                 return;
               }
 
@@ -197,7 +206,9 @@ class OrderConfirmationView<T extends OrderableProduct>
               AppData().user = _guest;
               order.customer = _guest;
             } else if (result[0] == CustomerRegistrationType.fromGuest) {
-              final verify = await verifyPhoneNumber(context, number);
+              final verify = true;
+              //TODO
+              // final verify = await verifyPhoneNumber(context, number);
               if (verify == null) {
                 Navigator.pop(context);
                 _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -220,6 +231,8 @@ class OrderConfirmationView<T extends OrderableProduct>
               if (_appData.isAuthenticated) {
                 order.customer = _appData.user;
               } else {
+                print("cancelled sign in");
+                Navigator.of(context).pop();
                 return;
               }
             }
@@ -234,24 +247,20 @@ class OrderConfirmationView<T extends OrderableProduct>
 
           Order _order;
           try {
-            // print(order.customer);
-            _order = await OrdersService().placeOrder(order);
-
-            // _order.images = [];
-            // for (final image in order.images) {
-            //   print(_order.id);
-            //   _order.images.add(OrderImage(
-            //     sort: 'loc',
-            //     name: await _service.addImage(
-            //       _order.id,
-            //       image.sort,
-            //       image.name,
-            //     ),
-            //   ));
-            // }
-
+          _order = await OrdersService().placeOrder(order);
+            await Hive.openBox('supplier').then((value) async {
+             await value.clear();
+             await value.close();
+            });
+            if(order.image !=null)
+            await HaweyatiService.patch('orders/add-image', FormData.fromMap({
+              'id': _order.id,
+              'image' :  await MultipartFile.fromFile(order.image.path),
+              'sort' : 'customer'
+            }));
             Navigator.of(context).pop();
           } catch (e) {
+            print(e);
             if(Navigator.canPop(context))
             Navigator.of(context).pop();
 
@@ -260,6 +269,7 @@ class OrderConfirmationView<T extends OrderableProduct>
               barrierDismissible: false,
               builder: (context) => UnableToPlaceOrderDialog(e),
             );
+            return;
             throw e;
           }
 

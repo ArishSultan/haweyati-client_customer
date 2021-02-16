@@ -2,12 +2,14 @@ part of 'delivery-vehicle_pages.dart';
 
 class DeliveryVehicleSelectionPage extends StatelessWidget {
   final DeliveryVehicle _deliveryVehicle;
+  final Location pickUp;
 
   final _item = DeliveryVehicleOrderable();
   final _order = Order<DeliveryVehicleOrderable>(OrderType.deliveryVehicle);
   final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
-  DeliveryVehicleSelectionPage(this._deliveryVehicle) {
+  DeliveryVehicleSelectionPage(this._deliveryVehicle,this.pickUp) {
     _item.product = _deliveryVehicle;
+    _item.pickUpLocation = pickUp;
   }
 
   @override
@@ -46,7 +48,7 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
                           ),
                         ),
                         subtitle: Text(
-                         "Volumetric Weight:  " +  _deliveryVehicle.volumetricWeight.toString(),
+                         "Weight:  " +  _deliveryVehicle.volumetricWeight.toString(),
                           style: TextStyle(
                             color: Color(0xFF313F53),
                             fontSize: 12
@@ -68,8 +70,9 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
       },
       // allow: _item.pickUpLocation !=null && _order.location !=null,
       onContinue:  (order) async {
-        if(_item.pickUpLocation == null || _order.location == null){
-         key.currentState.showSnackBar(SnackBar(content: Text("Please select pickup location.")));
+        if(_order.location == null){
+          showDialog(context: context,builder: (ctx)=> AlertDialog(
+              content:Text("Please select drop-off location.")));
           return;
         }
         order.clearProducts();
@@ -126,7 +129,7 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
         _order.addProduct(
           _item, _rest.price,
         );
-        navigateTo(context, DeliveryVehicleOrderTimeAndLocationPage(_order));
+        navigateTo(context, DeliveryVehicleOrderConfirmationPage(_order));
       },
     );
   }
@@ -170,7 +173,12 @@ class _DeliveryVehicleOrderTimeAndLocationPageState
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 40),
-            child: ImagePickerWidget(),
+            child: ImagePickerWidget(
+                onImagePicked: (PickedFile file){
+                order.addImage(File(file.path));
+            },
+              onImageDeleted: ()=> order.removeImage(),
+            ),
           ),
           SimpleForm(
             key: _formKey,
@@ -204,7 +212,6 @@ class DeliveryVehicleOrderConfirmationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(_order.total);
     return OrderConfirmationView<DeliveryVehicleOrderable>(
       order: _order,
       itemsBuilder: (lang, order) => order.products.map((holder) {
@@ -214,11 +221,9 @@ class DeliveryVehicleOrderConfirmationPage extends StatelessWidget {
           table: DetailsTableAlt([
             'Price',
             'Quantity',
-            'Days'
           ], [
-            '${holder.subtotal} SAR',
+            '${holder.subtotal.toStringAsFixed(2)} SAR',
             lang.nPieces(holder.item.qty),
-            "1"
           ], [
             2,
             1,

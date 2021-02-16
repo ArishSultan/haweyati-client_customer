@@ -19,6 +19,9 @@ import 'package:haweyati/src/ui/widgets/table-rows.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati_client_data_models/models/shareable-data_model.dart';
+import 'package:haweyati_client_data_models/models/user/supplier_model.dart';
+import 'package:haweyati_client_data_models/widgets/variants-tablerow.dart';
+import 'package:hive/hive.dart';
 
 part 'detail_pages.dart';
 part 'order_pages.dart';

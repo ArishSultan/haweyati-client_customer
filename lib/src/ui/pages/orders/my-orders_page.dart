@@ -2,6 +2,8 @@ import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/rest/orders_service.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati_client_data_models/data.dart';
+import 'package:haweyati_client_data_models/models/order/products/delivery-vehicle_orderable.dart';
+import 'package:haweyati_client_data_models/models/order/products/single-scaffolding_orderable.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -105,7 +107,7 @@ class _OrderListTile extends StatelessWidget {
             ),
             Spacer(),
             RichPriceText(
-              price: order.total,
+              price: order.totalWithoutVat,
               fontWeight: FontWeight.bold,
             ),
           ]),
@@ -130,7 +132,31 @@ class _OrderStatus extends Container {
         );
 
   static Color _color(OrderStatus status) {
+    switch(status){
+      case OrderStatus.canceled:
+        return Colors.red;
+        break;
+      case OrderStatus.pending:
+        return Colors.black;
+        break;
+      case OrderStatus.accepted:
+        return Colors.green;
+        break;
+      case OrderStatus.preparing:
+        return Colors.green;
+        break;
+      case OrderStatus.dispatched:
+        return Colors.green;
+        break;
+      case OrderStatus.delivered:
+        return Colors.green;
+        break;
+      case OrderStatus.rejected:
+        return Colors.green;
+        break;
+    }
     return Colors.red;
+
     // switch (status) {
     //   case OrderStatus.dispatched:
     //   case OrderStatus.active:
@@ -197,22 +223,32 @@ class OrderItemTile extends StatelessWidget {
     int qty = 1;
     String title;
     String imageUrl;
+    String imagePath;
 
     if (holder.item is DumpsterOrderable) {
       final item = holder.item as DumpsterOrderable;
-
       qty = item.qty;
       title = '${item.product?.size} Yards';
       imageUrl = item.product.image.name;
     } else if (holder.item is BuildingMaterialOrderable) {
       final item = holder.item as BuildingMaterialOrderable;
-
       qty = item.qty;
       title = item.product?.name;
       imageUrl = item.product?.image?.name;
     } else if (holder.item is FinishingMaterialOrderable) {
       final item = holder.item as FinishingMaterialOrderable;
-
+      qty = item.qty;
+      title = item.product.name;
+      imageUrl = item.product.image.name;
+    }
+    else if (holder.item is SingleScaffoldingOrderable) {
+      final item = holder.item as SingleScaffoldingOrderable;
+      qty = item.qty;
+      title = item.product.type;
+      imagePath = 'assets/images/singleScaffolding.png';
+    }
+    else if (holder.item is DeliveryVehicleOrderable) {
+      final item = holder.item as DeliveryVehicleOrderable;
       qty = item.qty;
       title = item.product.name;
       imageUrl = item.product.image.name;
@@ -233,8 +269,9 @@ class OrderItemTile extends StatelessWidget {
             )
           ],
           image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(HaweyatiService.resolveImage(imageUrl)),
+            fit: BoxFit.contain,
+            image: imagePath == null ? NetworkImage(HaweyatiService.resolveImage(imageUrl))
+            :  AssetImage(imagePath),
           ),
         ),
       ),

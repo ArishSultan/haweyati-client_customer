@@ -9,7 +9,7 @@ part of 'auth_service.dart';
 class __AuthService implements _AuthService {
   __AuthService(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.18.4:4000';
+    baseUrl ??= 'http://192.168.100.205:4000';
   }
 
   final Dio _dio;

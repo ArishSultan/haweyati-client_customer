@@ -1,7 +1,6 @@
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:retrofit/http.dart';
-
 import '_config.dart';
 
 part 'time-slots_rest.g.dart';

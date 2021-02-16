@@ -5,6 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/rest/_new/products/delivery-vehicle_rest.dart';
+import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
+import 'package:haweyati/src/utils/navigator.dart';
+import 'package:haweyati/src/utils/simple-future-builder.dart';
+import 'package:haweyati_client_data_models/models/order/vehicle-type.dart';
+import 'package:haweyati_client_data_models/models/products/delivery-vehicle_model.dart';
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_webservice/places.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
@@ -17,83 +23,15 @@ import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 
-const apiKey = 'AIzaSyDdNpY6LGWgHqRfTRZsKkVhocYOaER325w';
+import 'delivery-vehicle_pages.dart';
+import 'select-vehicle_page.dart';
 
-/// These are the coordinates of Saudi Arabia
-const mapBounds = const [
-  const LatLng(28.15730, 34.63000),
-  const LatLng(29.36180, 34.95420),
-  const LatLng(29.18890, 36.06910),
-  const LatLng(29.50000, 36.50440),
-  const LatLng(29.86850, 36.75350),
-  const LatLng(30.01000, 37.49990),
-  const LatLng(30.33260, 37.66550),
-  const LatLng(30.50070, 37.99690),
-  const LatLng(31.50004, 37.00030),
-  const LatLng(31.99830, 38.99570),
-  const LatLng(32.15630, 39.19760),
-  const LatLng(31.94810, 40.41340),
-  const LatLng(31.37320, 41.44090),
-  const LatLng(31.11170, 42.08560),
-  const LatLng(29.19850, 44.72190),
-  const LatLng(29.06120, 46.42600),
-  const LatLng(29.10110, 46.55300),
-  const LatLng(29.00050, 47.46620),
-  const LatLng(28.56120, 47.75130),
-  const LatLng(28.57840, 48.56990),
-  const LatLng(27.57450, 48.80290),
-  const LatLng(27.23320, 49.23130),
-  const LatLng(26.84180, 49.81000),
-  const LatLng(26.44000, 50.17000),
-  const LatLng(25.88000, 50.05000),
-  const LatLng(25.62900, 50.18210),
-  const LatLng(25.38800, 50.46300),
-  const LatLng(24.78680, 50.71800),
-  const LatLng(24.44700, 51.08000),
-  const LatLng(24.50000, 51.31700),
-  const LatLng(24.58100, 51.39900),
-  const LatLng(24.39430, 51.27900),
-  const LatLng(24.27050, 51.26600),
-  const LatLng(24.31200, 51.42300),
-  const LatLng(24.24800, 51.52000),
-  const LatLng(24.27800, 51.74000),
-  const LatLng(24.24820, 51.58140),
-  const LatLng(24.15400, 51.58600),
-  const LatLng(24.10600, 51.59200),
-  const LatLng(22.93400, 52.57700),
-  const LatLng(22.62900, 55.13100),
-  const LatLng(22.70000, 55.20400),
-  const LatLng(22.00200, 55.64900),
-  const LatLng(19.99990, 55.00000),
-  const LatLng(19.02000, 51.97000),
-  const LatLng(18.82000, 50.77000),
-  const LatLng(18.66000, 49.11000),
-  const LatLng(18.21000, 48.17200),
-  const LatLng(17.48000, 47.56000),
-  const LatLng(17.14000, 47.45000),
-  const LatLng(16.97000, 47.17000),
-  const LatLng(16.97000, 47.00800),
-  const LatLng(17.31000, 46.76000),
-  const LatLng(17.25700, 46.36000),
-  const LatLng(17.35200, 45.40900),
-  const LatLng(17.45700, 45.22000),
-  const LatLng(17.38100, 43.68400),
-  const LatLng(17.56420, 43.33790),
-  const LatLng(15.86480, 43.10200),
-  const LatLng(21.24660, 38.98830),
-  const LatLng(28.15730, 34.63000)
-];
-
-class LocationPickerMapPage extends StatefulWidget {
-  final LatLng coordinates;
-
-  LocationPickerMapPage([this.coordinates]);
-
+class DeliveryVehicleMapPage extends StatefulWidget {
   @override
-  _LocationPickerMapPageState createState() => _LocationPickerMapPageState();
+  _DeliveryVehicleMapPageState createState() => _DeliveryVehicleMapPageState();
 }
 
-class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
+class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
   Address _address;
   LatLng _location;
   bool _initiated = false;
@@ -101,12 +39,14 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
 
   final _utils = _MapUtilsImpl();
   final _markers = Set<Marker>();
-
+  Future<List<DeliveryVehicle>> vehicleTypes;
+  var _rest = DeliveryVehicleRest();
+  DeliveryVehicle selectedVehicle;
   @override
   void initState() {
     super.initState();
-
-    _location = widget.coordinates ?? l.AppData().coordinates;
+    _location = l.AppData().coordinates;
+    vehicleTypes = _rest.get();
   }
 
   @override
@@ -189,15 +129,26 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
         ),
         body: _resolveMap(),
         bottom: RaisedActionButton(
-          label: lang.setYourLocation,
-          onPressed: (_location != null && _initiated)
+          label: 'Confirm Pickup',
+          onPressed: (_location != null && _initiated && selectedVehicle!=null)
               ? () {
-                  Navigator.of(context).pop(l.Location(
-                    city: _address.locality,
-                    address: _address.addressLine,
-                    latitude: _location.latitude,
-                    longitude: _location.longitude,
-                  ));
+            navigateTo(context, DeliveryVehicleSelectionPage(
+                selectedVehicle,
+                l.Location(
+                  city : _address.locality,
+                  address : _address.addressLine,
+                  latitude : _location.latitude,
+                  longitude : _location.longitude,
+                )
+            ));
+
+                  // Navigator.of(context).pop(l.Location(
+                  //   city: _address.locality,
+                  //   address: _address.addressLine,
+                  //   latitude: _location.latitude,
+                  //   longitude: _location.longitude,
+                  // ));
+                  //
                 }
               : null,
         ),
@@ -230,7 +181,7 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
         ),
         Positioned(
           right: 15,
-          bottom: 15,
+          bottom: 65,
           child: Container(
             width: 35,
             height: 35,
@@ -251,6 +202,57 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
               child: Image.asset(MyLocationIcon, width: 24),
             ),
           ),
+        ),
+        Positioned(
+          right: 15,
+          bottom: 5,
+          left: 15,
+          child: SimpleFutureBuilder.simpler(
+              context: context,
+              future: vehicleTypes,
+              builder: (AsyncSnapshot<List<DeliveryVehicle>> vehicles) {
+               return InkWell(
+                 onTap: () async {
+                DeliveryVehicle _vehicle = await showModalBottomSheet(context: context, builder: (context){
+                     return SelectVehicle(vehicles.data,selectedVehicle);
+                   });
+                   if(_vehicle!=null) setState(() =>selectedVehicle = _vehicle);
+                 },
+                 child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 25.0),
+                            child: Image.asset(
+                              TruckIcon,
+                              scale: 4,
+                            ),
+                          ),
+                          Expanded(child: Container()),
+                          Text(
+                           selectedVehicle == null ? 'Choose Vehicle Type': selectedVehicle.name ,
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          Expanded(child: Container()),
+                          Expanded(child: Container()),
+                          Icon(
+                            Icons.arrow_drop_down,
+                            color: Theme.of(context).primaryColor,
+                            size: 30,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+               );
+              }),
         )
       ]);
     } else {

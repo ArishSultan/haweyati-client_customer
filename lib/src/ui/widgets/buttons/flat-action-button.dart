@@ -5,16 +5,18 @@ class FlatActionButton extends StatelessWidget {
   final Widget icon;
   final String label;
   final Function onPressed;
+  final EdgeInsets padding;
 
   FlatActionButton({
     @required this.label,
+    this.padding = const EdgeInsets.fromLTRB(20, 0, 20, 20),
     this.icon, this.onPressed
   }): assert(label != null);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      padding: padding,
       child: ConstrainedBox(
         constraints: const BoxConstraints.expand(height: 40),
         child: FlatButton(

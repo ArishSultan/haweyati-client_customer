@@ -14,7 +14,7 @@ class DeliveryVehiclesPage extends StatelessWidget {
         builder: (context, data) => ProductListTile(
           name: data.name,
           image: data.image.name,
-          onTap: () => navigateTo(context, DeliveryVehicleSelectionPage(data)),
+          // onTap: () => navigateTo(context, DeliveryVehicleSelectionPage(data)),
         ),
       ),
     );

@@ -9,7 +9,7 @@ part of 'dumpsters_rest.dart';
 class _DumpstersRest implements DumpstersRest {
   _DumpstersRest(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.18.4:4000';
+    baseUrl ??= 'http://192.168.100.205:4000';
   }
 
   final Dio _dio;

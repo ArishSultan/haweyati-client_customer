@@ -93,9 +93,9 @@ flutter:
       fonts:
         - asset: assets/fonts/Helvetica.ttf
 
-flutter_native_splash:
-  image: assets/images/haweyati_logo.png
-  color: "ffffff"
-  fill: false
-  android_disable_fullscreen: true
+#flutter_native_splash:
+#  image: assets/images/haweyati_logo.png
+#  color: "ffffff"
+#  fill: true
+#  android_disable_fullscreen: true
 

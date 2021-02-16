@@ -22,6 +22,8 @@ import 'package:haweyati/src/utils/phone-verification.dart';
 import 'package:haweyati_client_data_models/data.dart';
 
 class SignInPage extends StatefulWidget {
+  final String phone;
+  SignInPage({this.phone});
   @override
   _SignInPageState createState() => _SignInPageState();
 }
@@ -30,6 +32,19 @@ class _SignInPageState extends State<SignInPage> {
   final _data = SignInRequest();
   final _key = GlobalKey<SimpleFormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.phone!=null)
+      _data.username = widget.phone;
+
+    print(widget.phone);
+    print(_data.username);
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +109,7 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                   ContactInputField((value, status) {
                     _data.username = value;
-                  }),
+                  },widget.phone),
                   Padding(
                     padding: const EdgeInsets.only(top: 15, bottom: 15),
                     child: HaweyatiPasswordField(

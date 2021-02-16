@@ -156,7 +156,12 @@ class _DumpsterOrderTimeAndLocationPageState
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: 40),
-            child: ImagePickerWidget(),
+            child: ImagePickerWidget(
+              onImagePicked: (PickedFile file){
+                order.addImage(File(file.path));
+              },
+              onImageDeleted: ()=> order.removeImage(),
+            ),
           ),
           SimpleForm(
             key: _formKey,

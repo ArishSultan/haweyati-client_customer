@@ -111,10 +111,18 @@ class _BuildingMaterialTimeAndLocationPageState
         ),
         OrderLocationPicker(order),
         Padding(
-          padding: const EdgeInsets.only(top: 20, bottom: 40),
+          padding: const EdgeInsets.only(top: 20, bottom: 20),
           child: DropOffPicker(order, () => setState(() => _allow = true)),
         ),
-        // ImagePickerWidget()
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: ImagePickerWidget(
+            onImagePicked: (PickedFile file){
+              order.addImage(File(file.path));
+            },
+            onImageDeleted: ()=> order.removeImage(),
+          ),
+        ),
         Form(
           key: _formKey,
           child: TextFormField(
@@ -129,7 +137,7 @@ class _BuildingMaterialTimeAndLocationPageState
             maxLength: 80,
             onSaved: (text) => widget._order.note = text,
           ),
-        )
+        ),
       ],
       onContinue: (order) {
         _formKey.currentState.save();

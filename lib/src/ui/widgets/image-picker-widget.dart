@@ -20,8 +20,8 @@ class _OrderImagePickerState extends State<OrderImagePicker> {
 class ImagePickerWidget extends StatefulWidget {
   final PickedFile initialImage;
   final Function(PickedFile) onImagePicked;
-
-  ImagePickerWidget({this.initialImage, this.onImagePicked});
+  final Function onImageDeleted;
+  ImagePickerWidget({this.initialImage, this.onImagePicked,this.onImageDeleted});
 
   @override
   _ImagePickerWidgetState createState() => _ImagePickerWidgetState();
@@ -54,7 +54,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               color: Theme.of(context).accentColor,
               onPressed: () async {
                 final image = await ImagePicker().getImage(source: ImageSource.camera);
-                if (image != null) setState(() => this._image = image);
+                if (image != null) {
+                  setState(() => _image = image);
+                  widget.onImagePicked(_image);
+                }
               }
             ),
             FlatButton(
@@ -64,9 +67,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
               color: Theme.of(context).accentColor,
               onPressed: () async {
                 final image = await ImagePicker().getImage(source: ImageSource.gallery);
-                if (image != null) setState(() => _image = image);
-
-                widget.onImagePicked(_image);
+                if (image != null) {
+                  setState(() => _image = image);
+                  widget.onImagePicked(_image);
+                }
               },
             )
           ], mainAxisAlignment: MainAxisAlignment.spaceBetween),
@@ -129,7 +133,10 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30)
                   ),
-                  onPressed: () => setState(() => _image = null)
+                  onPressed: () {
+                    setState(() => _image = null);
+                    widget.onImageDeleted();
+                  }
               ),
             ),
           ),

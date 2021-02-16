@@ -10,14 +10,15 @@ class UnableToPlaceOrderDialog extends StatelessWidget {
     return AlertDialog(
       title: Text('Unable to Place your order'),
       content: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(details.toString()),
+            child: Text((details as DioError).response.data['message']),
           ),
           if (details is! DioError)
             Text(details?.stackTrace.toString())
-          else Text('Error')
+          else Text('')
         ],
       ),
       actions: [

@@ -7,11 +7,13 @@ class OrderConfirmationItem extends StatelessWidget {
   final String title;
   final String image;
   final Table table;
+  final bool assetImage;
 
   OrderConfirmationItem({
     this.title,
     this.image,
     this.table,
+    this.assetImage=false,
   });
 
   @override
@@ -35,7 +37,7 @@ class OrderConfirmationItem extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(top: 10),
           child: Row(children: [
-            Image.network(HaweyatiService.resolveImage(image), height: 60,width: 60,),
+           assetImage ? Image.asset(image, height: 60,width: 60,) : Image.network(HaweyatiService.resolveImage(image), height: 60,width: 60,),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(left: 10),

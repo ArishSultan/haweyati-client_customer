@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
 import 'package:haweyati/src/common/simple-form.dart';
@@ -30,6 +31,7 @@ import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati_client_data_models/models/order/products/delivery-vehicle_orderable.dart';
 import 'package:haweyati_client_data_models/models/products/delivery-vehicle_model.dart';
 import 'package:haweyati_client_data_models/models/shareable-data_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'detail_pages.dart';
 part 'order_pages.dart';

@@ -1,21 +1,49 @@
 part of 'finishing-material_pages.dart';
 
-class FinishingMaterialCategoriesPage extends StatelessWidget {
+class FinishingMaterialShops extends StatelessWidget {
   final _service = FinishingMaterialsRest();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: HaweyatiAppBar(hideHome: true),
-      body: LiveScrollableView<FinishingMaterialBase>(
-        title: 'Finishing Material',
+      body: LiveScrollableView<Supplier>(
+        title: 'Finishing Material Shops',
         subtitle: loremIpsum.substring(0, 70),
-        loader: () => _service.getCategories(),
+        loader: () => _service.getShops(
+            AppData().city,
+            AppData().location.latitude,
+            AppData().location.longitude),
+        builder: (context,Supplier data) {
+          return ProductListTile(
+            name: data.person.name,
+            image: data.person.image.name,
+            onTap: () => navigateTo(context, FinishingMaterialCategoriesPage(data)),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class FinishingMaterialCategoriesPage extends StatelessWidget {
+  final _service = FinishingMaterialsRest();
+  final Supplier supplier;
+  FinishingMaterialCategoriesPage(this.supplier);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: HaweyatiAppBar(hideHome: true),
+      body: LiveScrollableView<FinishingMaterialBase>(
+        title: 'Finishing Material Shops',
+        subtitle: loremIpsum.substring(0, 70),
+        loader: () => _service.getCategories(supplier.id),
         builder: (context, data) {
           return ProductListTile(
             name: data.name,
             image: data.image.name,
-            onTap: () => navigateTo(context, FinishingMaterialsPage(data)),
+            onTap: () => navigateTo(context, FinishingMaterialsPage(data,supplier)),
           );
         },
       ),
@@ -25,7 +53,8 @@ class FinishingMaterialCategoriesPage extends StatelessWidget {
 
 class FinishingMaterialsPage extends StatefulWidget {
   final FinishingMaterialBase item;
-  FinishingMaterialsPage(this.item);
+  final Supplier supplier;
+  FinishingMaterialsPage(this.item,this.supplier);
 
   @override
   _FinishingMaterialsPageState createState() => _FinishingMaterialsPageState();
@@ -120,7 +149,6 @@ class _FinishingMaterialsPageState extends State<FinishingMaterialsPage> {
                 child: Text(snapshot.error.toString()),
               );
             }
-
             switch (snapshot.connectionState) {
               case ConnectionState.none:
                 return SliverToBoxAdapter(child: Text('No Data was found'));
@@ -134,7 +162,7 @@ class _FinishingMaterialsPageState extends State<FinishingMaterialsPage> {
                         image: snapshot.data[i].image.name,
                         onTap: () => navigateTo(
                           context,
-                          FinishingMaterialPage(snapshot.data[i]),
+                          FinishingMaterialPage(snapshot.data[i],widget.supplier),
                         ),
                       ),
                       childCount: snapshot.data.length,
@@ -166,7 +194,7 @@ class _FinishingMaterialsPageState extends State<FinishingMaterialsPage> {
                         image: snapshot.data[i].image.name,
                         onTap: () => navigateTo(
                           context,
-                          FinishingMaterialPage(snapshot.data[i]),
+                          FinishingMaterialPage(snapshot.data[i],widget.supplier),
                         ),
                       ),
                       childCount: snapshot.data.length,
@@ -249,7 +277,8 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
 
 class FinishingMaterialPage extends StatefulWidget {
   final FinishingMaterial item;
-  FinishingMaterialPage(this.item);
+  final Supplier supplier;
+  FinishingMaterialPage(this.item,this.supplier);
 
   @override
   _FinishingMaterialPageState createState() => _FinishingMaterialPageState();
@@ -305,10 +334,23 @@ class _FinishingMaterialPageState extends State<FinishingMaterialPage> {
                     ),
                     onPressed: snapshot.data ?? true
                         ? () async {
+                      Box<Supplier> box = await Hive.openBox('supplier');
+                      if(box.isNotEmpty && widget.supplier.id != box.getAt(0).id){
+                        Scaffold.of(context).
+                        showSnackBar(SnackBar(
+                            content: Text('You cannot add items from two different suppliers')));
+                        return;
+                      }
+
+                      if(box.isEmpty){
+                        await box.add(widget.supplier);
+                        await widget.supplier.save();
+                      }
+
                       await _appData.addToCart(widget.item);
+                      await box.close();
                       setState(() {});
-                    }
-                        : null,
+                    } : null,
                   );
                 },
               ),
@@ -325,7 +367,7 @@ class _FinishingMaterialPageState extends State<FinishingMaterialPage> {
                 shape: StadiumBorder(),
                 child: Text('Buy Now'),
                 onPressed: () => navigateTo(
-                    context, FinishingMaterialServiceDetailPage(widget.item)),
+                    context, FinishingMaterialServiceDetailPage(widget.item,widget.supplier)),
               ),
             ),
           ),

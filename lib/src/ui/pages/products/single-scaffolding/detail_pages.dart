@@ -13,7 +13,8 @@ class SingleScaffoldingsPage extends StatelessWidget {
         loader: () => _service.get(AppData().city),
         builder: (context, data) => ProductListTile(
           name: data.type,
-          image: "6af31fbbec4b8a614867f206833cd21a",
+          assetImage: true,
+          image: "assets/images/singleScaffolding.png",
           onTap: () => navigateTo(context, SingleScaffoldingPage(data)),
         ),
       ),
@@ -37,8 +38,8 @@ class SingleScaffoldingPage extends StatelessWidget {
         socialMediaDescription: scaffolding.description
       ),
       title: title,
-      //Todo change
-      image: "6af31fbbec4b8a614867f206833cd21a",
+      assetImage: true,
+      image: "assets/images/singleScaffolding.png",
       price: TextSpan(
         text: '${scaffolding.rent.toStringAsFixed(2)} SAR ',
         style: TextStyle(color: Color(0xFF313F53)),

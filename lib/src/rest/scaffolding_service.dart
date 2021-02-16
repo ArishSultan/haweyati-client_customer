@@ -49,7 +49,6 @@ class ScaffoldingService {
   ScaffoldingPrice _parsePricing(Map<String, dynamic> json) {
     final pricing = (json['pricing'] as List)
         .firstWhere((element) => element['city'] == _appData.city);
-
     return ScaffoldingPrice.fromJson(pricing);
   }
 }

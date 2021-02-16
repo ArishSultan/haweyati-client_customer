@@ -42,7 +42,6 @@ class _PickUpLocationPickerState extends State<PickUpLocationPicker> {
               );
 
               if (location != null) {
-                print(location);
                 setState(() => widget.order.pickUpLocation = Location(
                     city : location?.city,
                     address : location?.address,

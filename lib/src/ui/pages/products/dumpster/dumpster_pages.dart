@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/common/simple-form.dart';
 import 'package:haweyati/src/const.dart';
@@ -22,6 +24,7 @@ import 'package:haweyati/src/ui/widgets/table-rows.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati_client_data_models/models/shareable-data_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'detail_pages.dart';
 part 'order_pages.dart';

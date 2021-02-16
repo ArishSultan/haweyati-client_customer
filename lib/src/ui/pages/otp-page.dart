@@ -83,7 +83,7 @@ class OtpVerificationPageState extends State<OtpVerificationPage> {
       context: context,
       builder: (context) => WaitingDialog(message: 'Verifying Phone Number'),
     );
-
+    if(verId==null) return false;
     final credentials =
         PhoneAuthProvider.credential(verificationId: verId, smsCode: smsCode);
 

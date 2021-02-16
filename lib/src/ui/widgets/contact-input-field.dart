@@ -15,7 +15,8 @@ const _codes = [
 
 class ContactInputField extends StatefulWidget {
   final Function(String val, bool status) onChanged;
-  ContactInputField(this.onChanged);
+  final String preFilledPhone;
+  ContactInputField(this.onChanged,[this.preFilledPhone]);
 
   @override
   _ContactInputFieldState createState() => _ContactInputFieldState();
@@ -34,6 +35,9 @@ class _ContactInputFieldState extends State<ContactInputField> {
     _node.addListener(() {
       setState(() {});
     });
+
+    if(widget.preFilledPhone !=null)
+      _controller.text = widget.preFilledPhone;
   }
 
   @override
@@ -53,7 +57,7 @@ class _ContactInputFieldState extends State<ContactInputField> {
               widget.onChanged(_code.code + value, false);
             }
           },
-          keyboardType: TextInputType.number,
+          keyboardType: TextInputType.phone,
           style: TextStyle(
             color: Color(0xFF313F53),
             fontFamily: 'Lato',
