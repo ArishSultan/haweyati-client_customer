@@ -25,7 +25,6 @@ import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
 import 'package:haweyati_client_data_models/models/order/products/delivery-vehicle_orderable.dart';
 import 'package:haweyati_client_data_models/models/order/products/single-scaffolding_orderable.dart';
 import 'package:haweyati_client_data_models/widgets/variants-tablerow.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class OrderDetailPage extends StatefulWidget {
   final Order order;
@@ -44,15 +43,19 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   bool isAwaitingDriver = false;
   static bool hasSupplierSelectedItems = false;
 
-
-
   @override
   void initState() {
     super.initState();
     order = widget.order;
+    hasSupplierSelectedItems = order.products.any((e) => (e.item as FinishingMaterialOrderable).selected == true);
+
     canCancel = order.status == OrderStatus.pending ||
         order.status == OrderStatus.accepted;
-    awaitingPayment = order.deliveryFee != null && order.paymentType == null;
+
+    awaitingPayment = order.type == OrderType.finishingMaterial ?
+    (order.deliveryFee != null && order.paymentType == null
+        && hasSupplierSelectedItems) : order.deliveryFee != null
+        && order.paymentType == null;
 
      isAwaitingSupplier =order.deliveryFee == null &&
           order.status == OrderStatus.pending &&
@@ -61,22 +64,21 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           order.status == OrderStatus.accepted &&
           order.type != OrderType.deliveryVehicle &&
           order.type != OrderType.buildingMaterial;
-   hasSupplierSelectedItems = order.products.any((e) => (e.item as FinishingMaterialOrderable).selected == true);
   }
 
   @override
   Widget build(BuildContext context) {
     return ScrollableView.sliver(
-      fab: order.driver == null && order.type == OrderType.deliveryVehicle ? null : FloatingActionButton(
-        backgroundColor: Theme.of(context).accentColor,
-        child: Text("Track Driver",style: TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-        ),textAlign: TextAlign.center,),
-        onPressed: () async {
-          launch('https://maps.app.goo.gl/pmWo4CJUfcXy4vHp6');
-        },
-      ),
+      // fab: order.driver == null && order.type == OrderType.deliveryVehicle ? null : FloatingActionButton(
+      //   backgroundColor: Theme.of(context).accentColor,
+      //   child: Text("Track Driver",style: TextStyle(
+      //     color: Colors.white,
+      //     fontSize: 12,
+      //   ),textAlign: TextAlign.center,),
+      //   onPressed: () async {
+      //     launch('https://maps.app.goo.gl/pmWo4CJUfcXy4vHp6');
+      //   },
+      // ),
       showBackground: true,
       padding: EdgeInsets.fromLTRB(15, 0, 15,
           (isAwaitingSupplier
@@ -193,7 +195,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) =>
-                _OrderProductWidget(widget.order.products[index]),
+                _OrderProductWidget(widget.order.products[index],hasSupplierSelectedItems),
             childCount: widget.order.products.length,
           ),
         ),
@@ -282,8 +284,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
 
 class _OrderProductWidget extends StatelessWidget {
   final OrderProductHolder holder;
-
-  _OrderProductWidget(this.holder);
+  final bool hasSupplierSelectedItems;
+  _OrderProductWidget(this.holder,[this.hasSupplierSelectedItems=false]);
 
   Widget _buildFinishingMaterial(
     BuildContext context,
@@ -320,7 +322,7 @@ class _OrderProductWidget extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 15),
       padding: const EdgeInsets.all(15),
       child: Column(children: [
-        OrderProductTile(holder),
+        OrderProductTile(holder,hasSupplierSelectedItems),
         if (holder.item is DumpsterOrderable)
           DetailsTable([
             DetailRow('Quantity',
@@ -444,8 +446,9 @@ class _OrderProductWidget extends StatelessWidget {
 
 class OrderProductTile extends StatelessWidget {
   final OrderProductHolder item;
+  final bool hasSupplierSelectedItems;
 
-  OrderProductTile(this.item);
+  OrderProductTile(this.item,[this.hasSupplierSelectedItems=false]);
 
   @override
   Widget build(BuildContext context) {
@@ -454,7 +457,6 @@ class OrderProductTile extends StatelessWidget {
     String imagePath;
     dynamic product = item.item.product;
     bool isItemSelected;
-
     if (item.item is DumpsterOrderable) {
       title = '${product.size} Yards';
       imageUrl = product.image.name;
@@ -472,6 +474,7 @@ class OrderProductTile extends StatelessWidget {
       title = product.name;
       imageUrl = product.image.name;
     }
+
     return ListTile(
       contentPadding: const EdgeInsets.only(bottom: 15),
       leading: Container(
@@ -490,7 +493,7 @@ class OrderProductTile extends StatelessWidget {
                     : AssetImage(imagePath))),
       ),
       title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-      trailing: item.item is FinishingMaterialOrderable ?
+      trailing: (item.item is FinishingMaterialOrderable && hasSupplierSelectedItems) ?
       Icon( isItemSelected ? Icons.done : Icons.close,color:  isItemSelected ? Colors.green : Colors.red,)  : null,
     );
   }

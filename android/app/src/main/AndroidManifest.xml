@@ -15,6 +15,7 @@
         android:name=".Application"
         android:label="Haweyati"
         android:usesCleartextTraffic="true"
+        xmlns:tools="http://schemas.android.com/tools"
         android:icon="@mipmap/ic_launcher">
 
 <!--        <meta-data android:name="io.flutter.network-policy"-->

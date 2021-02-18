@@ -231,14 +231,12 @@ class OrderConfirmationView<T extends OrderableProduct>
               if (_appData.isAuthenticated) {
                 order.customer = _appData.user;
               } else {
-                print("cancelled sign in");
                 Navigator.of(context).pop();
                 return;
               }
             }
           }
           Navigator.of(context).pop();
-
           showDialog(
             context: context,
             barrierDismissible: false,
@@ -252,6 +250,7 @@ class OrderConfirmationView<T extends OrderableProduct>
              await value.clear();
              await value.close();
             });
+            order.clearProducts();
             if(order.image !=null)
             await HaweyatiService.patch('orders/add-image', FormData.fromMap({
               'id': _order.id,

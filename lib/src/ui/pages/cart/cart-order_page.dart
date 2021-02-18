@@ -25,11 +25,6 @@ class _CartOrderPageState extends State<CartOrderPage> {
   final _count = ValueNotifier(0);
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return NoScrollView(
       appBar: HaweyatiAppBar(hideHome: true, hideCart: true),

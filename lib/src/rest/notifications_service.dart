@@ -192,7 +192,6 @@ class TempNotificationService{
     if (Platform.isAndroid) {
       return [message['notification']['title'],message['notification']['body']];
     } else if (Platform.isIOS) {
-      print(message['aps']['alert']['title']);
       return [message['aps']['alert']['title'], message['aps']['alert']['body']];
     }
   }
@@ -201,7 +200,7 @@ class TempNotificationService{
     if (Platform.isIOS) iOS_Permission();
 
     _firebaseMessaging.configure(
-//      onBackgroundMessage: myBackgroundMessageHandler,
+     // onBackgroundMessage: myBackgroundMessageHandler,
       onMessage: (Map<String, dynamic> message) async {
         print('on message $message');
         openNotificationDialog(context, transformNotificationMessage(message));

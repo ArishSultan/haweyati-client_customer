@@ -26,27 +26,43 @@ import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'delivery-vehicle_pages.dart';
 import 'select-vehicle_page.dart';
 
+enum SelectionMode{
+  pickUp,
+  dropOff,
+  vehicle
+}
+
 class DeliveryVehicleMapPage extends StatefulWidget {
   @override
   _DeliveryVehicleMapPageState createState() => _DeliveryVehicleMapPageState();
 }
 
 class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
-  Address _address;
-  LatLng _location;
+  Address _pickUpAddress;
+  Address _dropOffAddress;
+  LatLng pickUpLocation;
+  LatLng dropOffLocation;
+  bool selectedPickupLocation = false;
   bool _initiated = false;
   GoogleMapController _controller;
-
+  SelectionMode mode = SelectionMode.pickUp;
   final _utils = _MapUtilsImpl();
   final _markers = Set<Marker>();
   Future<List<DeliveryVehicle>> vehicleTypes;
   var _rest = DeliveryVehicleRest();
   DeliveryVehicle selectedVehicle;
+  BitmapDescriptor pickUpLocationBitmap;
+  var PersonMarkerIcon = 'assets/map-icons/mapicons-person.png';
+
   @override
   void initState() {
     super.initState();
-    _location = l.AppData().coordinates;
+    pickUpLocation = l.AppData().coordinates;
     vehicleTypes = _rest.get();
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(9, 9)), PersonMarkerIcon)
+        .then((onValue) {
+      pickUpLocationBitmap = onValue;
+        });
   }
 
   @override
@@ -118,7 +134,8 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
                         ),
                         style: TextStyle(color: Colors.grey.shade700),
                         controller: TextEditingController(
-                            text: _address?.addressLine ?? 'Tap To Search'),
+                            text: mode == SelectionMode.pickUp ? _pickUpAddress?.addressLine ?? 'Tap To Search' :
+                            _dropOffAddress?.addressLine ?? 'Tap To Search'),
                       ),
                     ),
                   ],
@@ -128,29 +145,64 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
           ),
         ),
         body: _resolveMap(),
-        bottom: RaisedActionButton(
-          label: 'Confirm Pickup',
-          onPressed: (_location != null && _initiated && selectedVehicle!=null)
-              ? () {
-            navigateTo(context, DeliveryVehicleSelectionPage(
-                selectedVehicle,
-                l.Location(
-                  city : _address.locality,
-                  address : _address.addressLine,
-                  latitude : _location.latitude,
-                  longitude : _location.longitude,
-                )
-            ));
+        bottom: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+         if(pickUpLocation!=null && mode!=SelectionMode.pickUp && _pickUpAddress!=null)  ListTile(
+              leading: Icon(CupertinoIcons.location,color: Theme.of(context).accentColor,),
+              dense: true,
+              title: Text("Pickup"),
+              subtitle: Column(
+                children: [
+                  Text(_pickUpAddress?.addressLine),
+                  Divider(),
+                ],
+              ),
+            ),
+            if(dropOffLocation!=null && mode!=SelectionMode.dropOff && _dropOffAddress!=null)  ListTile(
+              leading: Icon(CupertinoIcons.location,color: Colors.red,),
+              dense: true,
+              title: Text("Drop off"),
+              subtitle: Text(_dropOffAddress?.addressLine),
+            ),
+            RaisedActionButton(
+              label: mode == SelectionMode.pickUp ? 'Confirm Pickup' :
+              (mode == SelectionMode.dropOff ? 'Confirm DropOff' : (mode == SelectionMode.vehicle ? 'Find Driver' :'')),
+              onPressed: (pickUpLocation == null && !_initiated || (mode == SelectionMode.vehicle && selectedVehicle==null)) ? null : () {
+                if(mode == SelectionMode.pickUp)
+                  mode = SelectionMode.dropOff;
+                else if(mode == SelectionMode.dropOff)
+                  mode = SelectionMode.vehicle;
+                setState(() {});
+                // if(!selectedPickupLocation) setState(() { selectedPickupLocation = true;});
 
-                  // Navigator.of(context).pop(l.Location(
-                  //   city: _address.locality,
-                  //   address: _address.addressLine,
-                  //   latitude: _location.latitude,
-                  //   longitude: _location.longitude,
-                  // ));
-                  //
-                }
-              : null,
+                // navigateTo(context, DeliveryVehicleSelectionPage(
+                //     selectedVehicle,
+                //     l.Location(
+                //       city : _pickUpAddress.locality,
+                //       address : _pickUpAddress.addressLine,
+                //       latitude : pickUpLocation.latitude,
+                //       longitude : pickUpLocation.longitude,
+                //     )
+                // ));
+
+              }
+              // onPressed: (pickUpLocation != null && _initiated && selectedVehicle!=null)
+              //     ? () {
+              //   navigateTo(context, DeliveryVehicleSelectionPage(
+              //       selectedVehicle,
+              //       l.Location(
+              //         city : _pickUpAddress.locality,
+              //         address : _pickUpAddress.addressLine,
+              //         latitude : pickUpLocation.latitude,
+              //         longitude : pickUpLocation.longitude,
+              //       )
+              //   ));
+              //
+              // }
+              //     : null,
+            ),
+          ],
         ),
       ),
     );
@@ -169,7 +221,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
     if (_initiated) {
       return Stack(children: [
         GoogleMap(
-          initialCameraPosition: CameraPosition(target: _location, zoom: 15),
+          initialCameraPosition: CameraPosition(target: mode == SelectionMode.pickUp ? pickUpLocation : dropOffLocation ?? pickUpLocation, zoom: 15),
           onTap: _setLocationOnMap,
           polygons: _bounds,
           onMapCreated: (controller) {
@@ -203,7 +255,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
             ),
           ),
         ),
-        Positioned(
+     if(mode == SelectionMode.vehicle)  Positioned(
           right: 15,
           bottom: 5,
           left: 15,
@@ -216,7 +268,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
                 DeliveryVehicle _vehicle = await showModalBottomSheet(context: context, builder: (context){
                      return SelectVehicle(vehicles.data,selectedVehicle);
                    });
-                   if(_vehicle!=null) setState(() =>selectedVehicle = _vehicle);
+                   if(_vehicle!=null) setState(() => selectedVehicle = _vehicle);
                  },
                  child: Container(
                     decoration: BoxDecoration(
@@ -239,7 +291,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
                           Text(
                            selectedVehicle == null ? 'Choose Vehicle Type': selectedVehicle.name ,
                             style: TextStyle(fontSize: 15),
-                          ),
+                          ) ,
                           Expanded(child: Container()),
                           Expanded(child: Container()),
                           Icon(
@@ -256,8 +308,8 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
         )
       ]);
     } else {
-      if (_location != null) {
-        _setLocationOnMap(_location);
+      if (pickUpLocation != null) {
+        _setLocationOnMap(pickUpLocation);
       } else {
         _utils.fetchCurrentLocation().then(_setLocationOnMap);
       }
@@ -285,25 +337,33 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
         ),
       );
     }
-
     if (location == null) {
-      _location = await _utils.fetchCurrentLocation();
+      pickUpLocation = await _utils.fetchCurrentLocation();
     } else {
-      _location = location;
+      if(mode == SelectionMode.pickUp){
+        pickUpLocation = location;
+      }
+      else if(mode == SelectionMode.dropOff){
+        dropOffLocation = location;
+      }
     }
     _markers
-      ..clear()
       ..add(Marker(
         draggable: true,
-        position: _location,
-        markerId: MarkerId('\0'),
+        position: mode == SelectionMode.pickUp ? pickUpLocation : dropOffLocation,
+        markerId: MarkerId( mode == SelectionMode.pickUp ? 'pickup' : 'dropOff'),
         onDragEnd: _setLocationOnMap,
+        icon: mode == SelectionMode.dropOff ? BitmapDescriptor.defaultMarker : pickUpLocationBitmap
       ));
 
-    _address = await _utils.fetchAddress(_location);
+    if(mode == SelectionMode.pickUp)
+    _pickUpAddress = await _utils.fetchAddress(pickUpLocation);
+    else if(mode == SelectionMode.dropOff)
+      _dropOffAddress = await _utils.fetchAddress(dropOffLocation);
+
     if (_controller != null) {
       Navigator.of(context).pop();
-      _controller.animateCamera(CameraUpdate.newLatLng(_location));
+      _controller.animateCamera(CameraUpdate.newLatLng(mode == SelectionMode.pickUp ? pickUpLocation : dropOffLocation));
     }
 
     if (!_initiated) _initiated = true;
@@ -312,7 +372,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
 }
 
 class _MapUtilsImpl {
-  final _location = loc.Location();
+  final pickUpLocation = loc.Location();
 
   Future<Address> fetchAddress(final LatLng location) async {
     return (await Geocoder.google(apiKey).findAddressesFromCoordinates(
@@ -321,7 +381,7 @@ class _MapUtilsImpl {
   }
 
   Future<LatLng> fetchCurrentLocation() async {
-    final position = await _location.getLocation();
+    final position = await pickUpLocation.getLocation();
     return LatLng(position.latitude, position.longitude);
   }
 }
