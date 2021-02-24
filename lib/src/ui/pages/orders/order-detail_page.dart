@@ -9,13 +9,16 @@ import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/rest/orders_service.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
+import 'package:haweyati/src/ui/views/location-tracking_view.dart';
 import 'package:haweyati/src/ui/views/order-confirmation_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/details-table.dart';
 import 'package:haweyati/src/ui/widgets/pickup-location_picker.dart';
+import 'package:haweyati/src/ui/widgets/rate-bottom-sheet.dart';
 import 'package:haweyati/src/ui/widgets/table-rows.dart';
+import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
 import 'package:haweyati/src/rest/haweyati-service.dart';
@@ -25,7 +28,9 @@ import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
 import 'package:haweyati_client_data_models/models/order/products/delivery-vehicle_orderable.dart';
 import 'package:haweyati_client_data_models/models/order/products/single-scaffolding_orderable.dart';
 import 'package:haweyati_client_data_models/widgets/variants-tablerow.dart';
-
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:ui' as ui;
 class OrderDetailPage extends StatefulWidget {
   final Order order;
 
@@ -47,10 +52,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   void initState() {
     super.initState();
     order = widget.order;
-    hasSupplierSelectedItems = order.products.any((e) => (e.item as FinishingMaterialOrderable).selected == true);
+    hasSupplierSelectedItems = order.type == OrderType.finishingMaterial ? order.products.any((e) => (e.item as FinishingMaterialOrderable).selected == true) : false;
 
     canCancel = order.status == OrderStatus.pending ||
-        order.status == OrderStatus.accepted;
+        order.status == OrderStatus.accepted || order.driver==null;
 
     awaitingPayment = order.type == OrderType.finishingMaterial ?
     (order.deliveryFee != null && order.paymentType == null
@@ -69,22 +74,37 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   @override
   Widget build(BuildContext context) {
     return ScrollableView.sliver(
-      // fab: order.driver == null && order.type == OrderType.deliveryVehicle ? null : FloatingActionButton(
-      //   backgroundColor: Theme.of(context).accentColor,
-      //   child: Text("Track Driver",style: TextStyle(
-      //     color: Colors.white,
-      //     fontSize: 12,
-      //   ),textAlign: TextAlign.center,),
-      //   onPressed: () async {
-      //     launch('https://maps.app.goo.gl/pmWo4CJUfcXy4vHp6');
-      //   },
-      // ),
+      fab: order.status == OrderStatus.delivered && order.rating == null ?
+      FloatingActionButton(
+        backgroundColor: Theme.of(context).accentColor,
+        child: Text("Rate",style: TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+        ),textAlign: TextAlign.center,),
+        onPressed: () async {
+         await showModalBottomSheet(
+             context: context, builder: (ctx){
+            return RatingBottomSheet(order);
+          },isScrollControlled: true
+          );
+        },
+      ) : (order.shareUrl !=null) ? FloatingActionButton(
+        backgroundColor: Theme.of(context).accentColor,
+        child: Text("Track Driver",style: TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+        ),textAlign: TextAlign.center,),
+        onPressed: () async {
+          navigateTo(context, LiveTrackingView(order));
+        },
+      ) : null,
       showBackground: true,
       padding: EdgeInsets.fromLTRB(15, 0, 15,
           (isAwaitingSupplier
           || awaitingPayment ||
           isAwaitingDriver) ? 20 : 20),
       appBar: HaweyatiAppBar(actions: [
+
         IconButton(
           icon: Image.asset(CustomerCareIcon, width: 20),
           onPressed: () => Navigator.of(context).pushNamed(HELPLINE_PAGE),
@@ -101,7 +121,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                    bool reviewed =  await showConfirmationDialog(
                         context: context,
                         builder: (ctx) => ConfirmationDialog(
-                        title: Text("Have your reviewed the items availability?"),
+                        title: Text("Have you reviewed the items availability?"),
                         )
                       );
                    if(!reviewed ?? true) return;
@@ -189,7 +209,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         SliverPadding(
           padding: const EdgeInsets.only(bottom: 15, top: 0),
           sliver: SliverToBoxAdapter(
-            child: LocationPicker(initialValue: order.location),
+            child: DropOffLocation(order.location),
           ),
         ),
         SliverList(
@@ -276,10 +296,69 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               ],
               textBaseline: TextBaseline.alphabetic,
               defaultVerticalAlignment: TableCellVerticalAlignment.baseline),
-        )
+        ),
+        SliverToBoxAdapter(child: SizedBox(height: 15,),),
+        if(order.supplier!=null ) personBuilder(type: 'Supplier',image: order.supplier?.person?.image?.name,name: order.supplier.person.name,contact: order.supplier.person.contact),
+        if(order.driver!=null) personBuilder(type: 'Driver',image: order.driver?.profile?.image?.name,name: order.driver.profile.name,contact: order.driver.profile.contact),
+
       ],
     );
   }
+}
+
+Widget personBuilder({String type,String image,String name,String contact}){
+  return SliverToBoxAdapter(
+    child: DarkContainer(
+      margin: const EdgeInsets.only(bottom: 10,top: 0),
+      padding: const EdgeInsets.only(left: 15,right: 15,top: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(type,style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14
+          ),),
+          ListTile(
+            leading: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                  color: Color(0xEEFFFFFF),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                        blurRadius: 5,
+                        spreadRadius: 1,
+                        color: Colors.grey.shade500
+                    )
+                  ],
+                  image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: image !=null? NetworkImage(HaweyatiService.resolveImage(image))
+                          : AssetImage("assets/images/app-logo.png")
+                  )
+              ),
+            ),
+            title: Text(name, style: TextStyle()),
+            subtitle: Text(contact, style: TextStyle()),
+            trailing: Padding(
+              padding: const EdgeInsets.only(bottom:10.0),
+              child: FlatButton.icon(
+                  minWidth: 30,
+                  color: Color(0xFFFF974D),
+                  label: SizedBox(),
+                  shape: CircleBorder(),
+                  icon: Padding(
+                    padding: const EdgeInsets.only(left:12.0),
+                    child: Icon(CupertinoIcons.phone_fill,size: 20,color: Colors.white,),
+                  ), onPressed: () async {
+                launch("tel:${contact}");
+              }),
+            ),
+          )
+        ],),
+    ),
+  );
 }
 
 class _OrderProductWidget extends StatelessWidget {
@@ -294,8 +373,7 @@ class _OrderProductWidget extends StatelessWidget {
     return Table(
         children: [
           ...buildVariants(item.variants),
-          DetailRow(
-              'Quantity', AppLocalizations.of(context).nProducts(item.qty)),
+          DetailRow('Quantity', AppLocalizations.of(context).nProducts(item.qty),false),
           PriceRow('Price', item.price),
           PriceRow('Total', item.price),
           TableRow(children: [
@@ -358,6 +436,19 @@ class _OrderProductWidget extends StatelessWidget {
           ]),
         if (holder.item is SingleScaffoldingOrderable)
           Table(children: [
+            TableRow(children: [
+              Text("Quantity",
+                  style: TextStyle(
+                    height: 1.6,
+                    fontSize: 13,
+                    color: Colors.grey,
+                  )),
+              Text(
+                '${(holder.item as SingleScaffoldingOrderable).qty}',
+                textAlign: TextAlign.right,
+                style: TextStyle(color: Color(0xFF313F53)),
+              )
+            ]),
             TableRow(children: [
               Text("Days",
                   style: TextStyle(
@@ -552,7 +643,7 @@ class _OrderStatusPainter extends CustomPainter {
       text: TextSpan(
           text: text,
           style: TextStyle(fontSize: 10, color: Colors.grey.shade700)),
-      textDirection: TextDirection.ltr,
+      textDirection: ui.TextDirection.ltr,
     );
   }
 
@@ -666,3 +757,87 @@ class _OrderStatusPainter extends CustomPainter {
 //   @override
 //   bool shouldRepaint(CustomPainter oldDelegate) => false;
 // }
+
+
+class DropOffLocation extends StatelessWidget {
+  final OrderLocation location;
+  DropOffLocation(this.location);
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        LocationPicker(onChanged: null,initialValue: location),
+        if(location.dropOffTime != null)  DarkContainer(
+          child: Column(
+            children: [
+              Row(children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 11),
+                    child: _Title('Drop-off Date'),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 17),
+                    child: _Title('Drop-off Time'),
+                  ),
+                ),
+              ]),
+              Row(children: [
+                Expanded(
+                  child: DarkContainer(
+                    padding: const EdgeInsets.all(10),
+                    child: GestureDetector(
+                      child: Row(children: [
+                        Expanded(
+                          child: Text(
+                            DateFormat(DateFormat.YEAR_MONTH_DAY).format(location.dropOffDate),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade800,
+                            ),
+                          ),
+                        ),
+                        Image.asset(CalendarIcon, width: 25),
+                      ]),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 15),
+                Expanded(
+                  child: DarkContainer(
+                    padding: const EdgeInsets.all(10),
+                    child: GestureDetector(
+                      child: Row(children: [
+                        Expanded(
+                          child: Text(
+                            location.dropOffTime.from.format(context) + '  -  ' + location.dropOffTime.to.format(context),
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey.shade800,
+                            ),
+                          ),
+                        ),
+                        Image.asset(ClockIcon, width: 25),
+                      ]),
+                    ),
+                  ),
+                ),
+              ]),
+            ],
+          ),)],
+    );
+  }
+}
+
+class _Title extends Text {
+  _Title(String title)
+      : super(
+    title,
+    style: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 13,
+    ),
+  );
+}

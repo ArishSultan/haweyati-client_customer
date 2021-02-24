@@ -66,11 +66,13 @@ class _FinishingMaterialsPageState extends State<FinishingMaterialsPage> {
   var _allowRefresh = false;
   final _service = FinishingMaterialsRest();
   final _countListenable = ValueNotifier<int>(0);
+  TextEditingController search = TextEditingController();
+  var searchTapped = false;
 
   @override
   void initState() {
     super.initState();
-    _future = _service.get(AppData().city, widget.item.id)
+    _future = _service.get(widget.supplier.id, widget.item.id)
       ..then((value) {
         if (!_allowRefresh) setState(() => _allowRefresh = true);
 
@@ -136,9 +138,28 @@ class _FinishingMaterialsPageState extends State<FinishingMaterialsPage> {
         ),
         SliverPadding(
           padding: const EdgeInsets.only(bottom: 10),
-          sliver: SliverPersistentHeader(
-            delegate: _SearchBarDelegate(_countListenable),
+          sliver: !searchTapped ? SliverPersistentHeader(
+            delegate: _SearchBarDelegate(_countListenable,(bool value){
+              setState(() {
+                searchTapped =true;
+              });
+                }),
             pinned: true,
+          ) : SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal:10.0),
+              child: HaweyatiTextField(
+                controller: search,
+                label: 'Search',
+                icon: CupertinoIcons.search,
+                dense: true,
+                onFieldSubmitted: (String val){
+                  setState(() {
+                    _future =  _service.search(val);
+                  });
+                },
+              ),
+            ),
           ),
         ),
         FutureBuilder<List<FinishingMaterial>>(
@@ -213,8 +234,9 @@ class _FinishingMaterialsPageState extends State<FinishingMaterialsPage> {
 }
 
 class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
-  _SearchBarDelegate(this.value);
+  _SearchBarDelegate(this.value, this.onSearchTapped);
   final ValueListenable<int> value;
+  final Function(bool) onSearchTapped;
 
   @override
   Widget build(
@@ -246,20 +268,22 @@ class _SearchBarDelegate extends SliverPersistentHeaderDelegate {
           ),
         ),
         Spacer(),
-        GestureDetector(
-          child: Icon(
-            Icons.sort,
-            color: shrinkOffset > 0.0 ? Colors.white : Color(0xFF313F53),
-          ),
-          onTap: () {},
-        ),
+        // GestureDetector(
+        //   child: Icon(
+        //     Icons.sort,
+        //     color: shrinkOffset > 0.0 ? Colors.white : Color(0xFF313F53),
+        //   ),
+        //   onTap: () {},
+        // ),
         SizedBox(width: 10),
         GestureDetector(
           child: Icon(
             Icons.search,
             color: shrinkOffset > 0.0 ? Colors.white : Color(0xFF313F53),
           ),
-          onTap: () {},
+          onTap: () async {
+           onSearchTapped(true);
+          },
         ),
       ]),
       padding: const EdgeInsets.symmetric(horizontal: 15),

@@ -1,16 +1,18 @@
 import 'dart:async';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/rest/_new/products/delivery-vehicle_rest.dart';
+import 'package:haweyati/src/services/hyper-track_service.dart';
 import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati/src/utils/simple-future-builder.dart';
 import 'package:haweyati_client_data_models/models/order/vehicle-type.dart';
 import 'package:haweyati_client_data_models/models/products/delivery-vehicle_model.dart';
+import 'package:haweyati_client_data_models/services/hyerptrack_service.dart';
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_webservice/places.dart';
 import 'package:haweyati/l10n/app_localizations.dart';
@@ -22,7 +24,7 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
 import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
-
+import 'package:http/http.dart' as http;
 import 'delivery-vehicle_pages.dart';
 import 'select-vehicle_page.dart';
 
@@ -50,9 +52,28 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
   final _markers = Set<Marker>();
   Future<List<DeliveryVehicle>> vehicleTypes;
   var _rest = DeliveryVehicleRest();
+  GoogleMapsServices _googleMapServices = GoogleMapsServices();
   DeliveryVehicle selectedVehicle;
   BitmapDescriptor pickUpLocationBitmap;
+  BitmapDescriptor mapCarMarker;
   var PersonMarkerIcon = 'assets/map-icons/mapicons-person.png';
+  var CarMarkerIcon = 'assets/map-icons/map-car-marker.png';
+  Future<List> nearbyVehicles;
+  List<LatLng> vehicleCords = [];
+  final Set<Polyline> _polyLines = {};
+
+  void createRoute() async {
+    String route = await _googleMapServices.getRouteCoordinates(pickUpLocation,dropOffLocation);
+    setState(() {
+      _polyLines.clear();
+      _polyLines.add(Polyline(
+          polylineId: PolylineId('route'),
+          width: 3,
+          points: convertToLatLng(decodePoly(route)),
+          color: Colors.blue
+      ));
+    });
+  }
 
   @override
   void initState() {
@@ -61,8 +82,42 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
     vehicleTypes = _rest.get();
     BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(9, 9)), PersonMarkerIcon)
         .then((onValue) {
-      pickUpLocationBitmap = onValue;
+          setState(() {
+            pickUpLocationBitmap = onValue;
+          });
         });
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(9, 9)), CarMarkerIcon)
+        .then((onValue) {
+          setState(() {
+            mapCarMarker = onValue;
+          });
+    });
+  }
+
+  Future showNearbyDrivers() async {
+    if(selectedVehicle!=null){
+      HyperRequestService().fetchNearby(pickUpLocation,selectedVehicle.id).then((value){
+
+        vehicleCords.clear();
+        if(this.mounted){
+          for(var loc in value){
+            var l = LatLng(loc['location']['geometry']['coordinates'][1],
+                loc['location']['geometry']['coordinates'][0]);
+
+
+            vehicleCords.add(l);
+            _markers
+              ..add(Marker(
+                  draggable: false,
+                  position: l,
+                  markerId: MarkerId( (l.latitude+l.longitude).toString() ),
+                  icon: mapCarMarker
+              ));
+          }
+        }
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -167,24 +222,36 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
             ),
             RaisedActionButton(
               label: mode == SelectionMode.pickUp ? 'Confirm Pickup' :
-              (mode == SelectionMode.dropOff ? 'Confirm DropOff' : (mode == SelectionMode.vehicle ? 'Find Driver' :'')),
+              (mode == SelectionMode.dropOff ? 'Confirm DropOff' : (mode == SelectionMode.vehicle ? 'Proceed' :'')),
               onPressed: (pickUpLocation == null && !_initiated || (mode == SelectionMode.vehicle && selectedVehicle==null)) ? null : () {
                 if(mode == SelectionMode.pickUp)
-                  mode = SelectionMode.dropOff;
-                else if(mode == SelectionMode.dropOff)
+                  setState(() {mode = SelectionMode.dropOff;});
+                else if(mode == SelectionMode.dropOff){
                   mode = SelectionMode.vehicle;
-                setState(() {});
+                  setState(() {});
+                  createRoute();
+                }
+                else if(mode == SelectionMode.vehicle && selectedVehicle!=null){
+                  navigateTo(context, DeliveryVehicleSelectionPage(
+                      selectedVehicle,
+                      l.Location(
+                        city : _pickUpAddress.locality,
+                        address : _pickUpAddress.addressLine,
+                        latitude : pickUpLocation.latitude,
+                        longitude : pickUpLocation.longitude,
+                      ),
+                    l.OrderLocation(
+                      latitude : dropOffLocation.latitude,
+                      longitude : dropOffLocation.longitude,
+                    )..address = _dropOffAddress.addressLine
+                      ..city = _dropOffAddress.locality
+                      ..latitude = dropOffLocation.latitude
+                      ..longitude = dropOffLocation.longitude
+                  ));
+                }
                 // if(!selectedPickupLocation) setState(() { selectedPickupLocation = true;});
 
-                // navigateTo(context, DeliveryVehicleSelectionPage(
-                //     selectedVehicle,
-                //     l.Location(
-                //       city : _pickUpAddress.locality,
-                //       address : _pickUpAddress.addressLine,
-                //       latitude : pickUpLocation.latitude,
-                //       longitude : pickUpLocation.longitude,
-                //     )
-                // ));
+
 
               }
               // onPressed: (pickUpLocation != null && _initiated && selectedVehicle!=null)
@@ -227,6 +294,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
           onMapCreated: (controller) {
             _controller = controller;
           },
+          polylines: _polyLines,
           zoomControlsEnabled: false,
           compassEnabled: true,
           markers: _markers,
@@ -268,7 +336,10 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
                 DeliveryVehicle _vehicle = await showModalBottomSheet(context: context, builder: (context){
                      return SelectVehicle(vehicles.data,selectedVehicle);
                    });
-                   if(_vehicle!=null) setState(() => selectedVehicle = _vehicle);
+                   if(_vehicle!=null) setState(() {
+                     selectedVehicle = _vehicle;
+                     showNearbyDrivers();
+                   });
                  },
                  child: Container(
                     decoration: BoxDecoration(
@@ -308,11 +379,14 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
         )
       ]);
     } else {
-      if (pickUpLocation != null) {
+      // if (pickUpLocation != null) {
+      //   _setLocationOnMap(pickUpLocation);
+      // } else {
+      //
+      // if(pickUpLocation!=null)
         _setLocationOnMap(pickUpLocation);
-      } else {
-        _utils.fetchCurrentLocation().then(_setLocationOnMap);
-      }
+      // else
+      //   _utils.fetchCurrentLocation().then(_setLocationOnMap);
 
       return Center(
         child: Row(children: [
@@ -353,7 +427,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
         position: mode == SelectionMode.pickUp ? pickUpLocation : dropOffLocation,
         markerId: MarkerId( mode == SelectionMode.pickUp ? 'pickup' : 'dropOff'),
         onDragEnd: _setLocationOnMap,
-        icon: mode == SelectionMode.dropOff ? BitmapDescriptor.defaultMarker : pickUpLocationBitmap
+        icon: mode == SelectionMode.pickUp ? pickUpLocationBitmap : BitmapDescriptor.defaultMarker
       ));
 
     if(mode == SelectionMode.pickUp)
@@ -384,4 +458,69 @@ class _MapUtilsImpl {
     final position = await pickUpLocation.getLocation();
     return LatLng(position.latitude, position.longitude);
   }
+}
+
+const apiKey = "AIzaSyDdNpY6LGWgHqRfTRZsKkVhocYOaER325w";
+
+class GoogleMapsServices{
+
+  Future<String> getRouteCoordinates(LatLng currentLocation,LatLng destination)async{
+    StringBuffer query = StringBuffer('https://maps.googleapis.com/maps/api/directions/json?origin=');
+    query.write('${currentLocation.latitude},${currentLocation.longitude}');
+    // query.write('&waypoints=');
+    // for(var waypoint in waypoints){
+    //   // query.write('via:-${waypoint.latitude},${waypoint.longitude}|');
+    //   query.write('${waypoint.latitude},${waypoint.longitude}|');
+    // }
+    query.write('&key=AIzaSyDdNpY6LGWgHqRfTRZsKkVhocYOaER325w');
+    query.write('&destination=${destination.latitude},${destination.longitude}');
+    print(query.toString());
+    http.Response response = await http.get(query.toString());
+    Map values = jsonDecode(response.body);
+    return values["routes"][0]["overview_polyline"]["points"];
+  }
+}
+
+List<LatLng> convertToLatLng(List points) {
+  List<LatLng> result = <LatLng>[];
+  for (int i = 0; i < points.length; i++) {
+    if (i % 2 != 0) {
+      result.add(LatLng(points[i - 1], points[i]));
+    }
+  }
+  return result;
+}
+
+List decodePoly(String poly) {
+  var list = poly.codeUnits;
+  var lList = new List();
+  int index = 0;
+  int len = poly.length;
+  int c = 0;
+// repeating until all attributes are decoded
+  do {
+    var shift = 0;
+    int result = 0;
+
+    // for decoding value of one attribute
+    do {
+      c = list[index] - 63;
+      result |= (c & 0x1F) << (shift * 5);
+      index++;
+      shift++;
+    } while (c >= 32);
+    /* if value is negetive then bitwise not the value */
+    if (result & 1 == 1) {
+      result = ~result;
+    }
+    var result1 = (result >> 1) * 0.00001;
+    lList.add(result1);
+  } while (index < len);
+
+/*adding to previous value as done in encoding */
+  for (var i = 2; i < lList.length; i++) lList[i] += lList[i - 2];
+
+  print(lList.toString());
+
+  return lList;
 }

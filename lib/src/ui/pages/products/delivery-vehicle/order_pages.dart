@@ -3,13 +3,15 @@ part of 'delivery-vehicle_pages.dart';
 class DeliveryVehicleSelectionPage extends StatelessWidget {
   final DeliveryVehicle _deliveryVehicle;
   final Location pickUp;
-
+  final OrderLocation dropOff;
   final _item = DeliveryVehicleOrderable();
   final _order = Order<DeliveryVehicleOrderable>(OrderType.deliveryVehicle);
   final GlobalKey<ScaffoldState> key = GlobalKey<ScaffoldState>();
-  DeliveryVehicleSelectionPage(this._deliveryVehicle,this.pickUp) {
+
+  DeliveryVehicleSelectionPage(this._deliveryVehicle,this.pickUp,this.dropOff) {
     _item.product = _deliveryVehicle;
     _item.pickUpLocation = pickUp;
+    _order.location = dropOff;
   }
 
   @override
@@ -99,12 +101,8 @@ class DeliveryVehicleSelectionPage extends StatelessWidget {
                 children: [
                   DetailsTable([
                     PriceRow(
-                      'Price',
+                      'Estimated Price',
                       _rest.price,
-                    ),
-                    PriceRow(
-                      'Price per km',
-                      _item.product.deliveryCharges,
                     ),
                     TableRow(
                         children: [

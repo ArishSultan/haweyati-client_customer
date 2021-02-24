@@ -9,7 +9,7 @@ part of 'time-slots_rest.dart';
 class __TimeSlotsRest implements _TimeSlotsRest {
   __TimeSlotsRest(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.100.205:4000';
+    baseUrl ??= 'http://192.168.10.3:4000';
   }
 
   final Dio _dio;

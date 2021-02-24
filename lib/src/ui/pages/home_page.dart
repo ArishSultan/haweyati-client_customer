@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
+import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/rest/notifications_service.dart';
 import 'package:haweyati/src/services/dynamic-links_service.dart';
 import 'package:haweyati/src/ui/widgets/rating-bar.dart';
@@ -156,8 +157,10 @@ class _HomePageState extends State<HomePage> {
                     radius: 50,
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.white,
-//                  backgroundImage: (!HaweyatiData.isSignedIn || HaweyatiData.customer?.profile?.image ==null) ? AssetImage("assets/images/building.png")
-//                  : NetworkImage(HaweyatiService.convertImgUrl(HaweyatiData.customer.profile.image.name)),
+                 backgroundImage: (!AppData().isAuthenticated ||
+                     AppData().user?.profile?.image ==null) ?
+                 AssetImage("assets/icons/avatar.png")
+                 : NetworkImage(HaweyatiService.convertImgUrl(AppData().user.profile.image.name)),
                   )),
                   if (_appData.isAuthenticated)
                     Padding(
@@ -175,10 +178,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   if (_appData.isAuthenticated &&
                       _appData.user.profile.hasScope('customer'))
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: Center(child: StarRating()),
-                    )
+                    Center(child: StarRating(
+                      padding: EdgeInsets.only(bottom: 10,top: 10),
+                      size: 20,
+                    ))
                   else
                     SizedBox(height: 50),
                   Expanded(

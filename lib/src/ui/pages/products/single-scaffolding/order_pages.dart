@@ -17,7 +17,7 @@ class SingleScaffoldingSelectionPage extends StatelessWidget {
         return <Widget>[
           HeaderView(
             title: 'Service Details',
-            subtitle: loremIpsum.substring(0, 0),
+            subtitle: loremIpsum.substring(0, 120),
           ),
           DarkContainer(
             padding: const EdgeInsets.fromLTRB(20, 20, 10, 20),
@@ -50,7 +50,26 @@ class SingleScaffoldingSelectionPage extends StatelessWidget {
             ]),
           ),
           DarkContainer(
-            margin: const EdgeInsets.only(top: 15),
+            margin: const EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+            child: Row(children: [
+              Expanded(
+                child: Text(
+                  'Quantity',
+                  style: TextStyle(
+                    color: Color(0xFF313F53),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Counter(
+                initialValue: 1,
+                onChange: (count) => _item.qty = count.round(),
+              )
+            ]),
+          ),
+          DarkContainer(
+            margin: const EdgeInsets.only(top: 10),
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
             child: Row(children: [
               Expanded(
@@ -164,7 +183,7 @@ class SingleScaffoldingSelectionPage extends StatelessWidget {
       onContinue: (order) {
         order.clearProducts();
         var subtotal = 0.0;
-        subtotal+= _item.product.rent + (_item.days * _item.product.extraDayRent);
+        subtotal+= (_item.product.rent + (_item.days * _item.product.extraDayRent)) * _item.qty;
         subtotal+= _item.mesh == null ? 0 : _item.product.meshPrice(_item.mesh) * _item.meshQty;
         _item.meshQty = _item.mesh == null ? null : _item.meshQty;
         _item.days = _item.product.days + _item.days;

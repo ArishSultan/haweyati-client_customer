@@ -9,22 +9,28 @@ class HaweyatiTextField extends StatelessWidget {
   final String value;
   final IconData icon;
   final int maxLength;
+  final int lines;
   final bool disabled;
   final EdgeInsets scrollPadding;
   final Function(String) onSaved;
   final Function(String) validator;
   final TextInputType keyboardType;
   final TextEditingController controller;
+  final TextInputAction action;
+  final Function onFieldSubmitted;
 
   HaweyatiTextField({
     this.hint,
     this.maxLength,
     this.value,
+    this.action = TextInputAction.next,
+    this.lines,
     this.disabled = false,
     this.scrollPadding = const EdgeInsets.all(100),
     this.label, this.icon, this.onSaved,
     this.dense = false, this.validator,
-    this.keyboardType, this.controller
+    this.keyboardType, this.controller,
+    this.onFieldSubmitted
   });
   
   @override
@@ -32,8 +38,8 @@ class HaweyatiTextField extends StatelessWidget {
     return TextFormField(
       enabled: !disabled,
       keyboardType: keyboardType,
-      textInputAction: TextInputAction.next,
-      onFieldSubmitted: (v) {
+      textInputAction: action,
+      onFieldSubmitted: onFieldSubmitted ??  (v) {
         FocusScope.of(context).nextFocus();
       },
       scrollPadding: EdgeInsets.all(100),
@@ -42,6 +48,7 @@ class HaweyatiTextField extends StatelessWidget {
         labelText: label,
       ),
       initialValue: value,
+      maxLines: lines,
       maxLength: maxLength,
       onSaved: onSaved,
       validator: validator,

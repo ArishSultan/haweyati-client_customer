@@ -9,7 +9,7 @@ part of 'finishing-materials_rest.dart';
 class _FinishingMaterialsRest implements FinishingMaterialsRest {
   _FinishingMaterialsRest(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.100.205:4000';
+    baseUrl ??= 'http://192.168.10.3:4000';
   }
 
   final Dio _dio;
@@ -17,14 +17,17 @@ class _FinishingMaterialsRest implements FinishingMaterialsRest {
   String baseUrl;
 
   @override
-  Future<List<FinishingMaterial>> get(city, parent) async {
-    ArgumentError.checkNotNull(city, 'city');
+  Future<List<FinishingMaterial>> get(supplier, parent) async {
+    ArgumentError.checkNotNull(supplier, 'supplier');
     ArgumentError.checkNotNull(parent, 'parent');
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'city': city, r'parent': parent};
+    final queryParameters = <String, dynamic>{
+      r'supplier': supplier,
+      r'parent': parent
+    };
     final _data = <String, dynamic>{};
     final _result = await _dio.request<List<dynamic>>(
-        '/finishing-materials/available',
+        '/finishing-materials/available-supplier',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',

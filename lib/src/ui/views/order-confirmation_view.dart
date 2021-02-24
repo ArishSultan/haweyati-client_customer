@@ -250,6 +250,15 @@ class OrderConfirmationView<T extends OrderableProduct>
              await value.clear();
              await value.close();
             });
+
+            if(order.type == OrderType.finishingMaterial){
+              try{
+                Hive.lazyBox<FinishingMaterial>('cart').clear();
+              } catch (e) {
+
+              }
+            }
+
             order.clearProducts();
             if(order.image !=null)
             await HaweyatiService.patch('orders/add-image', FormData.fromMap({

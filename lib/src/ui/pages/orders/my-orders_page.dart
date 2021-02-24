@@ -89,6 +89,7 @@ class _OrderListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return DarkContainer(
       padding: const EdgeInsets.all(15),
       margin: const EdgeInsets.all(15),
@@ -97,7 +98,8 @@ class _OrderListTile extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 15),
           child: OrderMeta(order),
         ),
-        for (final item in order.products) OrderItemTile(item),
+        for (final item in order.products) OrderItemTile(item,
+            order.type == OrderType.finishingMaterial ? order.products.any((e) => (e.item as FinishingMaterialOrderable).selected == true) : false),
         Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Row(children: [
@@ -215,8 +217,8 @@ class OrderMeta extends Row {
 
 class OrderItemTile extends StatelessWidget {
   final OrderProductHolder holder;
-
-  OrderItemTile(this.holder);
+  final bool hasSupplierSelectedItems;
+  OrderItemTile(this.holder,[this.hasSupplierSelectedItems=false]);
 
   @override
   Widget build(BuildContext context) {
@@ -224,6 +226,7 @@ class OrderItemTile extends StatelessWidget {
     String title;
     String imageUrl;
     String imagePath;
+    bool isItemSelected;
 
     if (holder.item is DumpsterOrderable) {
       final item = holder.item as DumpsterOrderable;
@@ -240,6 +243,7 @@ class OrderItemTile extends StatelessWidget {
       qty = item.qty;
       title = item.product.name;
       imageUrl = item.product.image.name;
+      isItemSelected = (holder.item as FinishingMaterialOrderable).selected;
     }
     else if (holder.item is SingleScaffoldingOrderable) {
       final item = holder.item as SingleScaffoldingOrderable;
@@ -280,6 +284,8 @@ class OrderItemTile extends StatelessWidget {
         style: TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(AppLocalizations.of(context).nProducts(qty)),
+      trailing:  (holder.item is FinishingMaterialOrderable && hasSupplierSelectedItems) ?
+      Icon( isItemSelected ? Icons.done : Icons.close,color:  isItemSelected ? Colors.green : Colors.red,)  : null,
     );
   }
 }

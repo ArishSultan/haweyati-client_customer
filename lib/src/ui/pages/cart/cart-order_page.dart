@@ -77,6 +77,7 @@ class _CartOrderPageState extends State<CartOrderPage> {
     final order = Order<FinishingMaterialOrderable>(OrderType.finishingMaterial);
 
     Box<Supplier> box = await Hive.openBox('supplier');
+    // TODO: check
     order.supplier =box.getAt(0);
     await box.close();
     print(widget._items.where((element) => element.qty > 0).toList().map((e) =>

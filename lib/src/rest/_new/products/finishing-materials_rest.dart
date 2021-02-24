@@ -9,9 +9,9 @@ part 'finishing-materials_rest.g.dart';
 abstract class FinishingMaterialsRest {
   factory FinishingMaterialsRest() => _FinishingMaterialsRest(defaultDio);
 
-  @GET('/finishing-materials/available')
+  @GET('/finishing-materials/available-supplier')
   Future<List<FinishingMaterial>> get(
-    @Query('city') String city,
+    @Query('supplier') String supplier,
     @Query('parent') String parent,
   );
 

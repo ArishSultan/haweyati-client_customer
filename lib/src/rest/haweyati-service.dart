@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:haweyati_client_data_models/utils/toast_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -120,6 +121,7 @@ abstract class HaweyatiService<T> {
         print(e.request);
         print(e.message);
       }
+      showErrorToast(e.response.data['message']);
       return e.response.data['message'];
 
     }
