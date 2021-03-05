@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/rest/notifications_service.dart';
 import 'package:haweyati/src/services/dynamic-links_service.dart';
@@ -11,7 +12,6 @@ import 'package:flutter/foundation.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati/src/rest/_new/auth_service.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
@@ -39,6 +39,9 @@ class _HomePageState extends State<HomePage> {
     // DynamicLinksService.initiate(context);
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
     TempNotificationService().setup(context);
+    AuthService.refreshCustomerProfile().then((value) {
+      AppData().user = value;
+    });
   }
 
   @override
@@ -47,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       onWillPop: () async {
         final result = await showDialog(
             context: context,
-            child: ConfirmationDialog(
+            builder:(ctx)=> ConfirmationDialog(
               title: Text('Are you sure?'),
               content: Text('App will be closed.'),
             ));
@@ -184,6 +187,36 @@ class _HomePageState extends State<HomePage> {
                     ))
                   else
                     SizedBox(height: 50),
+               if(_appData.isAuthenticated)   Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                    child: InkWell(
+                      onTap: () {
+                        // print(AppData().user.id);
+                        // AuthService.refreshCustomerProfile().then((value) => print(value));
+                        // return;
+                        Navigator.of(context).pushNamed(REWARDS_PAGE);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Spacer(),
+                              Image.asset(GiftIcon,color: Colors.black,scale: 10),
+                              SizedBox(width: 10,),
+                              Text("Rewards : ${_appData.user.points} points",style: TextStyle(fontSize: 11),),
+                              Spacer(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(children: <Widget>[

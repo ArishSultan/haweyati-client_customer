@@ -12,7 +12,7 @@ class DumpstersPage extends StatelessWidget {
         subtitle: loremIpsum.substring(0, 70),
         loader: () => _service.get(AppData().city),
         builder: (context, data) => ProductListTile(
-          name: '${data.size} Yards',
+          name: '${data.name} Yards',
           image: data.image.name,
           onTap: () => navigateTo(context, DumpsterPage(data)),
         ),
@@ -27,7 +27,7 @@ class DumpsterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = '${dumpster.size} Yards Container';
+    final title = '${dumpster.name} Yards Container';
 
     return ProductDetailView(
       shareableData: ShareableData(

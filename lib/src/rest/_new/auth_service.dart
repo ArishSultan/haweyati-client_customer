@@ -17,6 +17,9 @@ abstract class _AuthService {
   @GET('/auth/profile')
   Future<Customer> user();
 
+  @GET('/customers/{id}')
+  Future<Customer> _refreshCustomer(@Path('id') String customer);
+
   @POST('/customers/guest')
   Future<Customer> _createGuest(@Body() Customer customer);
   @POST('/customers/convert-guest')
@@ -65,6 +68,9 @@ class AuthService {
       _service._createGuest(customer);
   static Future<void> registerNewCustomer(Customer customer) =>
       _service._createNewCustomer(customer);
+
+  static Future<Customer> refreshCustomerProfile() =>
+      _service._refreshCustomer(AppData().user.id);
 
   static Future<void> signIn(SignInRequest data) async {
     final resp = await _service._signIn(data);

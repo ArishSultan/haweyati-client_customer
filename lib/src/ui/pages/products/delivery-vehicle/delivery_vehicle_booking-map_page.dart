@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/rest/_new/products/delivery-vehicle_rest.dart';
 import 'package:haweyati/src/services/hyper-track_service.dart';
 import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
@@ -15,7 +16,6 @@ import 'package:haweyati_client_data_models/models/products/delivery-vehicle_mod
 import 'package:haweyati_client_data_models/services/hyerptrack_service.dart';
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_webservice/places.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
 import 'package:haweyati_client_data_models/data.dart' as l;
@@ -95,29 +95,30 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
   }
 
   Future showNearbyDrivers() async {
-    if(selectedVehicle!=null){
-      HyperRequestService().fetchNearby(pickUpLocation,selectedVehicle.id).then((value){
-
-        vehicleCords.clear();
-        if(this.mounted){
-          for(var loc in value){
-            var l = LatLng(loc['location']['geometry']['coordinates'][1],
-                loc['location']['geometry']['coordinates'][0]);
-
-
-            vehicleCords.add(l);
-            _markers
-              ..add(Marker(
-                  draggable: false,
-                  position: l,
-                  markerId: MarkerId( (l.latitude+l.longitude).toString() ),
-                  icon: mapCarMarker
-              ));
-          }
-        }
-        setState(() {});
-      });
-    }
+    //TODO NEARBY
+    // if(selectedVehicle!=null){
+    //   HyperRequestService().fetchNearby(pickUpLocation,selectedVehicle.id).then((value){
+    //
+    //     vehicleCords.clear();
+    //     if(this.mounted){
+    //       for(var loc in value){
+    //         var l = LatLng(loc['location']['geometry']['coordinates'][1],
+    //             loc['location']['geometry']['coordinates'][0]);
+    //
+    //
+    //         vehicleCords.add(l);
+    //         _markers
+    //           ..add(Marker(
+    //               draggable: false,
+    //               position: l,
+    //               markerId: MarkerId( (l.latitude+l.longitude).toString() ),
+    //               icon: mapCarMarker
+    //           ));
+    //       }
+    //     }
+    //     setState(() {});
+    //   });
+    // }
   }
 
   @override
@@ -295,7 +296,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
             _controller = controller;
           },
           polylines: _polyLines,
-          zoomControlsEnabled: false,
+          zoomGesturesEnabled: false,
           compassEnabled: true,
           markers: _markers,
         ),
@@ -475,7 +476,8 @@ class GoogleMapsServices{
     query.write('&key=AIzaSyDdNpY6LGWgHqRfTRZsKkVhocYOaER325w');
     query.write('&destination=${destination.latitude},${destination.longitude}');
     print(query.toString());
-    http.Response response = await http.get(query.toString());
+    //TODO modified
+    http.Response response = await http.get(Uri(path:query.toString()));
     Map values = jsonDecode(response.body);
     return values["routes"][0]["overview_polyline"]["points"];
   }

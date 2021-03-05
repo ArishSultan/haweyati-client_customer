@@ -147,7 +147,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                         name: _name,
                         password: _password,
                         contact: widget.contact,
-                        deviceToken: await FirebaseMessaging().getToken()
+                        deviceToken: await FirebaseMessaging.instance.getToken()
                       )
                       ..location = AppData().location;
 
@@ -159,7 +159,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                           name: _name,
                           password: _password,
                           contact: widget.contact,
-                            deviceToken: await FirebaseMessaging().getToken()
+                            deviceToken: await FirebaseMessaging.instance.getToken()
                         )
                         ..location = AppData().location;
                       await AuthService.registerGuest(customer);

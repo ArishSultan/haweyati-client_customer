@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati_client_data_models/mixins/locale_mixin.dart';

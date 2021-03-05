@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/rest/_new/_config.dart';
 import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
@@ -9,6 +12,7 @@ import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
 import 'package:haweyati/src/utils/validations.dart';
 import 'package:haweyati_client_data_models/data.dart';
+import 'package:dio/dio.dart' as dio;
 
 class EditProfile extends StatefulWidget {
   @override
@@ -82,10 +86,10 @@ class _EditProfileState extends State<EditProfile> {
             );
 
             final user = AppData().user;
-            FormData profile = FormData.fromMap({
+            FormData profile = FormData.from({
               '_id' : user.id,
               'personId' : user.profile.id,
-              'image': imagePath != null ? await MultipartFile.fromFile(imagePath,) : null,
+              'image': imagePath != null ? UploadFileInfo(File(imagePath),File(imagePath).path) : null,
               'name': name,
               'latitude' : location.latitude,
               'longitude' : location.longitude,

@@ -17,7 +17,7 @@ abstract class HaweyatiService<T> {
   Future<List<T>> getAll(String route) async {
 //    print(route);
     print("$apiUrl/$route");
-    final response = await http.get('$apiUrl/$route',headers: {
+    final response = await http.get(Uri.parse('$apiUrl/$route'),headers: {
       'Accept': 'application/json',
     },
     );

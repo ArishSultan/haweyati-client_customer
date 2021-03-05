@@ -36,7 +36,7 @@ class DumpsterOrderSelectionPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: Text(
-                      '${_dumpster.size} Yard Dumpster',
+                      '${_dumpster.name} Yard Dumpster',
                       style: TextStyle(
                         color: Color(0xFF313F53),
                         fontWeight: FontWeight.bold,
@@ -199,7 +199,7 @@ class DumpsterOrderConfirmationPage extends StatelessWidget {
       order: _order,
       itemsBuilder: (lang, order) => order.products.map((holder) {
         return OrderConfirmationItem(
-          title: '${holder.item.product.size} Yard Container',
+          title: '${holder.item.product.name} Yard Container',
           image: holder.item.product.image.name,
           table: DetailsTableAlt([
             'Price',
@@ -220,7 +220,7 @@ class DumpsterOrderConfirmationPage extends StatelessWidget {
       pricingBuilder: (lang, order) => order.products.map((holder) {
         return DetailsTable([
           DetailRow(
-            '${holder.item.product.size} Yards Container',
+            '${holder.item.product.name} Yards Container',
             lang.nPieces(holder.item.qty),
           ),
           PriceRow(

@@ -34,7 +34,7 @@ class SingleScaffoldingSelectionPage extends StatelessWidget {
                 child: Column(children: [
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
-                    child: Text(_singleScaffolding.type,
+                    child: Text(_singleScaffolding.name,
                       style: TextStyle(
                         color: Color(0xFF313F53),
                         fontWeight: FontWeight.bold,
@@ -365,7 +365,7 @@ class SingleScaffoldingOrderConfirmationPage extends StatelessWidget {
       order: _order,
       itemsBuilder: (lang, order) => order.products.map((holder) {
         return OrderConfirmationItem(
-          title: holder.item.product.type,
+          title: holder.item.product.name,
           assetImage: true,
           image: "assets/images/singleScaffolding.png",
           table: DetailsTableAlt([
@@ -387,7 +387,7 @@ class SingleScaffoldingOrderConfirmationPage extends StatelessWidget {
       pricingBuilder: (lang, order) => order.products.map((holder) {
         print( holder.item.days);
         return DetailsTable([
-          DetailRow(holder.item.product.type,
+          DetailRow(holder.item.product.name,
             lang.nPieces(holder.item.qty),
           ),
           PriceRow(

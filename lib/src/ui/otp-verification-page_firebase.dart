@@ -46,7 +46,7 @@ class _VerificationPhoneNumberState extends State<VerificationPhoneNumber> {
       context: context,
       builder: (context) => WaitingDialog(message: 'Verifying otp')
     );
-    AuthCredential authCreds = PhoneAuthProvider.getCredential(verificationId: verId, smsCode: smsCode);
+    AuthCredential authCreds = PhoneAuthProvider.credential(verificationId: verId, smsCode: smsCode);
     UserCredential result = await auth.signInWithCredential(authCreds);
     if(result.user != null){
       Navigator.pop(context);
@@ -75,7 +75,7 @@ class _VerificationPhoneNumberState extends State<VerificationPhoneNumber> {
             if(v6.text.isNotEmpty) {
               print("Completed");
               print(typedCode);
-              AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verID, smsCode: smsCode);
+              AuthCredential credential = PhoneAuthProvider.credential(verificationId: verID, smsCode: smsCode);
               UserCredential result = await auth.signInWithCredential(credential);
             if(result.user != null){
               print("code verified");

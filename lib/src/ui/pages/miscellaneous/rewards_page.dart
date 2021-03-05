@@ -4,6 +4,7 @@ import 'package:haweyati/src/const.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati_client_data_models/data.dart';
 
 class RewardsPage extends StatefulWidget {
   @override
@@ -11,6 +12,7 @@ class RewardsPage extends StatefulWidget {
 }
 
 class _RewardsPageState extends State<RewardsPage> {
+  AppData _appData  = AppData();
   @override
   Widget build(BuildContext context) {
     return ScrollableView.sliver(
@@ -27,7 +29,7 @@ class _RewardsPageState extends State<RewardsPage> {
         ),
 
         SliverToBoxAdapter(child: Container(
-          height: 170,
+          height: 130,
           margin: const EdgeInsets.fromLTRB(15, 0, 15, 10),
           decoration: BoxDecoration(
             color: Color(0xff313f53),
@@ -46,7 +48,7 @@ class _RewardsPageState extends State<RewardsPage> {
                     top: 18, bottom: 5
                   ),
                   child: RichText(text: TextSpan(
-                    text: '2,596',
+                    text: _appData.user.points.toString(),
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.white,
@@ -66,9 +68,9 @@ class _RewardsPageState extends State<RewardsPage> {
                 ),
                 visualDensity: VisualDensity.compact,
                 contentPadding: const EdgeInsets.all(0),
-                subtitle: Text('1599 points expiring on DATE', style: TextStyle(
-                  fontSize: 12, color: Colors.white
-                )),
+                // subtitle: Text('1599 points expiring on DATE', style: TextStyle(
+                //   fontSize: 12, color: Colors.white
+                // )),
               ),
               Spacer(),
               Text("Earn Points", style: TextStyle(
@@ -77,7 +79,7 @@ class _RewardsPageState extends State<RewardsPage> {
                 fontWeight: FontWeight.bold
               )),
               SizedBox(height: 5),
-              Text("Spend 2000 SR  and get 100 points",style: TextStyle(color: Colors.white, fontSize: 12)),
+              Text("Spend 2000 SR and get 100 points",style: TextStyle(color: Colors.white, fontSize: 12)),
             ], mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start),
             Positioned(
               right: 0,

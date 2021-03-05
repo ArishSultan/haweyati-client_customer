@@ -12,7 +12,7 @@ class SingleScaffoldingsPage extends StatelessWidget {
         subtitle: loremIpsum.substring(0, 70),
         loader: () => _service.get(AppData().city),
         builder: (context, data) => ProductListTile(
-          name: data.type,
+          name: data.name,
           assetImage: true,
           image: "assets/images/singleScaffolding.png",
           onTap: () => navigateTo(context, SingleScaffoldingPage(data)),
@@ -28,7 +28,7 @@ class SingleScaffoldingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = scaffolding.type;
+    final title = scaffolding.name;
 
     return ProductDetailView(
       shareableData: ShareableData(

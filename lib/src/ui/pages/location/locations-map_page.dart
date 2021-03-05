@@ -5,9 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_webservice/places.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
 import 'package:haweyati_client_data_models/data.dart' as l;
@@ -224,7 +224,7 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
           onMapCreated: (controller) {
             _controller = controller;
           },
-          zoomControlsEnabled: false,
+          zoomGesturesEnabled: false,
           compassEnabled: true,
           markers: _markers,
         ),

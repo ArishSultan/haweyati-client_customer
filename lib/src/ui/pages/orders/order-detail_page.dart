@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
 import 'package:haweyati/src/common/modals/util.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/rest/orders_service.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
+import 'package:haweyati/src/ui/pages/miscellaneous/reviews.dart';
 import 'package:haweyati/src/ui/views/location-tracking_view.dart';
 import 'package:haweyati/src/ui/views/order-confirmation_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
@@ -55,7 +56,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     hasSupplierSelectedItems = order.type == OrderType.finishingMaterial ? order.products.any((e) => (e.item as FinishingMaterialOrderable).selected == true) : false;
 
     canCancel = order.status == OrderStatus.pending ||
-        order.status == OrderStatus.accepted || order.driver==null;
+        order.status == OrderStatus.accepted || order.driver==null && order.status != OrderStatus.rejected;
 
     awaitingPayment = order.type == OrderType.finishingMaterial ?
     (order.deliveryFee != null && order.paymentType == null
@@ -159,7 +160,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ? FlatActionButton(
                   padding: EdgeInsets.only(left:20,right:20,bottom: 5),
                   label: "Order is awaiting confirmation from ${isAwaitingSupplier ? 'Supplier' : "Driver"}")
-                  : SizedBox(),
+                  : (order.status == OrderStatus.rejected && order.supplierCancellationReason!=null) ? FlatActionButton(
+
+                  padding: EdgeInsets.only(left:20,right:20,bottom: 5),
+                  label: "Cancellation Reason ${order.supplierCancellationReason['message']}") :SizedBox(),
            if(canCancel) FlatActionButton(
              padding: EdgeInsets.only(left:20,right:20,bottom: 5),
              icon: Icon(Icons.block),
@@ -235,7 +239,8 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ),
                 ),
                 RichPriceText(
-                  price: order.totalWithoutVat - (order.totalWithoutVat * .15),
+                  price: order.subtotal == 0 ? (order.products.fold(0, (previousValue, element) => previousValue+element.subtotal))
+                      : order.subtotal - order.vat,
                   fontSize: 13,
                 )
               ]),
@@ -250,7 +255,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ),
                 ),
                 RichPriceText(
-                  price: order.subtotal * 0.15,
+                  price: order.vat,
                   fontSize: 13,
                 )
               ]),
@@ -267,6 +272,22 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   ),
                   RichPriceText(
                     price: order.deliveryFee,
+                    fontSize: 13,
+                  )
+                ]),
+              if (order.rewardPointsValue != null)
+                TableRow(children: [
+                  Text(
+                    'Reward Value Used ',
+                    style: TextStyle(
+                      height: 2,
+                      fontSize: 13,
+                      fontFamily: 'Lato',
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  RichPriceText(
+                    price: order.rewardPointsValue,
                     fontSize: 13,
                   )
                 ]),
@@ -298,65 +319,90 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               defaultVerticalAlignment: TableCellVerticalAlignment.baseline),
         ),
         SliverToBoxAdapter(child: SizedBox(height: 15,),),
-        if(order.supplier!=null ) personBuilder(type: 'Supplier',image: order.supplier?.person?.image?.name,name: order.supplier.person.name,contact: order.supplier.person.contact),
-        if(order.driver!=null) personBuilder(type: 'Driver',image: order.driver?.profile?.image?.name,name: order.driver.profile.name,contact: order.driver.profile.contact),
-
+        if(order.supplier!=null ) personBuilder(type: 'Supplier',
+            image: order.supplier?.person?.image?.name,
+            name: order.supplier.person.name,
+            contact: order.supplier.person.contact,
+            rating: order.supplier.rating,
+            onTap: (){
+              navigateTo(context, PersonReviews(supplier: order.supplier,));
+            }
+        ),
+        if(order.driver!=null) personBuilder(type: 'Driver',
+            image: order.driver?.profile?.image?.name,
+            name: order.driver.profile.name,
+            contact: order.driver.profile.contact,
+            rating: order.driver.rating,
+            onTap: (){
+              navigateTo(context, PersonReviews(driver: order.driver,));
+            }
+        ),
       ],
     );
   }
 }
 
-Widget personBuilder({String type,String image,String name,String contact}){
+Widget personBuilder({String type,String image,String name,String contact,Function onTap,double rating}){
   return SliverToBoxAdapter(
-    child: DarkContainer(
-      margin: const EdgeInsets.only(bottom: 10,top: 0),
-      padding: const EdgeInsets.only(left: 15,right: 15,top: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(type,style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 14
-          ),),
-          ListTile(
-            leading: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                  color: Color(0xEEFFFFFF),
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 5,
-                        spreadRadius: 1,
-                        color: Colors.grey.shade500
+    child: InkWell(
+      onTap: onTap,
+      child: DarkContainer(
+        margin: const EdgeInsets.only(bottom: 10,top: 0),
+        padding: const EdgeInsets.only(left: 15,right: 15,top: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(type,style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14
+            ),),
+            ListTile(
+              leading: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                    color: Color(0xEEFFFFFF),
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 5,
+                          spreadRadius: 1,
+                          color: Colors.grey.shade500
+                      )
+                    ],
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: image !=null? NetworkImage(HaweyatiService.resolveImage(image))
+                            : AssetImage("assets/images/app-logo.png")
                     )
-                  ],
-                  image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: image !=null? NetworkImage(HaweyatiService.resolveImage(image))
-                          : AssetImage("assets/images/app-logo.png")
-                  )
+                ),
               ),
-            ),
-            title: Text(name, style: TextStyle()),
-            subtitle: Text(contact, style: TextStyle()),
-            trailing: Padding(
-              padding: const EdgeInsets.only(bottom:10.0),
-              child: FlatButton.icon(
-                  minWidth: 30,
-                  color: Color(0xFFFF974D),
-                  label: SizedBox(),
-                  shape: CircleBorder(),
-                  icon: Padding(
-                    padding: const EdgeInsets.only(left:12.0),
-                    child: Icon(CupertinoIcons.phone_fill,size: 20,color: Colors.white,),
-                  ), onPressed: () async {
-                launch("tel:${contact}");
-              }),
-            ),
-          )
-        ],),
+              title: Text(name, style: TextStyle()),
+              subtitle: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(contact, style: TextStyle()),
+                  StarRating(size: 20,rating: rating ?? 0,padding: EdgeInsets.zero,)
+                ],
+              ),
+              trailing: Padding(
+                padding: const EdgeInsets.only(bottom:10.0),
+                child: FlatButton.icon(
+                    minWidth: 30,
+                    color: Color(0xFFFF974D),
+                    label: SizedBox(),
+                    shape: CircleBorder(),
+                    icon: Padding(
+                      padding: const EdgeInsets.only(left:12.0),
+                      child: Icon(CupertinoIcons.phone_fill,size: 20,color: Colors.white,),
+                    ), onPressed: () async {
+                  launch("tel:${contact}");
+                }),
+              ),
+            )
+          ],),
+      ),
     ),
   );
 }
@@ -549,7 +595,7 @@ class OrderProductTile extends StatelessWidget {
     dynamic product = item.item.product;
     bool isItemSelected;
     if (item.item is DumpsterOrderable) {
-      title = '${product.size} Yards';
+      title = '${product.name} Yards';
       imageUrl = product.image.name;
     } else if (item.item is BuildingMaterialOrderable) {
       title = product.name + " (${(item.item as dynamic).price.unit})";
@@ -678,22 +724,22 @@ class _OrderStatusPainter extends CustomPainter {
     canvas.drawLine(Offset(xOffset1, 20), Offset(xOffset2, 20),
         progress > 0 ? _donePainter : _unDonePainter);
     canvas.drawLine(Offset(xOffset2, 20), Offset(xOffset3, 20),
-        progress > 2 ? _donePainter : _unDonePainter);
+        progress > 2 && progress < 5 ? _donePainter : _unDonePainter);
     canvas.drawLine(Offset(xOffset3, 20), Offset(xOffset4, 20),
-        progress > 4 ? _donePainter : _unDonePainter);
+        progress > 4  && progress < 5? _donePainter : _unDonePainter);
     canvas.drawLine(Offset(xOffset4, 20), Offset(xOffset5, 20),
-        progress > 5 ? _donePainter : _unDonePainter);
+        progress > 5  && progress < 5? _donePainter : _unDonePainter);
 
     canvas.drawCircle(Offset(xOffset1, 20), 20,
         progress >= 0 ? _donePainter : _unDonePainter);
     canvas.drawCircle(Offset(xOffset2, 20), 20,
-        progress >= 1 ? _donePainter : _unDonePainter);
+        progress >= 1 && progress < 5 ? _donePainter : _unDonePainter);
     canvas.drawCircle(Offset(xOffset3, 20), 20,
-        progress >= 2 ? _donePainter : _unDonePainter);
+        progress >= 2  && progress < 5? _donePainter : _unDonePainter);
     canvas.drawCircle(Offset(xOffset4, 20), 20,
-        progress >= 3 ? _donePainter : _unDonePainter);
+        progress >= 3  && progress < 5? _donePainter : _unDonePainter);
     canvas.drawCircle(Offset(xOffset5, 20), 20,
-        progress >= 4 ? _donePainter : _unDonePainter);
+        progress >= 4  && progress < 5? _donePainter : _unDonePainter);
   }
 
   @override

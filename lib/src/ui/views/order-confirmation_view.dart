@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
-import 'package:haweyati/src/rest/_new/_config.dart';
+import 'package:haweyati/src/const.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/rest/_new/auth_service.dart';
 import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/rest/orders_service.dart';
@@ -9,7 +11,6 @@ import 'package:haweyati/src/ui/modals/dialogs/order/unable-to-place-order_dialo
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/pages/auth/sign-in_page.dart';
 import 'package:haweyati/src/ui/pages/orders/order-placed_page.dart';
-import 'package:haweyati/src/ui/pages/otp-page.dart';
 import 'package:haweyati/src/ui/pages/payment/payment-methods_page.dart';
 import 'package:haweyati/src/ui/snack-bars/payment/not-selected_snack-bar.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
@@ -20,9 +21,10 @@ import 'package:haweyati/src/ui/widgets/location-picker.dart';
 import 'package:haweyati/src/ui/widgets/table-rows.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati/src/utils/phone-verification.dart';
+import 'package:haweyati/src/utils/simple-future-builder.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:hive/hive.dart';
-
+import 'package:dio/dio.dart';
 import 'header_view.dart';
 import 'order-location_view.dart';
 
@@ -41,14 +43,15 @@ class OrderConfirmationView<T extends OrderableProduct>
     @required this.pricingBuilder,
   })  : assert(order != null),
         assert(itemsBuilder != null),
-        assert(pricingBuilder != null);
+        assert(pricingBuilder != null),
+        notifier = TotalNotifier(order);
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final TotalNotifier notifier;
 
   @override
   Widget build(BuildContext context) {
     final lang = AppLocalizations.of(context);
-
     final items = itemsBuilder(lang, order);
     final pricing = pricingBuilder(lang, order);
 
@@ -98,10 +101,17 @@ class OrderConfirmationView<T extends OrderableProduct>
             ]
           )
         ]),
-        DetailsTable([
-          PercentRow('Value Added Tax (VAT)', Order.vat),
-          TotalPriceRow(order.total)
-        ]),
+        ValueListenableBuilder(
+          valueListenable: notifier.valueNotifier,
+          builder: (context,value,child){
+            return DetailsTable([
+              PriceRow('Value Added Tax (VAT) ( ${Order.vatVal} %) ', order.vat),
+              if(order.rewardPointsValue !=null)  PriceRow('Reward Points Value ', order.rewardPointsValue),
+              TotalPriceRow(value)
+            ]);
+          },
+        ),
+        RewardPointsSelection(order,notifier)
       ],
       bottom: RaisedActionButton(
         label: 'Proceed',
@@ -245,7 +255,10 @@ class OrderConfirmationView<T extends OrderableProduct>
 
           Order _order;
           try {
+            // order.vat = order.subtotal * Order.vatVal;
           _order = await OrdersService().placeOrder(order);
+          _appData.user.points = _order.customer.points;
+            await _appData.user.save();
             await Hive.openBox('supplier').then((value) async {
              await value.clear();
              await value.close();
@@ -258,12 +271,11 @@ class OrderConfirmationView<T extends OrderableProduct>
 
               }
             }
-
             order.clearProducts();
             if(order.image !=null)
-            await HaweyatiService.patch('orders/add-image', FormData.fromMap({
+            await HaweyatiService.patch('orders/add-image', FormData.from({
               'id': _order.id,
-              'image' :  await MultipartFile.fromFile(order.image.path),
+              'image' : UploadFileInfo(File(order.image.path), order.image.path),
               'sort' : 'customer'
             }));
             Navigator.of(context).pop();
@@ -289,6 +301,74 @@ class OrderConfirmationView<T extends OrderableProduct>
     );
   }
 }
+
+class TotalNotifier {
+  final Order order;
+  ValueNotifier valueNotifier;
+
+   TotalNotifier(this.order){
+    this.valueNotifier = ValueNotifier(order.total);
+  }
+
+  void changeOrderTotal(double value) {
+    valueNotifier.value = value;
+  }
+
+}
+
+
+class RewardPointsSelection extends StatefulWidget {
+  final Order order;
+  final TotalNotifier notifier;
+  RewardPointsSelection(this.order,this.notifier);
+  @override
+  _RewardPointsSelectionState createState() => _RewardPointsSelectionState();
+}
+
+class _RewardPointsSelectionState extends State<RewardPointsSelection> {
+
+  Future rewardsFuture;
+  TotalNotifier notifier;
+
+  @override
+  void initState() {
+    super.initState();
+    rewardsFuture = Dio().get(apiUrl + '/unit/point-value');
+    notifier = widget.notifier;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return (AppData().user.points > 0) ? SimpleFutureBuilder.simpler(
+      context: context,
+      future: rewardsFuture,
+      builder: (AsyncSnapshot snapshot){
+        double sarVal = double.tryParse(snapshot.data.toString());
+        return CheckboxListTile(dense: true,
+            controlAffinity: ListTileControlAffinity.leading,
+            title: snapshot.data!=null ? Text("Use ${AppData().user.points}  Reward Points ( ${ (sarVal * AppData().user.points).toStringAsFixed(2) } SAR )") : SizedBox(),
+            value: widget.order.rewardPointsValue !=null, onChanged: (bool value){
+          setState(() {
+            if(value){
+              double sarRewardValue =  sarVal * AppData().user.points;
+              if(sarRewardValue >= widget.order.total){
+                widget.order.rewardPointsValue = widget.order.total;
+                widget.order.total= 0;
+                notifier.changeOrderTotal(0);
+              } else {
+                widget.order.rewardPointsValue = sarRewardValue;
+                notifier.changeOrderTotal(widget.order.total-sarRewardValue);
+              }
+            } else {
+              notifier.changeOrderTotal(widget.order.total);
+            }
+          });
+        });
+      },
+    ) : SizedBox();
+  }
+}
+
 
 Future<PaymentResponse> selectPayment(
   BuildContext context,

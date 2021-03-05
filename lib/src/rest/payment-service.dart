@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:haweyati_client_data_models/utils/toast_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:stripe_payment/stripe_payment.dart';
 
@@ -38,14 +39,16 @@ class StripeService {
       try{
         paymentIntent = await StripeService.createPaymentIntent(
             amount,
-            currency
+            "SAR"
+            // currency
         );
 
         print(paymentIntent);
       } catch (e){
+        print("There was an error");
+        showErrorToast(e);
         print(e);
       }
-
 
       var response;
       try{
@@ -117,6 +120,7 @@ class StripeService {
     } on PlatformException catch(err) {
       return StripeService.getPlatformExceptionErrorResult(err);
     } catch (err) {
+      showErrorToast(err);
       return new StripeTransactionResponse(
           message: 'Transaction failed: ${err.toString()}',
           success: false
@@ -145,7 +149,7 @@ class StripeService {
         'payment_method_types[]': 'card'
       };
       var response = await http.post(
-          StripeService.paymentApiUrl,
+        Uri.parse(StripeService.paymentApiUrl),
           body: body,
           headers: StripeService.headers
       );

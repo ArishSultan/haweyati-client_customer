@@ -2,10 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:haweyati/src/const.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/rest/_new/auth_service.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
-import 'package:haweyati/src/common/modals/util.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/common/simple-form.dart';
 import 'package:haweyati/src/ui/views/header_view.dart';
 import 'package:haweyati/src/ui/widgets/contact-input-field.dart';
@@ -70,6 +69,7 @@ class _SignInPageState extends State<SignInPage> {
               key: _key,
               waitingDialog: WaitingDialog(message: 'Signing in ...'),
               onError: (err) async {
+                print(err);
                 if (err is DioError) {
                   if (err.response.statusCode == 401) {
                     await showDialog(

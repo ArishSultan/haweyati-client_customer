@@ -1,3 +1,4 @@
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/rest/orders_service.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
@@ -8,7 +9,6 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/dark-container.dart';
@@ -154,7 +154,7 @@ class _OrderStatus extends Container {
         return Colors.green;
         break;
       case OrderStatus.rejected:
-        return Colors.green;
+        return Colors.red;
         break;
     }
     return Colors.red;
@@ -231,7 +231,7 @@ class OrderItemTile extends StatelessWidget {
     if (holder.item is DumpsterOrderable) {
       final item = holder.item as DumpsterOrderable;
       qty = item.qty;
-      title = '${item.product?.size} Yards';
+      title = '${item.product?.name} Yards';
       imageUrl = item.product.image.name;
     } else if (holder.item is BuildingMaterialOrderable) {
       final item = holder.item as BuildingMaterialOrderable;
@@ -248,7 +248,7 @@ class OrderItemTile extends StatelessWidget {
     else if (holder.item is SingleScaffoldingOrderable) {
       final item = holder.item as SingleScaffoldingOrderable;
       qty = item.qty;
-      title = item.product.type;
+      title = item.product.name;
       imagePath = 'assets/images/singleScaffolding.png';
     }
     else if (holder.item is DeliveryVehicleOrderable) {

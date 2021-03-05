@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class LiveScrollableView<T> extends StatefulWidget {
   final Widget header;
-  final String title, subtitle;
+  final String title, subtitle,loadingTitle;
   final Future<List<T>> Function() loader;
   final Widget Function(BuildContext context, T data) builder;
 
@@ -12,7 +12,7 @@ class LiveScrollableView<T> extends StatefulWidget {
 
   LiveScrollableView({
     Key key,
-    this.title,
+    this.title,this.loadingTitle,
     this.header,
     this.subtitle,
     @required this.loader,
@@ -107,7 +107,7 @@ class LiveScrollableViewState<T> extends State<LiveScrollableView<T>> {
 
                       Padding(
                         padding: const EdgeInsets.only(top: 13),
-                        child: Text('Locating Services'),
+                        child: Text( widget.loadingTitle ?? 'Locating Services'),
                       )
                     ],
                   ),

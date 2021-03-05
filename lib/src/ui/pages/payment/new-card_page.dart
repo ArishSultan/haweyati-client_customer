@@ -43,7 +43,7 @@ class _NewCardPageState extends State<NewCardPage> {
               key: _key,
               onSubmit: () async {
                 StripeTransactionResponse response = await StripeService.payViaExistingCard(
-                  card: _card, currency: 'SAR', amount: widget.amount.toString()
+                  card: _card, currency: 'SAR', amount: widget.amount.toString()+'0'
                 );
 
                 if (response.success ?? false) {

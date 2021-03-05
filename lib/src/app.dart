@@ -1,11 +1,12 @@
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
 import 'package:haweyati/src/ui/pages/miscellaneous/features_page.dart';
 
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:haweyati/l10n/app_localizations.dart';
 
 import 'ui/pages/home_page.dart';
 
