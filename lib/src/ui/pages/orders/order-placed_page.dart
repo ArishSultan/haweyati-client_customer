@@ -58,7 +58,6 @@ class OrderPlacedPage extends StatelessWidget {
             )
           ], mainAxisAlignment: MainAxisAlignment.center),
         ),
-        //Todo Haroon
         bottom: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

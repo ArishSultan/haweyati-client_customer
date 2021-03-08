@@ -9,7 +9,7 @@ part of 'finishing-materials_rest.dart';
 class _FinishingMaterialsRest implements FinishingMaterialsRest {
   _FinishingMaterialsRest(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.10.3:4000';
+    baseUrl ??= 'http://192.168.10.100:4000';
   }
 
   final Dio _dio;

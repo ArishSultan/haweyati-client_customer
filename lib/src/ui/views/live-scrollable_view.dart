@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/utils/simple-future-builder.dart';
 
 // ignore: must_be_immutable
 class LiveScrollableView<T> extends StatefulWidget {
@@ -76,56 +77,14 @@ class LiveScrollableViewState<T> extends State<LiveScrollableView<T>> {
           sliver: SliverToBoxAdapter(child: Text(widget.subtitle, textAlign: TextAlign.center)),
         ),
 
-      FutureBuilder<List<T>>(
+      SimpleFutureBuilder.simplerSliver(
         future: _future,
-        builder: (context, AsyncSnapshot<List<T>> snapshot) {
-          if (snapshot.hasError) {
-            return SliverToBoxAdapter(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              return SliverToBoxAdapter(child: Text('No Data was found'));
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              if (_allowRefresh) {
-                return SliverList(delegate: SliverChildBuilderDelegate(
+        context: context,
+        builder: ( AsyncSnapshot<List<T>> snapshot) {
+          return SliverList(delegate: SliverChildBuilderDelegate(
                   (context, i) => widget.builder(context, snapshot.data[i]),
-                  childCount: snapshot.data.length
-                ));
-              } else {
-                return SliverToBoxAdapter(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: 35,
-                        height: 35,
-                        child: CircularProgressIndicator(strokeWidth: 2)
-                      ),
-
-                      Padding(
-                        padding: const EdgeInsets.only(top: 13),
-                        child: Text( widget.loadingTitle ?? 'Locating Services'),
-                      )
-                    ],
-                  ),
-                );
-              }
-              break;
-            case ConnectionState.done:
-              if (snapshot.hasData) {
-                return SliverList(delegate: SliverChildBuilderDelegate(
-                  (context, i) => widget.builder(context, snapshot.data[i]),
-                  childCount: snapshot.data.length
-                ));
-              }
-          }
-
-          return SliverToBoxAdapter(
-            child: Text('No Data was found'),
-          );
+              childCount: snapshot.data.length
+          ));
         },
       )
     ]);

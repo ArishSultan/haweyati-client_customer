@@ -5,6 +5,7 @@ import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
 import 'package:flutter/widgets.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
+import 'package:haweyati_client_data_models/data.dart';
 
 class NotificationsPage extends StatelessWidget {
   // final _box = Hive.box<StoreableNotification>('notifications');
@@ -18,18 +19,18 @@ class NotificationsPage extends StatelessWidget {
         hideHome: true,
         hideCart: true,
       ),
-      body: LiveScrollableView(
+      body: LiveScrollableView<NotificationRequest>(
         key: _key,
-        loader: NotificationRest() ?? [],
-        builder: (context, _) {
+        loader: NotificationRest().get,
+        loadingTitle: 'Loading Notifications',
+        builder: (context, NotificationRequest _) {
           return ListTile(
-            title: Text('Title'),
-            subtitle: Text('Subtitle'),
+            title: Text(_.title),
+            subtitle: Text(_.body),
           );
         },
         title: 'Notifications',
-        subtitle:
-            'this is the history of all the notifications that you have received',
+        // subtitle: 'This is the history of all the notifications that you have received.',
       ),
     );
     //

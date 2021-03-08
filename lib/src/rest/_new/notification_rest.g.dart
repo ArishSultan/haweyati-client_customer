@@ -9,7 +9,7 @@ part of 'notification_rest.dart';
 class _NotificationRest implements NotificationRest {
   _NotificationRest(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.10.3:4000';
+    baseUrl ??= 'http://192.168.10.100:4000';
   }
 
   final Dio _dio;
@@ -22,7 +22,7 @@ class _NotificationRest implements NotificationRest {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    final _result = await _dio.request<List<dynamic>>('fcm/get-history/$id',
+    final _result = await _dio.request<List<dynamic>>('/fcm/get-unseen/$id',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',
@@ -32,8 +32,13 @@ class _NotificationRest implements NotificationRest {
         data: _data);
     var value = _result.data
         .map((dynamic i) =>
-            NotificationRequest.fromJson(i as Map<String, dynamic>))
+        NotificationRequest.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
+  }
+
+  @override
+  Future<List<NotificationRequest>> get() {
+    return this._get(AppData().user.id);
   }
 }

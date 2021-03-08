@@ -88,6 +88,7 @@ abstract class HaweyatiService<T> {
         print(e.request);
         print(e.message);
       }
+      showErrorToast(e.response.data['message']);
       return e.response.data['message'];
 
     }

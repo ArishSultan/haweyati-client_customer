@@ -5,14 +5,14 @@ import 'package:haweyati/src/ui/pages/miscellaneous/phone-number-input_page.dart
 import 'package:haweyati/src/ui/pages/otp-page.dart';
 import 'package:haweyati/src/ui/widgets/contact-input-field.dart';
 import 'package:haweyati/src/utils/navigator.dart';
+import 'package:haweyati_client_data_models/utils/toast_utils.dart';
+
+import '../const.dart';
 
 Future verifyPhoneNumber(BuildContext context, String phone) async {
   final isVerified = await navigateTo(context, OtpVerificationPage(phone));
   if (isVerified == null) {
-    //Todo: Scaffold context issues
-    // Scaffold.of(context)?.showSnackBar(SnackBar(
-    //   content: Text("Phone Verification Canceled"),
-    // ));
+    showErrorToast("Phone Verification Canceled");
     return;
   } else if (!isVerified) {
     Navigator.of(context).pop();
@@ -21,6 +21,7 @@ Future verifyPhoneNumber(BuildContext context, String phone) async {
 
   return phone;
 }
+
 Future getPhoneNumber(context) => navigateTo(context, ContactInputPage());
 
 Future getVerifiedPhoneNumber(BuildContext context) async {
@@ -29,7 +30,9 @@ Future getVerifiedPhoneNumber(BuildContext context) async {
     return null;
   }
 
-  final isVerified = await navigateTo(context, OtpVerificationPage(phone));
+  var isVerified;
+  if(isDebugMode) isVerified = true;
+  else isVerified = await navigateTo(context, OtpVerificationPage(phone));
   if (isVerified == null) {
     Scaffold.of(context)?.showSnackBar(SnackBar(
       content: Text("Your Phone Number wasn't verified"),

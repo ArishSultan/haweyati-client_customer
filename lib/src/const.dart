@@ -28,6 +28,7 @@ const TermIcon = '$_icon/term.png';
 const CreditCardsIcon = '$_icon/cards.png';
 const CashIcon = '$_icon/cash.png';
 const ApplePayIcon = '$_icon/apple-pay.png';
+const MadaIcon = '$_icon/mada.png';
 
 const _image = 'assets/images';
 const Pattern = '$_image/pattern.png';
@@ -51,6 +52,7 @@ const FeatureImage4 = '$_image/features-page/feature-4.png';
 
 // const apiUrl = "http:///${kReleaseMode ? '178.128.16.246' : '192.168.100.103'}:4000";
 const apiUrl = "http://192.168.10.100:4000";
+const isDebugMode = false;
 // const apiUrl = "http://192.168.100.205:4000";
 // const apiUrl = "http://192.168.18.4:4000";
 // const apiUrl = "http://128.199.69.75:4000";

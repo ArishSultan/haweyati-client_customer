@@ -194,8 +194,9 @@ class _SignInPageState extends State<SignInPage> {
                                 ));
 
                         if (flag == true) {
-                          final verify =
-                              await verifyPhoneNumber(context, number);
+                          var verify;
+                          if(isDebugMode)  verify = true;
+                          else verify = await verifyPhoneNumber(context, number);
                           if (verify == null) {
                             _scaffoldKey.currentState.showSnackBar(
                                 SnackBar(content: Text('Phone not verified')));
@@ -214,7 +215,9 @@ class _SignInPageState extends State<SignInPage> {
 
                       if (registerType[0] ==
                           CustomerRegistrationType.fromGuest) {
-                        final verify = await verifyPhoneNumber(context, number);
+                        var verify;
+                        if(isDebugMode) verify =true;
+                        else verify = await verifyPhoneNumber(context, number);
                         if (verify == null) {
                           _scaffoldKey.currentState.showSnackBar(
                               SnackBar(content: Text('Phone not verified')));
@@ -230,7 +233,9 @@ class _SignInPageState extends State<SignInPage> {
                       }
 
                       if (registerType[0] == CustomerRegistrationType.new_) {
-                        final verify = await verifyPhoneNumber(context, number);
+                        var verify;
+                        if(isDebugMode) verify = true;
+                        else verify = await verifyPhoneNumber(context, number);
                         if (verify == null) {
                           _scaffoldKey.currentState.showSnackBar(
                               SnackBar(content: Text('Phone not verified')));

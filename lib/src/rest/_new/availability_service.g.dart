@@ -9,7 +9,7 @@ part of 'availability_service.dart';
 class _AvailabilityService implements AvailabilityService {
   _AvailabilityService(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.10.3:4000';
+    baseUrl ??= 'http://192.168.10.100:4000';
   }
 
   final Dio _dio;

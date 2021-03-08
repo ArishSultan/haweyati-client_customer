@@ -29,7 +29,9 @@ class _PersonReviewsState extends State<PersonReviews> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: HaweyatiAppBar(),
+      appBar: AppBar(
+        title: Text("${ isSupplier ? widget.supplier.person.name : widget.driver.profile.name} Reviews",style: TextStyle(color: Colors.white),),
+      ),
       body: LiveScrollableView<Review>(
         loader:()=> isSupplier ? ReviewsRest().get(type: 'supplier', id: widget.supplier.id):
         ReviewsRest().get(type: 'driver', id: widget.driver.sId),

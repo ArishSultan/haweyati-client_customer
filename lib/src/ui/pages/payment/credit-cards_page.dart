@@ -55,8 +55,8 @@ class _CreditCardsPageState extends State<CreditCardsPage> {
           onPressed: () async {
             await navigateTo(context, NewCardPage(amount: widget.amount,onPaymentIntentId: receive,));
             if (paymentIntentId != null) {
-              Navigator.pop(context, PaymentResponse(PaymentMethodEnum.creditCard,paymentIntentId));
-              Navigator.pop(context, PaymentResponse(PaymentMethodEnum.creditCard,paymentIntentId));
+              Navigator.pop(context, PaymentResponse(PaymentMethodEnum.stripe,paymentIntentId));
+              Navigator.pop(context, PaymentResponse(PaymentMethodEnum.stripe,paymentIntentId));
             }
           },
           icon: Icon(Icons.add),

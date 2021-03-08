@@ -30,6 +30,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
   String _name;
   String _password;
   String _confirmPass;
+  String referralCode;
 
   var agreeToTerms = false;
   var autoValidate = false;
@@ -98,6 +99,11 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
               },
             ),
             SizedBox(height: 15),
+          if(widget.type == CustomerRegistrationType.new_)  HaweyatiPasswordField(
+              label: 'Referral Code',
+              onSaved: (invCode) => referralCode = invCode,
+            ),
+            SizedBox(height: 15),
             Row(children: [
               Checkbox(
                 value: agreeToTerms,
@@ -147,9 +153,10 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                         name: _name,
                         password: _password,
                         contact: widget.contact,
-                        deviceToken: await FirebaseMessaging.instance.getToken()
+                        deviceToken: await FirebaseMessaging().getToken(),
                       )
-                      ..location = AppData().location;
+                      ..location = AppData().location
+                      ..referralCode = referralCode;
 
                     if (widget.type == CustomerRegistrationType.new_) {
                       await AuthService.registerNewCustomer(customer);
@@ -159,7 +166,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                           name: _name,
                           password: _password,
                           contact: widget.contact,
-                            deviceToken: await FirebaseMessaging.instance.getToken()
+                            deviceToken: await FirebaseMessaging().getToken()
                         )
                         ..location = AppData().location;
                       await AuthService.registerGuest(customer);

@@ -7,6 +7,7 @@ import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati_client_data_models/data.dart';
+import 'package:share/share.dart';
 
 class ShareAndInvitePage extends StatefulWidget {
   @override
@@ -22,7 +23,7 @@ class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
     super.initState();
 
     final profileId = AppData().user.profile.id;
-    _code = profileId.substring(profileId.length - 5);
+    _code = AppData().user.referralCode;
   }
 
   @override
@@ -47,11 +48,11 @@ class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
             child: HeaderView(
               title: 'Share and Invite',
               subtitle:
-                  'Invite our friends and give them each 500 points in coupons. And for every friend who completes their first purchase we\'ll give you 500 points.',
+                  'Invite your friends and give them each 500 points in coupons. And for every friend who completes their first purchase we\'ll give you 500 points.',
             ),
           ),
           Container(
-            width: 170,
+            width: 260,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
             margin: const EdgeInsets.symmetric(vertical: 12),
             decoration: BoxDecoration(
@@ -68,7 +69,15 @@ class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
                 ),
               ),
               GestureDetector(
-                onTap: () => Clipboard.setData(ClipboardData(text: _code)),
+                onTap: ()  async {
+                  await Clipboard.setData(ClipboardData(text: _code));
+                  _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    behavior: SnackBarBehavior.floating,
+                    content: Text(
+                      'Copied $_code',
+                    ),
+                  ));
+                } ,
                 child: Text('Copy', style: TextStyle(color: Colors.orange)),
               )
             ], mainAxisAlignment: MainAxisAlignment.spaceBetween),
@@ -77,7 +86,9 @@ class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
       ),
       bottom: FlatActionButton(
         label: 'Invite Friends',
-        onPressed: () {
+        onPressed: () async {
+         await Share.share("You are invited to create an account on Haweyati by ${AppData().user.name}. Please use the following code when signing up to get 500 bonus points: $_code");
+          return;
           _scaffoldKey.currentState.showSnackBar(SnackBar(
             behavior: SnackBarBehavior.floating,
             content: Text(

@@ -9,7 +9,7 @@ part of 'auth_service.dart';
 class __AuthService implements _AuthService {
   __AuthService(this._dio, {this.baseUrl}) {
     ArgumentError.checkNotNull(_dio, '_dio');
-    baseUrl ??= 'http://192.168.10.3:4000';
+    baseUrl ??= 'http://192.168.10.100:4000';
   }
 
   final Dio _dio;
@@ -42,6 +42,25 @@ class __AuthService implements _AuthService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.request<Map<String, dynamic>>('/auth/profile',
+        queryParameters: queryParameters,
+        options: RequestOptions(
+            method: 'GET',
+            headers: <String, dynamic>{},
+            extra: _extra,
+            baseUrl: baseUrl),
+        data: _data);
+    final value = Customer.fromJson(_result.data);
+    return value;
+  }
+
+  @override
+  Future<Customer> _refreshCustomer(customer) async {
+    ArgumentError.checkNotNull(customer, 'customer');
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.request<Map<String, dynamic>>(
+        '/customers/$customer',
         queryParameters: queryParameters,
         options: RequestOptions(
             method: 'GET',

@@ -152,6 +152,7 @@ class _FinishingMaterialsPageState extends State<FinishingMaterialsPage> {
                 controller: search,
                 label: 'Search',
                 icon: CupertinoIcons.search,
+                action: TextInputAction.search,
                 dense: true,
                 onFieldSubmitted: (String val){
                   setState(() {

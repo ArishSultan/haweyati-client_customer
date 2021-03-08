@@ -9,8 +9,8 @@ part 'notification_rest.g.dart';
 abstract class NotificationRest {
   factory NotificationRest() => _NotificationRest(defaultDio);
 
-  @GET('fcm/get-history/{id}')
+  @GET('/fcm/get-unseen/{id}')
   Future<List<NotificationRequest>> _get(@Path('id') String id);
 
-  // Future<List<NotificationRequest>> get() => _get(AppData().user.id);
+  Future<List<NotificationRequest>> get() => _get(AppData().user.id);
 }

@@ -5,7 +5,9 @@ import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
+import 'package:haweyati/src/utils/lazy_task.dart';
 import 'package:haweyati_client_data_models/data.dart';
+import 'package:haweyati_client_data_models/utils/toast_utils.dart';
 
 class ChangePassword extends StatefulWidget {
   @override
@@ -61,9 +63,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                   return 'Please Enter Confirm Password';
                 }
                 if (_newPassword != _confirmPassword) {
-                  return 'New and Confirm Passwords not matched';
+                  return 'New and Confirm Passwords do not match';
                 }
-
                 return null;
               },
               onSaved: (val) => _confirmPassword = val,
@@ -78,42 +79,37 @@ class _ChangePasswordState extends State<ChangePassword> {
       bottom: FlatActionButton(
         label: 'Change Password',
         onPressed: () async {
+          _formKey.currentState.save();
           if (_formKey.currentState.validate()) {
             FocusScope.of(context).requestFocus(FocusNode());
             FocusScope.of(context).requestFocus(FocusNode());
-
-            showDialog(
-              context: context,
-              builder: (context) => WaitingDialog(),
-            );
 
             var change = {
               '_id': AppData().user.profile.id,
               'old': _oldPassword,
               'password': _newPassword,
             };
-            var res = await HaweyatiService.patch(
-              'persons/update-password',
-              change,
-            );
-            try {
-              Navigator.pop(context);
-              key.currentState.showSnackBar(SnackBar(
-                content: Text('Your password has been updated successfully!'),
-              ));
-            } catch (e) {
-              Navigator.pop(context);
-              key.currentState.hideCurrentSnackBar();
-              key.currentState.showSnackBar(SnackBar(
-                content: Text(res.toString()),
-              ));
-            }
+
+            await performLazyTask(context, () async {
+              var res;
+              try {
+                res = await HaweyatiService.patch(
+                  'persons/update-password',
+                  change,
+                );
+                Navigator.pop(context);
+                showSuccessToast("Your password has been updated successfully!");
+              } catch (e) {
+                print(e);
+                throw e;
+                showErrorToast(res.toString());
+              }
+            });
           } else {
             setState(() {
               autoValidate = true;
             });
-          }
-        },
+          }},
       ),
     );
   }

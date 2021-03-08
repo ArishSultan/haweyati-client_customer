@@ -228,69 +228,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             textBaseline: TextBaseline.alphabetic,
             defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
             children: [
-              TableRow(children: [
-                Text(
-                  'Sub Total',
-                  style: TextStyle(
-                    height: 2,
-                    fontSize: 13,
-                    fontFamily: 'Lato',
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                RichPriceText(
-                  price: order.subtotal == 0 ? (order.products.fold(0, (previousValue, element) => previousValue+element.subtotal))
-                      : order.subtotal - order.vat,
-                  fontSize: 13,
-                )
-              ]),
-              TableRow(children: [
-                Text(
-                  'VAT (15%)',
-                  style: TextStyle(
-                    height: 2,
-                    fontSize: 13,
-                    fontFamily: 'Lato',
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-                RichPriceText(
-                  price: order.vat,
-                  fontSize: 13,
-                )
-              ]),
-              if (order.deliveryFee != null)
-                TableRow(children: [
-                  Text(
-                    'Delivery Fee',
-                    style: TextStyle(
-                      height: 2,
-                      fontSize: 13,
-                      fontFamily: 'Lato',
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  RichPriceText(
-                    price: order.deliveryFee,
-                    fontSize: 13,
-                  )
-                ]),
-              if (order.rewardPointsValue != null)
-                TableRow(children: [
-                  Text(
-                    'Reward Value Used ',
-                    style: TextStyle(
-                      height: 2,
-                      fontSize: 13,
-                      fontFamily: 'Lato',
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
-                  RichPriceText(
-                    price: order.rewardPointsValue,
-                    fontSize: 13,
-                  )
-                ]),
+              if (order.deliveryFee != null)  priceRow("Delivery Fee", order.deliveryFee),
+              if (order.rewardPointsValue != null)  priceRow("Reward Value Used", order.rewardPointsValue),
+              if (order.couponValue != null)  priceRow("Discount ( ${order.coupon} ) ", order.couponValue),
+              priceRow("Subtotal", order.subtotal - order.vat),
+              priceRow("VAT (15%)", order.vat)
             ],
           ),
         ),
@@ -340,6 +282,24 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
       ],
     );
   }
+}
+
+TableRow priceRow(String title,double value){
+  return  TableRow(children: [
+    Text(
+      title,
+      style: TextStyle(
+        height: 2,
+        fontSize: 13,
+        fontFamily: 'Lato',
+        color: Colors.grey.shade600,
+      ),
+    ),
+    RichPriceText(
+      price: value,
+      fontSize: 13,
+    )
+  ]);
 }
 
 Widget personBuilder({String type,String image,String name,String contact,Function onTap,double rating}){

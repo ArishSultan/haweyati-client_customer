@@ -62,21 +62,21 @@ class NotificationsService {
     _beforeNotify = beforeNotify;
     _notificationDataParser = dataParser;
 
-    _firebaseMessaging = FirebaseMessaging.instance
+    _firebaseMessaging = FirebaseMessaging()
       ..onTokenRefresh.listen(_tokenUpdater);
 
     if (topics?.isNotEmpty ?? false) {
       topics.forEach(_firebaseMessaging.subscribeToTopic);
     }
 
-    // _firebaseMessaging.configure(
-    //   onBackgroundMessage: _saveNotification,
-    //   // onResume: (message) => _parseData(message, onResume),
-    //   onLaunch: _saveNotification,
-    //   onResume: _saveNotification,
-    //   // onLaunch: (message) => _parseData(message, onLaunch),
-    //   onMessage: (message) => _parseData(message, onReceived),
-    // );
+    _firebaseMessaging.configure(
+      onBackgroundMessage: _saveNotification,
+      // onResume: (message) => _parseData(message, onResume),
+      onLaunch: _saveNotification,
+      onResume: _saveNotification,
+      // onLaunch: (message) => _parseData(message, onLaunch),
+      onMessage: (message) => _parseData(message, onReceived),
+    );
   }
 
   static _parseData(Map<String, dynamic> json, next) async {
@@ -167,7 +167,7 @@ openNotificationDialog(BuildContext context, List<String> notification,[bool pop
 
 
 class TempNotificationService{
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   void setup(BuildContext context){
     firebaseCloudMessaging_Listeners(context);
@@ -199,28 +199,33 @@ class TempNotificationService{
   void firebaseCloudMessaging_Listeners(BuildContext context) {
     if (Platform.isIOS) iOS_Permission();
 
-//     _firebaseMessaging.configure(
-//      // onBackgroundMessage: myBackgroundMessageHandler,
-//       onMessage: (Map<String, dynamic> message) async {
-//         print('on message $message');
-//         openNotificationDialog(context, transformNotificationMessage(message));
-//       },
-//       onResume: (Map<String, dynamic> message) async {
-//         print('on resume $message');
-//         openNotificationDialog(context,transformNotificationMessage(message));
-//       },
-//       onLaunch: (Map<String, dynamic> message) async {
-//         print('on launch $message');
-//         openNotificationDialog(context, transformNotificationMessage(message));
-//       },
-// //
-//     );
+    _firebaseMessaging.configure(
+     // onBackgroundMessage: myBackgroundMessageHandler,
+      onMessage: (Map<String, dynamic> message) async {
+        print('on message $message');
+        openNotificationDialog(context, transformNotificationMessage(message));
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('on resume $message');
+        openNotificationDialog(context,transformNotificationMessage(message));
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('on launch $message');
+        openNotificationDialog(context, transformNotificationMessage(message));
+      },
+//
+    );
   }
 
   void iOS_Permission() {
-    _firebaseMessaging.requestPermission(
-
+    _firebaseMessaging.requestNotificationPermissions(
+        IosNotificationSettings(sound: true, badge: true, alert: true)
     );
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings)
+    {
+      print("Settings registered: $settings");
+    });
   }
 
 }

@@ -9,6 +9,7 @@ import 'package:haweyati/src/ui/views/no-scroll_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/ui/widgets/location-picker.dart';
+import 'package:haweyati/src/ui/widgets/profile-image-picker.dart';
 import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
 import 'package:haweyati/src/utils/validations.dart';
 import 'package:haweyati_client_data_models/data.dart';
@@ -40,14 +41,14 @@ class _EditProfileState extends State<EditProfile> {
           autovalidate: autoValidate,
           key: form,
           child: Column(children: <Widget>[
-            // ProfileImagePicker(
-            //   previousImage: HaweyatiData.customer?.profile?.image?.name,
-            //   onImagePicked: (String val){
-            //     setState(() {
-            //       imagePath = val;
-            //     });
-            //   },
-            // ),
+            ProfileImagePicker(
+              previousImage: AppData()?.user?.profile?.image?.name,
+              onImagePicked: (String val){
+                setState(() {
+                  imagePath = val;
+                });
+              },
+            ),
             HaweyatiTextField(
               value: name,
               validator: (value) => emptyValidator(value, 'Name'),
@@ -86,10 +87,10 @@ class _EditProfileState extends State<EditProfile> {
             );
 
             final user = AppData().user;
-            FormData profile = FormData.from({
+            FormData profile = FormData.fromMap({
               '_id' : user.id,
               'personId' : user.profile.id,
-              'image': imagePath != null ? UploadFileInfo(File(imagePath),File(imagePath).path) : null,
+              'image': imagePath != null ? await MultipartFile.fromFile(imagePath) : null,
               'name': name,
               'latitude' : location.latitude,
               'longitude' : location.longitude,

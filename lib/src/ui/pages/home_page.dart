@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:dio/dio.dart';
 import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/rest/haweyati-service.dart';
@@ -20,6 +21,7 @@ import 'package:haweyati/src/ui/views/live-scrollable_view.dart';
 import 'package:haweyati/src/rest/_new/availability_service.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
 import 'package:haweyati/src/ui/widgets/localization-selector.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -39,9 +41,16 @@ class _HomePageState extends State<HomePage> {
     // DynamicLinksService.initiate(context);
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
     TempNotificationService().setup(context);
+    if(AppData().isAuthenticated)
     AuthService.refreshCustomerProfile().then((value) {
       AppData().user = value;
     });
+    Dio().get(apiUrl + '/unit/point-value').then((value) {
+    double rewardValue =  double.tryParse(value.data.toString()) ?? 0.0;
+         AppData().updateRewardPointSARValue(rewardValue);
+    });
+
+
   }
 
   @override
@@ -179,14 +188,15 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                  if (_appData.isAuthenticated &&
-                      _appData.user.profile.hasScope('customer'))
-                    Center(child: StarRating(
-                      padding: EdgeInsets.only(bottom: 10,top: 10),
-                      size: 20,
-                    ))
-                  else
-                    SizedBox(height: 50),
+                  // if (_appData.isAuthenticated &&
+                  //     _appData.user.profile.hasScope('customer'))
+                  //   Center(child: StarRating(
+                  //     padding: EdgeInsets.only(bottom: 10,top: 10),
+                  //     size: 20,
+                  //   ))
+                  // else
+                  //   SizedBox(height: 50),
+                    SizedBox(height: 10),
                if(_appData.isAuthenticated)   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 50.0),
                     child: InkWell(
@@ -217,6 +227,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 10),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(children: <Widget>[
@@ -231,15 +242,19 @@ class _HomePageState extends State<HomePage> {
                           context,
                           image: SettingsIcon,
                           title: lang.settings,
-                          navigateTo: SETTINGS_PAGE,
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                           await Navigator.of(context).pushNamed(SETTINGS_PAGE);
+                           setState(() {});
+                          },
                         ),
-                        _ListTile(
+                        if (_appData.isAuthenticated)  _ListTile(
                           context,
                           image: AccountIcon,
                           title: lang.inviteFriends,
                           navigateTo: SHARE_AND_INVITE_PAGE,
                         ),
-                        _ListTile(
+                        if (_appData.isAuthenticated)  _ListTile(
                           context,
                           image: OrderIcon,
                           title: lang.rewards,

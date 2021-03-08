@@ -12,7 +12,19 @@ class RewardsPage extends StatefulWidget {
 }
 
 class _RewardsPageState extends State<RewardsPage> {
+
   AppData _appData  = AppData();
+  double pointsSarWorth = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    AppData().rewardPointSarValue.then((value) {
+      pointsSarWorth = value;
+     if(this.mounted) setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScrollableView.sliver(
@@ -79,7 +91,7 @@ class _RewardsPageState extends State<RewardsPage> {
                 fontWeight: FontWeight.bold
               )),
               SizedBox(height: 5),
-              Text("Spend 2000 SR and get 100 points",style: TextStyle(color: Colors.white, fontSize: 12)),
+              Text("Spend 2000 SR and get ${ (2000 * pointsSarWorth).toInt() } points",style: TextStyle(color: Colors.white, fontSize: 12)),
             ], mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start),
             Positioned(
               right: 0,
@@ -89,34 +101,34 @@ class _RewardsPageState extends State<RewardsPage> {
           ])
         )),
 
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Row(children: [
-              Expanded(child: FlatButton(
-                onPressed: () {},
-                color: Colors.grey.shade200,
-                shape: StadiumBorder(),
-                child: Text('History', style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: Color(0xFF313F53)
-                ))
-              )),
-              SizedBox(width: 20),
-              Expanded(
-                child: FlatButton(
-                  onPressed: () {},
-                  color: Colors.grey.shade200,
-                  shape: StadiumBorder(),
-                  child: Text('Your Vouchers', style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: Color(0xFF313F53)
-                  ))
-                )
-              ),
-            ]),
-          ),
-        ),
+        // SliverToBoxAdapter(
+        //   child: Padding(
+        //     padding: const EdgeInsets.symmetric(horizontal: 15),
+        //     child: Row(children: [
+        //       Expanded(child: FlatButton(
+        //         onPressed: () {},
+        //         color: Colors.grey.shade200,
+        //         shape: StadiumBorder(),
+        //         child: Text('History', style: TextStyle(
+        //           fontWeight: FontWeight.normal,
+        //           color: Color(0xFF313F53)
+        //         ))
+        //       )),
+        //       SizedBox(width: 20),
+        //       Expanded(
+        //         child: FlatButton(
+        //           onPressed: () {},
+        //           color: Colors.grey.shade200,
+        //           shape: StadiumBorder(),
+        //           child: Text('Your Vouchers', style: TextStyle(
+        //             fontWeight: FontWeight.normal,
+        //             color: Color(0xFF313F53)
+        //           ))
+        //         )
+        //       ),
+        //     ]),
+        //   ),
+        // ),
 
         // _buildHeading(text: 'Construction Dumpster'),
         // SliverToBoxAdapter(
@@ -150,44 +162,44 @@ class _RewardsPageState extends State<RewardsPage> {
         //     ),
         //   ),
         // ),
-        _buildHeading(text: 'Finishing Materials'),
-        SliverToBoxAdapter(
-          child: SizedBox(
-            height: 240,
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
-              children: <Widget>[
-                _buildHorizontalList
-                  (text1: "Get Mapefill", text2: "1200 points",image: 'assets/images/item-1.png'),
-                _buildHorizontalList
-                  (text1: "Get Mapefill", text2: "360 points",image: 'assets/images/item-2.png'),
-                _buildHorizontalList
-                  (text1: "Get Mapefill", text2: "190 points",image: 'assets/images/item-3.png'),
-                _buildHorizontalList
-                  (text1: "Get Mapefill", text2: "100 points",image: 'assets/images/item-4.png'),
-                _buildHorizontalList
-                  (text1: "Get Mapefill", text2: "320 points",image: 'assets/images/item-5.png'),
-              ],
-              scrollDirection: Axis.horizontal,
-            ),
-          ),
-        ),
-        _buildHeading(text: 'Building Materials'),
-        SliverToBoxAdapter(
-          child: SizedBox(
-            height: 240,
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
-              children: <Widget>[
-                _buildHorizontalList(text1: "Sand", text2: "350 points",image: 'assets/images/Sand 1.png'),
-                _buildHorizontalList(text1: "Gypsum", text2: "212 points",image: 'assets/images/Sand 2.png'),
-                _buildHorizontalList(text1: "Cement", text2: "630 points",image: 'assets/images/Sand 5.png'),
-                _buildHorizontalList(text1: "Gypsum", text2: "325 points",image: 'assets/images/Sand 4.png'),
-              ],
-              scrollDirection: Axis.horizontal,
-            ),
-          ),
-        )
+        // _buildHeading(text: 'Finishing Materials'),
+        // SliverToBoxAdapter(
+        //   child: SizedBox(
+        //     height: 240,
+        //     child: ListView(
+        //       padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
+        //       children: <Widget>[
+        //         _buildHorizontalList
+        //           (text1: "Get Mapefill", text2: "1200 points",image: 'assets/images/item-1.png'),
+        //         _buildHorizontalList
+        //           (text1: "Get Mapefill", text2: "360 points",image: 'assets/images/item-2.png'),
+        //         _buildHorizontalList
+        //           (text1: "Get Mapefill", text2: "190 points",image: 'assets/images/item-3.png'),
+        //         _buildHorizontalList
+        //           (text1: "Get Mapefill", text2: "100 points",image: 'assets/images/item-4.png'),
+        //         _buildHorizontalList
+        //           (text1: "Get Mapefill", text2: "320 points",image: 'assets/images/item-5.png'),
+        //       ],
+        //       scrollDirection: Axis.horizontal,
+        //     ),
+        //   ),
+        // ),
+        // _buildHeading(text: 'Building Materials'),
+        // SliverToBoxAdapter(
+        //   child: SizedBox(
+        //     height: 240,
+        //     child: ListView(
+        //       padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
+        //       children: <Widget>[
+        //         _buildHorizontalList(text1: "Sand", text2: "350 points",image: 'assets/images/Sand 1.png'),
+        //         _buildHorizontalList(text1: "Gypsum", text2: "212 points",image: 'assets/images/Sand 2.png'),
+        //         _buildHorizontalList(text1: "Cement", text2: "630 points",image: 'assets/images/Sand 5.png'),
+        //         _buildHorizontalList(text1: "Gypsum", text2: "325 points",image: 'assets/images/Sand 4.png'),
+        //       ],
+        //       scrollDirection: Axis.horizontal,
+        //     ),
+        //   ),
+        // )
       ],
     );
     // return ScrollablePage(

@@ -7,13 +7,11 @@ import 'package:geocoder/geocoder.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/rest/_new/products/delivery-vehicle_rest.dart';
-import 'package:haweyati/src/services/hyper-track_service.dart';
+import 'package:haweyati/src/services/hyerptrack_service.dart';
 import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati/src/utils/simple-future-builder.dart';
-import 'package:haweyati_client_data_models/models/order/vehicle-type.dart';
 import 'package:haweyati_client_data_models/models/products/delivery-vehicle_model.dart';
-import 'package:haweyati_client_data_models/services/hyerptrack_service.dart';
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_webservice/places.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
@@ -44,7 +42,6 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
   Address _dropOffAddress;
   LatLng pickUpLocation;
   LatLng dropOffLocation;
-  bool selectedPickupLocation = false;
   bool _initiated = false;
   GoogleMapController _controller;
   SelectionMode mode = SelectionMode.pickUp;
@@ -95,30 +92,26 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
   }
 
   Future showNearbyDrivers() async {
-    //TODO NEARBY
-    // if(selectedVehicle!=null){
-    //   HyperRequestService().fetchNearby(pickUpLocation,selectedVehicle.id).then((value){
-    //
-    //     vehicleCords.clear();
-    //     if(this.mounted){
-    //       for(var loc in value){
-    //         var l = LatLng(loc['location']['geometry']['coordinates'][1],
-    //             loc['location']['geometry']['coordinates'][0]);
-    //
-    //
-    //         vehicleCords.add(l);
-    //         _markers
-    //           ..add(Marker(
-    //               draggable: false,
-    //               position: l,
-    //               markerId: MarkerId( (l.latitude+l.longitude).toString() ),
-    //               icon: mapCarMarker
-    //           ));
-    //       }
-    //     }
-    //     setState(() {});
-    //   });
-    // }
+    if(selectedVehicle!=null){
+      HyperRequestService().fetchNearby(pickUpLocation,selectedVehicle.id).then((value){
+        vehicleCords.clear();
+        if(this.mounted){
+          for(var loc in value){
+            var l = LatLng(loc['location']['geometry']['coordinates'][1],
+                loc['location']['geometry']['coordinates'][0]);
+            vehicleCords.add(l);
+            _markers
+              ..add(Marker(
+                  draggable: false,
+                  position: l,
+                  markerId: MarkerId( (l.latitude+l.longitude).toString() ),
+                  icon: mapCarMarker
+              ));
+          }
+        }
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -334,7 +327,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
               builder: (AsyncSnapshot<List<DeliveryVehicle>> vehicles) {
                return InkWell(
                  onTap: () async {
-                DeliveryVehicle _vehicle = await showModalBottomSheet(context: context, builder: (context){
+                  DeliveryVehicle _vehicle = await showModalBottomSheet(context: context, builder: (context){
                      return SelectVehicle(vehicles.data,selectedVehicle);
                    });
                    if(_vehicle!=null) setState(() {

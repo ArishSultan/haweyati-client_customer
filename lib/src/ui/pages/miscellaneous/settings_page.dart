@@ -31,7 +31,9 @@ class SettingsPage extends StatelessWidget {
             DarkListTile(
               title: 'Profile',
               trailing: Icon(CupertinoIcons.right_chevron),
-              onTap: () => navigateTo(context, EditProfile()),
+              onTap: () async {
+              await navigateTo(context, EditProfile());
+              } ,
             ),
           SizedBox(height: 15),
           DarkListTile(
@@ -40,7 +42,7 @@ class SettingsPage extends StatelessWidget {
             onTap: () => AppSettings.openAppSettings(),
           ),
           SizedBox(height: 15),
-          DarkListTile(
+          if (_appData.isAuthenticated) DarkListTile(
             title: 'Change Password',
             trailing: Icon(CupertinoIcons.right_chevron),
             onTap: () => navigateTo(context, ChangePassword()),
