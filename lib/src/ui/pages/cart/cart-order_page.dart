@@ -144,7 +144,7 @@ class __CartOrderItemWithVariantsState extends State<_CartOrderItem> {
     print(widget.item.variants);
 
     return DarkContainer(
-      child: Wrap(children: [
+      child: Column(children: [
         _ListTile(widget.item, widget.onChange),
         if (_expanded) Wrap(children: _buildOptions(widget.product.options)),
         Divider(thickness: 1, height: 1),
@@ -177,19 +177,18 @@ class __CartOrderItemWithVariantsState extends State<_CartOrderItem> {
 
       var row = <Widget>[];
       for (final value in option.values) {
-        row.add(Expanded(
-          child: Row(children: [
-            Radio(
-              value: value,
-              visualDensity: VisualDensity.compact,
-              groupValue: _selectedVariant[option.name],
-              onChanged: (val) => setState(() {
-                _selectedVariant[option.name] = value;
-              }),
-            ),
-            Text(value)
-          ]),
-        ));
+        row.add(Row(
+            children: [
+          Radio(
+            value: value,
+            visualDensity: VisualDensity.compact,
+            groupValue: _selectedVariant[option.name],
+            onChanged: (val) => setState(() {
+              _selectedVariant[option.name] = value;
+            }),
+          ),
+          Text(value)
+        ]));
 
         if (row.length == 2) {
           list.add(Padding(

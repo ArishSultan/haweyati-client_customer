@@ -14,6 +14,7 @@ import 'package:haweyati/src/ui/widgets/text-fields/text-field.dart';
 import 'package:haweyati/src/utils/validations.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:dio/dio.dart' as dio;
+import 'package:haweyati_client_data_models/models/image_model.dart';
 
 class EditProfile extends StatefulWidget {
   @override
@@ -99,12 +100,16 @@ class _EditProfileState extends State<EditProfile> {
 
             var res = await HaweyatiService.patch('customers', profile);
             try {
+              ImageModel img = ImageModel.fromJson(res.data['profile']['image']);
               user.profile.name = name;
+              user.profile.image = img;
+
               await user.save();
 
               Navigator.pop(context);
               Navigator.pop(context);
             } catch (e) {
+              print(e);
               Navigator.pop(context);
               key.currentState.hideCurrentSnackBar();
               key.currentState.showSnackBar(

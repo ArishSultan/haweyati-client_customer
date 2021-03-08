@@ -157,6 +157,7 @@ class _LocationPickerMapPageState extends State<LocationPickerMapPage> {
                           final prediction = await PlacesAutocomplete.show(
                             context: context,
                             apiKey: apiKey,
+                              components: [Component(Component.country, "sau")]
                           );
 
                           if (prediction != null) {

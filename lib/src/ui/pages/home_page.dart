@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     _cart = Hive.lazyBox<FinishingMaterial>('cart').listenable();
     TempNotificationService().setup(context);
     if(AppData().isAuthenticated)
-    AuthService.refreshCustomerProfile().then((value) {
+    AuthService.refreshCustomerProfile().then((value) async {
       AppData().user = value;
     });
     Dio().get(apiUrl + '/unit/point-value').then((value) {
@@ -169,10 +169,9 @@ class _HomePageState extends State<HomePage> {
                     radius: 50,
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.white,
-                 backgroundImage: (!AppData().isAuthenticated ||
-                     AppData().user?.profile?.image ==null) ?
+                 backgroundImage: (_appData.user?.profile?.image?.name ==null) ?
                  AssetImage("assets/icons/avatar.png")
-                 : NetworkImage(HaweyatiService.convertImgUrl(AppData().user.profile.image.name)),
+                 : NetworkImage(HaweyatiService.convertImgUrl(_appData.user.profile.image.name)),
                   )),
                   if (_appData.isAuthenticated)
                     Padding(

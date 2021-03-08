@@ -72,7 +72,7 @@ class OrderConfirmationView<T extends OrderableProduct>
           subtitle: lang.orderConfirmationPageSubtitle,
         ),
         ...items,
-        Padding(
+      if(order.type != OrderType.finishingMaterial)  Padding(
           padding: const EdgeInsets.only(bottom: 30),
           child: OrderLocationView(
             location: order.location,
@@ -168,6 +168,7 @@ class OrderConfirmationView<T extends OrderableProduct>
                 verify = await getVerifiedPhoneNumber(context);
               }
 
+              print('section 1');
 
               if (verify == null) {
                 Navigator.of(context).pop();
@@ -179,11 +180,12 @@ class OrderConfirmationView<T extends OrderableProduct>
               order.customer = _appData.user;
             } else {
               if (order.paymentType == 'COD') {
+                print('section 2');
+
                 //TODO
                 var verify;
                 if(isDebugMode) verify = true;
-                else
-                final verify = await verifyPhoneNumber(context,AppData().user.profile.contact);
+                else verify = await verifyPhoneNumber(context,AppData().user.profile.contact);
                 if(verify == null) {
                   Navigator.pop(context);
                   return;
@@ -205,6 +207,8 @@ class OrderConfirmationView<T extends OrderableProduct>
             await AuthService.prepareForRegistration(context, number);
 
             if (result[0] == CustomerRegistrationType.new_) {
+              print('section 3');
+
               var verify;
               if(isDebugMode) verify = true;
               else
@@ -231,6 +235,8 @@ class OrderConfirmationView<T extends OrderableProduct>
               AppData().user = _guest;
               order.customer = _guest;
             } else if (result[0] == CustomerRegistrationType.fromGuest) {
+              print('section 4');
+
               var verify;
               if(isDebugMode) verify = true;
               else verify = await verifyPhoneNumber(context, number);
@@ -290,7 +296,7 @@ class OrderConfirmationView<T extends OrderableProduct>
             if(order.image !=null)
             await HaweyatiService.patch('orders/add-image', FormData.fromMap({
               'id': _order.id,
-              'image' : MultipartFile.fromFile(order.image.path),
+              'image' : await MultipartFile.fromFile(order.image.path),
               'sort' : 'customer'
             }));
             Navigator.of(context).pop();
@@ -375,37 +381,38 @@ class _RewardPointsSelectionState extends State<RewardPointsSelection> {
 
   @override
   Widget build(BuildContext context) {
-    return (AppData().user.points > 0) ? SimpleFutureBuilder.simpler(
-      context: context,
-      future: rewardsFuture,
-      builder: (AsyncSnapshot snapshot){
-        double sarVal = double.tryParse(snapshot.data.toString());
-        return Column(
+    return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-         if(!hasDiscountCode)   CheckboxListTile(dense: true,
-                controlAffinity: ListTileControlAffinity.leading,
-                title: snapshot.data!=null ? Text("Use ${AppData().user.points}  Reward Points ( ${ (sarVal * AppData().user.points).toStringAsFixed(2) } SAR )") : SizedBox(),
-                value: widget.order.rewardPointsValue !=null, onChanged: (bool value){
-               setState(() {
-                if(value) {
-                  final requiredPoints = widget.order.total;
-                  final currentPoints = sarVal * AppData().user.points;
-                  print('required points: ' + requiredPoints.toString());
-                  print('current points: ' + currentPoints.toString());
+         if(!hasDiscountCode && AppData().user.points > 0) SimpleFutureBuilder<double>.simpler(
+           context: context,
+           future: rewardsFuture,
+           builder: (double snapshot){
+             double sarVal = double.tryParse(snapshot.toString());
+             return CheckboxListTile(dense: true,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: snapshot!=null ? Text("Use ${AppData().user.points}  Reward Points ( ${ (sarVal * AppData().user.points).toStringAsFixed(2) } SAR )") : SizedBox(),
+                  value: widget.order.rewardPointsValue !=null, onChanged: (bool value){
+                 setState(() {
+                  if(value) {
+                    final requiredPoints = widget.order.total;
+                    final currentPoints = sarVal * AppData().user.points;
+                    print('required points: ' + requiredPoints.toString());
+                    print('current points: ' + currentPoints.toString());
 
-                  if (requiredPoints <= currentPoints) {
-                    widget.order.rewardPointsValue = requiredPoints;
+                    if (requiredPoints <= currentPoints) {
+                      widget.order.rewardPointsValue = requiredPoints;
+                    } else {
+                      widget.order.rewardPointsValue = currentPoints;
+                    }
                   } else {
-                    widget.order.rewardPointsValue = currentPoints;
+                    widget.order.rewardPointsValue = null;
                   }
-                } else {
-                  widget.order.rewardPointsValue = null;
-                }
 
-                  notifier.changeOrderTotal(widget.order.total);
-               });
-         }),
+                    notifier.changeOrderTotal(widget.order.total);
+                 });
+           });},
+         ),
 
           if(widget.order.rewardPointsValue == null && widget.order.coupon == null)  CheckboxListTile(dense: true,
                 controlAffinity: ListTileControlAffinity.leading,
@@ -427,16 +434,20 @@ class _RewardPointsSelectionState extends State<RewardPointsSelection> {
             } else {
               await performLazyTask(context, () async {
                 var res;
+                try{
                   res =  await HaweyatiService.post('coupons/check-coupon-validity', {
                     'code' : discountCode.text,
                     'user' : AppData().user.id
                   });
-                 Coupon coupon = Coupon.fromJson(res.data);
+                  Coupon coupon = Coupon.fromJson(res.data);
 
-                 showSuccessToast("Discount Code Applied");
-                 widget.order.coupon = coupon.code;
-                 widget.order.couponValue = widget.order.total * coupon.value / 100;
-                 notifier.changeOrderTotal(widget.order.total);
+                  showSuccessToast("Discount Code Applied");
+                  widget.order.coupon = coupon.code;
+                  widget.order.couponValue = widget.order.total * coupon.value / 100;
+                  notifier.changeOrderTotal(widget.order.total);
+                } catch (e){
+
+                }
               },message: 'Applying Discount Code');
             }
           }, child: Text("Apply")),
@@ -447,8 +458,6 @@ class _RewardPointsSelectionState extends State<RewardPointsSelection> {
               )
           ],
         );
-      },
-    ) : SizedBox();
   }
 }
 

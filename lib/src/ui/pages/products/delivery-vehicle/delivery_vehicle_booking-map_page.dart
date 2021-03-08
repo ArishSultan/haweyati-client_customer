@@ -162,6 +162,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
                           final prediction = await PlacesAutocomplete.show(
                             context: context,
                             apiKey: apiKey,
+                              components: [Component(Component.country, "sau")]
                           );
 
                           if (prediction != null) {
@@ -289,13 +290,12 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
             _controller = controller;
           },
           polylines: _polyLines,
-          zoomGesturesEnabled: false,
           compassEnabled: true,
           markers: _markers,
         ),
         Positioned(
           right: 15,
-          bottom: 65,
+          bottom: 125,
           child: Container(
             width: 35,
             height: 35,
@@ -324,11 +324,11 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
           child: SimpleFutureBuilder.simpler(
               context: context,
               future: vehicleTypes,
-              builder: (AsyncSnapshot<List<DeliveryVehicle>> vehicles) {
+              builder: (List<DeliveryVehicle> vehicles) {
                return InkWell(
                  onTap: () async {
                   DeliveryVehicle _vehicle = await showModalBottomSheet(context: context, builder: (context){
-                     return SelectVehicle(vehicles.data,selectedVehicle);
+                     return SelectVehicle(vehicles,selectedVehicle);
                    });
                    if(_vehicle!=null) setState(() {
                      selectedVehicle = _vehicle;
@@ -400,7 +400,9 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
     if (_controller != null) {
       showDialog(
         context: context,
-        builder: (context) => WaitingDialog(
+        barrierDismissible: false,
+        useRootNavigator: false,
+        builder: (BuildContext ctx) => WaitingDialog(
           message: AppLocalizations.of(context).fetchingLocationData,
         ),
       );
@@ -421,7 +423,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
         position: mode == SelectionMode.pickUp ? pickUpLocation : dropOffLocation,
         markerId: MarkerId( mode == SelectionMode.pickUp ? 'pickup' : 'dropOff'),
         onDragEnd: _setLocationOnMap,
-        icon: mode == SelectionMode.pickUp ? pickUpLocationBitmap : BitmapDescriptor.defaultMarker
+        icon: mode == SelectionMode.pickUp ? pickUpLocationBitmap : null
       ));
 
     if(mode == SelectionMode.pickUp)
@@ -430,7 +432,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
       _dropOffAddress = await _utils.fetchAddress(dropOffLocation);
 
     if (_controller != null) {
-      Navigator.of(context).pop();
+    if(Navigator.canPop(context)) Navigator.of(context).pop();
       _controller.animateCamera(CameraUpdate.newLatLng(mode == SelectionMode.pickUp ? pickUpLocation : dropOffLocation));
     }
 

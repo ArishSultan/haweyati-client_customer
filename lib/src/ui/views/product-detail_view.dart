@@ -39,28 +39,28 @@ class ProductDetailView extends StatelessWidget {
       key: _scaffoldKey,
       appBar: HaweyatiAppBar(
         actions: [
-          IconButton(
-            icon: Icon(Icons.share_outlined),
-            onPressed: () async {
-              showDialog(
-                context: context,
-                builder: (context) => WaitingDialog(message: 'Preparing to share',)
-              );
-              final link = await DynamicLinksService.createDynamicLink(
-                  queryParameters: {
-                    'id': shareableData.id,
-                    'city': AppData().city
-                  },
-                  path: 'products/${shareableData.type.link}',
-                  socialMediaTitle: shareableData.socialMediaTitle,
-                  socialMediaDescription: shareableData.socialMediaDescription
-              ).buildShortLink();
-              print(link.shortUrl);
-              print(link.warnings);
-              Navigator.of(context).pop();
-              Share.share(link.shortUrl.toString(), subject: 'Check this out!');
-            },
-          )
+          // IconButton(
+          //   icon: Icon(Icons.share_outlined),
+          //   onPressed: () async {
+          //     showDialog(
+          //       context: context,
+          //       builder: (context) => WaitingDialog(message: 'Preparing to share',)
+          //     );
+          //     final link = await DynamicLinksService.createDynamicLink(
+          //         queryParameters: {
+          //           'id': shareableData.id,
+          //           'city': AppData().city
+          //         },
+          //         path: 'products/${shareableData.type.link}',
+          //         socialMediaTitle: shareableData.socialMediaTitle,
+          //         socialMediaDescription: shareableData.socialMediaDescription
+          //     ).buildShortLink();
+          //     print(link.shortUrl);
+          //     print(link.warnings);
+          //     Navigator.of(context).pop();
+          //     Share.share(link.shortUrl.toString(), subject: 'Check this out!');
+          //   },
+          // )
         ],
       ),
       body: DottedBackgroundView(

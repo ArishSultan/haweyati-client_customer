@@ -16,7 +16,7 @@ abstract class FinishingMaterialsRest {
   );
 
   @GET('/finishing-materials/search')
-  Future<List<FinishingMaterial>> search(@Query('name') String keyword);
+  Future<List<FinishingMaterial>> search(@Query('name') String keyword,@Query('parent') String category,@Query('supplier') String supplier);
 
   @GET('/finishing-materials/categories-supplier/{id}')
   Future<List<FinishingMaterialBase>> getCategories(@Path('id') String supplier);

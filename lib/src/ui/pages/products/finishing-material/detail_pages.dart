@@ -156,7 +156,7 @@ class _FinishingMaterialsPageState extends State<FinishingMaterialsPage> {
                 dense: true,
                 onFieldSubmitted: (String val){
                   setState(() {
-                    _future =  _service.search(val);
+                    _future =  _service.search(val,widget.item.id,widget.supplier.id);
                   });
                 },
               ),

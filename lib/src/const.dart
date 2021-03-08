@@ -52,7 +52,7 @@ const FeatureImage4 = '$_image/features-page/feature-4.png';
 
 // const apiUrl = "http:///${kReleaseMode ? '178.128.16.246' : '192.168.100.103'}:4000";
 const apiUrl = "http://192.168.10.100:4000";
-const isDebugMode = false;
+const isDebugMode = true;
 // const apiUrl = "http://192.168.100.205:4000";
 // const apiUrl = "http://192.168.18.4:4000";
 // const apiUrl = "http://128.199.69.75:4000";

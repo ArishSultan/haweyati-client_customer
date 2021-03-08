@@ -56,7 +56,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
     hasSupplierSelectedItems = order.type == OrderType.finishingMaterial ? order.products.any((e) => (e.item as FinishingMaterialOrderable).selected == true) : false;
 
     canCancel = order.status == OrderStatus.pending ||
-        order.status == OrderStatus.accepted || order.driver==null && order.status != OrderStatus.rejected;
+        order.status == OrderStatus.accepted || order.driver==null && order.status != OrderStatus.rejected  && order.status != OrderStatus.canceled;
 
     awaitingPayment = order.type == OrderType.finishingMaterial ?
     (order.deliveryFee != null && order.paymentType == null
@@ -185,6 +185,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                   await OrdersService().cancelOrder(widget.order.id);
                   widget.order.status = OrderStatus.canceled;
                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                   setState(() {});
                 }
               },)
@@ -231,7 +232,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
               if (order.deliveryFee != null)  priceRow("Delivery Fee", order.deliveryFee),
               if (order.rewardPointsValue != null)  priceRow("Reward Value Used", order.rewardPointsValue),
               if (order.couponValue != null)  priceRow("Discount ( ${order.coupon} ) ", order.couponValue),
-              priceRow("Subtotal", order.subtotal - order.vat),
+              priceRow("Subtotal", order.subtotal == 0 ? 0 : order.subtotal - order.vat),
               priceRow("VAT (15%)", order.vat)
             ],
           ),
@@ -565,7 +566,7 @@ class OrderProductTile extends StatelessWidget {
       imageUrl = product.image.name;
       isItemSelected = (item.item as FinishingMaterialOrderable).selected;
     } else if (item.item is SingleScaffoldingOrderable) {
-      title = product.type;
+      title = product.name;
       imagePath = "assets/images/singleScaffolding.png";
     } else if (item.item is DeliveryVehicleOrderable) {
       title = product.name;

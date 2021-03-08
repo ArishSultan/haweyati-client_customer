@@ -80,10 +80,10 @@ class LiveScrollableViewState<T> extends State<LiveScrollableView<T>> {
       SimpleFutureBuilder.simplerSliver(
         future: _future,
         context: context,
-        builder: ( AsyncSnapshot<List<T>> snapshot) {
+        builder: ( List<T> snapshot) {
           return SliverList(delegate: SliverChildBuilderDelegate(
-                  (context, i) => widget.builder(context, snapshot.data[i]),
-              childCount: snapshot.data.length
+                  (context, i) => widget.builder(context, snapshot[i]),
+              childCount: snapshot.length
           ));
         },
       )

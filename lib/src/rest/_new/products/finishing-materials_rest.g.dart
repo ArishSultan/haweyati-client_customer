@@ -43,10 +43,16 @@ class _FinishingMaterialsRest implements FinishingMaterialsRest {
   }
 
   @override
-  Future<List<FinishingMaterial>> search(keyword) async {
+  Future<List<FinishingMaterial>> search(keyword, category, supplier) async {
     ArgumentError.checkNotNull(keyword, 'keyword');
+    ArgumentError.checkNotNull(category, 'category');
+    ArgumentError.checkNotNull(supplier, 'supplier');
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'name': keyword};
+    final queryParameters = <String, dynamic>{
+      r'name': keyword,
+      r'parent': category,
+      r'supplier': supplier
+    };
     final _data = <String, dynamic>{};
     final _result = await _dio.request<List<dynamic>>(
         '/finishing-materials/search',
@@ -59,7 +65,7 @@ class _FinishingMaterialsRest implements FinishingMaterialsRest {
         data: _data);
     var value = _result.data
         .map((dynamic i) =>
-            FinishingMaterial.fromJson(i as Map<String, dynamic>))
+        FinishingMaterial.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }
