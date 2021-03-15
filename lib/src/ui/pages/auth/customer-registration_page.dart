@@ -31,6 +31,7 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
   String _password;
   String _confirmPass;
   String referralCode;
+  // bool hasReferralCode = false;
 
   var agreeToTerms = false;
   var autoValidate = false;
@@ -98,8 +99,19 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
                 return null;
               },
             ),
+           // if(widget.type == CustomerRegistrationType.new_) CheckboxListTile(
+           //    contentPadding: EdgeInsets.zero,
+           //    controlAffinity: ListTileControlAffinity.leading,
+           //    dense: true,
+           //    title: Text("Have a referral code ?"),
+           //      value: hasReferralCode,
+           //      onChanged: (bool value){
+           //        setState(() {
+           //          hasReferralCode = value;
+           //        });
+           //      }),
             SizedBox(height: 15),
-          if(widget.type == CustomerRegistrationType.new_)  HaweyatiPasswordField(
+            if(widget.type == CustomerRegistrationType.new_)  HaweyatiTextField(
               label: 'Referral Code',
               onSaved: (invCode) => referralCode = invCode,
             ),
@@ -206,6 +218,3 @@ class _CustomerRegistrationState extends State<CustomerRegistration> {
     );
   }
 }
-
-// customers/convert-guest
-//3166787047

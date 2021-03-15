@@ -7,6 +7,7 @@ import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:haweyati_client_data_models/data.dart';
+import 'package:haweyati_client_data_models/utils/toast_utils.dart';
 import 'package:share/share.dart';
 
 class ShareAndInvitePage extends StatefulWidget {
@@ -68,15 +69,10 @@ class _ShareAndInvitePageState extends State<ShareAndInvitePage> {
                   letterSpacing: 2,
                 ),
               ),
-              GestureDetector(
+              InkWell(
                 onTap: ()  async {
                   await Clipboard.setData(ClipboardData(text: _code));
-                  _scaffoldKey.currentState.showSnackBar(SnackBar(
-                    behavior: SnackBarBehavior.floating,
-                    content: Text(
-                      'Copied $_code',
-                    ),
-                  ));
+                  showSuccessToast('Copied $_code');
                 } ,
                 child: Text('Copy', style: TextStyle(color: Colors.orange)),
               )

@@ -278,8 +278,9 @@ class OrderConfirmationView<T extends OrderableProduct>
           try {
             // order.vat = order.subtotal * Order.vatVal;
           _order = await OrdersService().placeOrder(order);
-          _appData.user.points = _order.customer.points;
-            await _appData.user.save();
+          var customer = _order.customer;
+            AppData().user = customer;
+            print("Points after order placement ${AppData().user.points}");
             await Hive.openBox('supplier').then((value) async {
              await value.clear();
              await value.close();

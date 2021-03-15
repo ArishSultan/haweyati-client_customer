@@ -4,13 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:haweyati/src/rest/_new/estimated-price_service.dart';
 import 'package:haweyati/src/rest/_new/products/delivery-vehicle_rest.dart';
 import 'package:haweyati/src/services/hyerptrack_service.dart';
 import 'package:haweyati/src/ui/pages/location/locations-map_page.dart';
+import 'package:haweyati/src/ui/widgets/details-table.dart';
+import 'package:haweyati/src/ui/widgets/table-rows.dart';
+import 'package:haweyati/src/utils/lazy_task.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati/src/utils/simple-future-builder.dart';
+import 'package:haweyati_client_data_models/models/order/order_model.dart';
+import 'package:haweyati_client_data_models/models/order/products/delivery-vehicle_orderable.dart';
 import 'package:haweyati_client_data_models/models/products/delivery-vehicle_model.dart';
 import 'package:location/location.dart' as loc;
 import 'package:google_maps_webservice/places.dart';
@@ -58,10 +65,12 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
   Future<List> nearbyVehicles;
   List<LatLng> vehicleCords = [];
   final Set<Polyline> _polyLines = {};
+  final _order = Order<DeliveryVehicleOrderable>(OrderType.deliveryVehicle);
+  final _item = DeliveryVehicleOrderable();
 
-  void createRoute() async {
+  Future createRoute() async {
+    print("Route was created again");
     String route = await _googleMapServices.getRouteCoordinates(pickUpLocation,dropOffLocation);
-    setState(() {
       _polyLines.clear();
       _polyLines.add(Polyline(
           polylineId: PolylineId('route'),
@@ -69,7 +78,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
           points: convertToLatLng(decodePoly(route)),
           color: Colors.blue
       ));
-    });
+      setState(() {});
   }
 
   @override
@@ -195,76 +204,81 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
           ),
         ),
         body: _resolveMap(),
-        bottom: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-         if(pickUpLocation!=null && mode!=SelectionMode.pickUp && _pickUpAddress!=null)  ListTile(
-              leading: Icon(CupertinoIcons.location,color: Theme.of(context).accentColor,),
-              dense: true,
-              title: Text("Pickup"),
-              subtitle: Column(
-                children: [
-                  Text(_pickUpAddress?.addressLine),
-                  Divider(),
-                ],
-              ),
-            ),
-            if(dropOffLocation!=null && mode!=SelectionMode.dropOff && _dropOffAddress!=null)  ListTile(
-              leading: Icon(CupertinoIcons.location,color: Colors.red,),
-              dense: true,
-              title: Text("Drop off"),
-              subtitle: Text(_dropOffAddress?.addressLine),
-            ),
-            RaisedActionButton(
-              label: mode == SelectionMode.pickUp ? 'Confirm Pickup' :
-              (mode == SelectionMode.dropOff ? 'Confirm DropOff' : (mode == SelectionMode.vehicle ? 'Proceed' :'')),
-              onPressed: (pickUpLocation == null && !_initiated || (mode == SelectionMode.vehicle && selectedVehicle==null)) ? null : () {
-                if(mode == SelectionMode.pickUp)
-                  setState(() {mode = SelectionMode.dropOff;});
-                else if(mode == SelectionMode.dropOff){
-                  mode = SelectionMode.vehicle;
-                  setState(() {});
-                  createRoute();
-                }
-                else if(mode == SelectionMode.vehicle && selectedVehicle!=null){
-                  navigateTo(context, DeliveryVehicleSelectionPage(
-                      selectedVehicle,
-                      l.Location(
-                        city : _pickUpAddress.locality,
-                        address : _pickUpAddress.addressLine,
-                        latitude : pickUpLocation.latitude,
-                        longitude : pickUpLocation.longitude,
-                      ),
-                    l.OrderLocation(
-                      latitude : dropOffLocation.latitude,
-                      longitude : dropOffLocation.longitude,
-                    )..address = _dropOffAddress.addressLine
-                      ..city = _dropOffAddress.locality
-                      ..latitude = dropOffLocation.latitude
-                      ..longitude = dropOffLocation.longitude
+        bottom: BottomAction(
+          dropOffAddress: _dropOffAddress,
+          dropOff: dropOffLocation,
+          pickup: pickUpLocation,
+          pickUpAddress: _pickUpAddress,
+          initiated: _initiated,
+          onConfirmedDropOff: createRoute,
+          mode: mode,
+          vehicle: selectedVehicle,
+          onChanged: (SelectionMode _mode)=> mode = _mode,
+          proceedOrder: () async {
+            _order.clearProducts();
+            _item.product = selectedVehicle;
+            _item.pickUpLocation = l.Location(
+              city : _pickUpAddress.locality,
+              address : _pickUpAddress.addressLine,
+              latitude : pickUpLocation.latitude,
+              longitude : pickUpLocation.longitude,
+            );
+            _order.location = l.OrderLocation(
+              latitude : dropOffLocation.latitude,
+              longitude : dropOffLocation.longitude,
+            )..address = _dropOffAddress.addressLine
+              ..city =  _dropOffAddress.locality
+              ..latitude = dropOffLocation.latitude
+              ..longitude = dropOffLocation.longitude;
+
+            await performLazyTask(context, () async {
+              var _rest = await EstimatedPriceRest().getPrice({
+                'vehicle' : selectedVehicle.id,
+                'pickUpLat' : _item.pickUpLocation.latitude,
+                'pickUpLng' : _item.pickUpLocation.longitude,
+                'dropOffLat' : _order.location.latitude,
+                'dropOffLng' : _order.location.longitude,
+              });
+              if(_rest == null ) return;
+              final location = await showDialog(
+                  context: context,
+                  builder: (context) => ConfirmationDialog(
+                    title: Text('Proceed'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        DetailsTable([
+                          PriceRow(
+                            'Estimated Price',
+                            _rest.price,
+                          ),
+                          TableRow(
+                              children: [
+                                Text("Distance",style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey,
+                                  fontFamily: 'Lato',
+                                  height: 1.9,
+                                ),),
+                                Text(_rest.distance.toString() + " km",textAlign: TextAlign.right,),
+                              ]
+                          )
+                        ]),
+                      ],
+                    ),
                   ));
-                }
-                // if(!selectedPickupLocation) setState(() { selectedPickupLocation = true;});
+
+              if (location != true) return;
+              _item.distance = _rest.distance;
+              _order.addProduct(
+                _item, _rest.price,
+              );
+              navigateTo(context, DeliveryVehicleOrderConfirmationPage(_order));
+
+            },message: 'Processing');
 
 
-
-              }
-              // onPressed: (pickUpLocation != null && _initiated && selectedVehicle!=null)
-              //     ? () {
-              //   navigateTo(context, DeliveryVehicleSelectionPage(
-              //       selectedVehicle,
-              //       l.Location(
-              //         city : _pickUpAddress.locality,
-              //         address : _pickUpAddress.addressLine,
-              //         latitude : pickUpLocation.latitude,
-              //         longitude : pickUpLocation.longitude,
-              //       )
-              //   ));
-              //
-              // }
-              //     : null,
-            ),
-          ],
+          },
         ),
       ),
     );
@@ -324,6 +338,7 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
           child: SimpleFutureBuilder.simpler(
               context: context,
               future: vehicleTypes,
+              noDataChild: Center(child: Text("No Vehicles Found")),
               builder: (List<DeliveryVehicle> vehicles) {
                return InkWell(
                  onTap: () async {
@@ -332,8 +347,8 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
                    });
                    if(_vehicle!=null) setState(() {
                      selectedVehicle = _vehicle;
-                     showNearbyDrivers();
                    });
+                  await showNearbyDrivers();
                  },
                  child: Container(
                     decoration: BoxDecoration(
@@ -396,7 +411,8 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
     }
   }
 
-  _setLocationOnMap(LatLng location) async {
+  _setLocationOnMap(LatLng location,[bool fromDrag=false]) async {
+   if(fromDrag) print("called from drag");
     if (_controller != null) {
       showDialog(
         context: context,
@@ -416,13 +432,19 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
       else if(mode == SelectionMode.dropOff){
         dropOffLocation = location;
       }
+      else if(mode == SelectionMode.vehicle){
+        if(fromDrag && pickUpLocation!=null && dropOffLocation!=null){
+          createRoute();
+          if(selectedVehicle!=null)  showNearbyDrivers();
+        }
+      }
     }
     _markers
       ..add(Marker(
         draggable: true,
         position: mode == SelectionMode.pickUp ? pickUpLocation : dropOffLocation,
         markerId: MarkerId( mode == SelectionMode.pickUp ? 'pickup' : 'dropOff'),
-        onDragEnd: _setLocationOnMap,
+        onDragEnd: (LatLng val)=> _setLocationOnMap(val,true),
         icon: mode == SelectionMode.pickUp ? pickUpLocationBitmap : null
       ));
 
@@ -440,6 +462,100 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
     setState(() {});
   }
 }
+
+class BottomAction extends StatefulWidget {
+  SelectionMode mode;
+  final LatLng pickup;
+  final LatLng dropOff;
+  final Address pickUpAddress;
+  final Address dropOffAddress;
+  final bool initiated;
+  final DeliveryVehicle vehicle;
+  final onConfirmedDropOff;
+  final Function(SelectionMode mode) onChanged;
+  final Function proceedOrder;
+  BottomAction({this.pickup,this.mode,
+    this.onChanged,
+    this.dropOffAddress,this.pickUpAddress,
+    this.vehicle,
+    this.proceedOrder,
+    this.onConfirmedDropOff,
+    this.dropOff,this.initiated});
+  @override
+  _BottomActionState createState() => _BottomActionState();
+}
+
+class _BottomActionState extends State<BottomAction> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if(widget.pickup!=null && widget.mode!=SelectionMode.pickUp && widget.pickUpAddress!=null)  ListTile(
+          leading: Icon(CupertinoIcons.location,color: Theme.of(context).accentColor,),
+          dense: true,
+          title: Text("Pickup"),
+          subtitle: Column(
+            children: [
+              Text(widget.pickUpAddress?.addressLine),
+              Divider(),
+            ],
+          ),
+        ),
+        if(widget.dropOff!=null && widget.mode!=SelectionMode.dropOff && widget.dropOffAddress!=null)  ListTile(
+          leading: Icon(CupertinoIcons.location,color: Colors.red,),
+          dense: true,
+          title: Text("Drop off"),
+          subtitle: Text(widget.dropOffAddress?.addressLine),
+        ),
+        RaisedActionButton(
+            label: _label,
+            onPressed: enabled ? () {
+              if(widget.mode == SelectionMode.pickUp)
+                setState(() {
+                  widget.mode = SelectionMode.dropOff;
+                  widget.onChanged(SelectionMode.dropOff);
+                });
+              else if(widget.mode == SelectionMode.dropOff){
+                widget.mode = SelectionMode.vehicle;
+                widget.onChanged(SelectionMode.vehicle);
+                widget.onConfirmedDropOff();
+                setState(() {});
+              }
+              else if(widget.mode == SelectionMode.vehicle && widget.vehicle!=null){
+                widget.proceedOrder();
+                return;
+
+                // navigateTo(context, DeliveryVehicleSelectionPage(
+                //     widget.vehicle,
+                //     l.Location(
+                //       city : widget.pickUpAddress.locality,
+                //       address : widget.pickUpAddress.addressLine,
+                //       latitude : widget.pickup.latitude,
+                //       longitude : widget.pickup.longitude,
+                //     ),
+                //     l.OrderLocation(
+                //       latitude : widget.dropOff.latitude,
+                //       longitude : widget.dropOff.longitude,
+                //     )..address = widget.dropOffAddress.addressLine
+                //       ..city =  widget.dropOffAddress.locality
+                //       ..latitude = widget.dropOff.latitude
+                //       ..longitude = widget.dropOff.longitude
+                // ));
+              }} : null
+        ),
+      ],
+    );
+  }
+
+  String get _label=> widget.mode == SelectionMode.pickUp ? 'Confirm Pickup' :
+    (widget.mode == SelectionMode.dropOff ? 'Confirm DropOff' : (widget.mode == SelectionMode.vehicle ? 'Proceed' : ''));
+
+  bool get enabled=> !(widget.pickup == null && !widget.initiated || (widget.mode == SelectionMode.vehicle && widget.vehicle==null));
+
+}
+
+
 
 class _MapUtilsImpl {
   final pickUpLocation = loc.Location();
@@ -472,7 +588,7 @@ class GoogleMapsServices{
     query.write('&destination=${destination.latitude},${destination.longitude}');
     print(query.toString());
     //TODO modified
-    http.Response response = await http.get(Uri(path:query.toString()));
+    http.Response response = await http.get(Uri.parse(query.toString()));
     Map values = jsonDecode(response.body);
     return values["routes"][0]["overview_polyline"]["points"];
   }

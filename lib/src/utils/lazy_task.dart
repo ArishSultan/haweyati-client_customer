@@ -4,7 +4,7 @@ import 'package:pedantic/pedantic.dart';
 
 Future<dynamic> performLazyTask(
   BuildContext context,
-  Future<dynamic> Function() task, {
+  Future<dynamic> Function()  task,  {
   String message = 'Please Wait',
   bool persistent = true,
 }) async {

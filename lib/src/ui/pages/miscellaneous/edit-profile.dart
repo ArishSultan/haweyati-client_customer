@@ -104,7 +104,7 @@ class _EditProfileState extends State<EditProfile> {
               user.profile.name = name;
               user.profile.image = img;
 
-              await user.save();
+               AppData().user = user;
 
               Navigator.pop(context);
               Navigator.pop(context);

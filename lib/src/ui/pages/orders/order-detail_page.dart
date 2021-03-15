@@ -6,6 +6,7 @@ import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
 import 'package:haweyati/src/common/modals/util.dart';
 import 'package:haweyati/src/const.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:haweyati/src/rest/_new/_config.dart';
 import 'package:haweyati/src/rest/orders_service.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
@@ -14,11 +15,11 @@ import 'package:haweyati/src/ui/views/location-tracking_view.dart';
 import 'package:haweyati/src/ui/views/order-confirmation_view.dart';
 import 'package:haweyati/src/ui/widgets/app-bar.dart';
 import 'package:haweyati/src/ui/widgets/buttons/flat-action-button.dart';
-import 'package:haweyati/src/ui/widgets/buttons/raised-action-button.dart';
 import 'package:haweyati/src/ui/widgets/details-table.dart';
 import 'package:haweyati/src/ui/widgets/pickup-location_picker.dart';
 import 'package:haweyati/src/ui/widgets/rate-bottom-sheet.dart';
 import 'package:haweyati/src/ui/widgets/table-rows.dart';
+import 'package:haweyati/src/utils/lazy_task.dart';
 import 'package:haweyati/src/utils/navigator.dart';
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati/src/ui/views/scroll_view.dart';
@@ -28,8 +29,11 @@ import 'package:haweyati/src/ui/widgets/rich-price-text.dart';
 import 'package:haweyati/src/ui/pages/orders/my-orders_page.dart';
 import 'package:haweyati_client_data_models/models/order/products/delivery-vehicle_orderable.dart';
 import 'package:haweyati_client_data_models/models/order/products/single-scaffolding_orderable.dart';
+import 'package:haweyati_client_data_models/utils/toast_utils.dart';
 import 'package:haweyati_client_data_models/widgets/variants-tablerow.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:ui' as ui;
 class OrderDetailPage extends StatefulWidget {
@@ -48,6 +52,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
   bool isAwaitingSupplier = false;
   bool isAwaitingDriver = false;
   static bool hasSupplierSelectedItems = false;
+  String invoiceDownloadPath;
 
   @override
   void initState() {
@@ -66,6 +71,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
      isAwaitingSupplier =order.deliveryFee == null &&
           order.status == OrderStatus.pending &&
           order.type != OrderType.deliveryVehicle;
+
      isAwaitingDriver = order.deliveryFee == null &&
           order.status == OrderStatus.accepted &&
           order.type != OrderType.deliveryVehicle &&
@@ -105,7 +111,20 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
           || awaitingPayment ||
           isAwaitingDriver) ? 20 : 20),
       appBar: HaweyatiAppBar(actions: [
+      if(order.status == OrderStatus.delivered)  IconButton(
+          icon: Icon(Icons.print),
+          onPressed: () async {
+            if(invoiceDownloadPath==null)
+            await performLazyTask(context, () async {
+              var dir = await getApplicationDocumentsDirectory();
+              invoiceDownloadPath = dir.path+'/${order.number}'+ '.pdf';
+              await Dio().download("$apiUrl/reports/order-invoice/${order.id}", invoiceDownloadPath);
+            },message: 'Generating Invoice');
 
+            await Share.shareFiles([invoiceDownloadPath]);
+
+          },
+        ),
         IconButton(
           icon: Image.asset(CustomerCareIcon, width: 20),
           onPressed: () => Navigator.of(context).pushNamed(HELPLINE_PAGE),
@@ -130,30 +149,21 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                     var order = widget.order;
                     final result = await selectPayment(context, order.total);
                     if (result == null) {
-                      //Todo: Snackbar
-                      // Scaffold.of(context)
-                      //     .showSnackBar(PaymentMethodNotSelectedSnackBar());
+                      showErrorToast("No payment method selected");
                       return;
                     } else {
                       order.paymentType = result.method;
                       order.paymentIntentId = result.intentId;
                     }
 
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return WaitingDialog(
-                            message: 'Processing order',
-                          );
-                        });
+                    await performLazyTask(context,() async {
+                      await OrdersService().processPayment({
+                        '_id': order.id,
+                        'paymentType': order.paymentType,
+                        'paymentIntentId': order.paymentIntentId,
+                      });
 
-                    await OrdersService().processPayment({
-                      '_id': order.id,
-                      'paymentType': order.paymentType,
-                      'paymentIntentId': order.paymentIntentId,
-                    });
-
-                    Navigator.pop(context);
+                    },message: 'Processing order');
                     Navigator.pop(context);
                   },
                 ) : isAwaitingSupplier || isAwaitingDriver
@@ -178,13 +188,10 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
                       );
                     });
                 if (confirmed ?? false) {
-                  showDialog(
-                      context: context,
-                      builder: (context) =>
-                          WaitingDialog(message: 'Canceling Order'));
-                  await OrdersService().cancelOrder(widget.order.id);
-                  widget.order.status = OrderStatus.canceled;
-                  Navigator.of(context).pop();
+                  await performLazyTask(context, () async {
+                    await OrdersService().cancelOrder(widget.order.id);
+                    widget.order.status = OrderStatus.canceled;
+                  },message: 'Cancelling order');
                   Navigator.of(context).pop();
                   setState(() {});
                 }
@@ -219,8 +226,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
         ),
         SliverList(
           delegate: SliverChildBuilderDelegate(
-            (context, index) =>
-                _OrderProductWidget(widget.order.products[index],hasSupplierSelectedItems),
+            (context, index) => _OrderProductWidget(widget.order.products[index],hasSupplierSelectedItems),
             childCount: widget.order.products.length,
           ),
         ),
@@ -229,11 +235,11 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             textBaseline: TextBaseline.alphabetic,
             defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
             children: [
-              if (order.deliveryFee != null)  priceRow("Delivery Fee", order.deliveryFee),
-              if (order.rewardPointsValue != null)  priceRow("Reward Value Used", order.rewardPointsValue),
-              if (order.couponValue != null)  priceRow("Discount ( ${order.coupon} ) ", order.couponValue),
-              priceRow("Subtotal", order.subtotal == 0 ? 0 : order.subtotal - order.vat),
-              priceRow("VAT (15%)", order.vat)
+              priceRow("Subtotal", order.itemsSubtotal),
+              if (order.deliveryFee != null)  priceRow("Delivery Fee ( + )", order.deliveryFee),
+              if (order.rewardPointsValue != null)  priceRow("Reward Value Used ( - )", order.rewardPointsValue),
+              if (order.couponValue != null)  priceRow("Discount ( ${order.coupon} ( - ) ) ", order.couponValue),
+              priceRow("VAT (15%) ( + )", order.vat),
             ],
           ),
         ),
@@ -306,7 +312,7 @@ TableRow priceRow(String title,double value){
 Widget personBuilder({String type,String image,String name,String contact,Function onTap,double rating}){
   return SliverToBoxAdapter(
     child: InkWell(
-      onTap: onTap,
+      // onTap: onTap,
       child: DarkContainer(
         margin: const EdgeInsets.only(bottom: 10,top: 0),
         padding: const EdgeInsets.only(left: 15,right: 15,top: 10),
@@ -344,7 +350,7 @@ Widget personBuilder({String type,String image,String name,String contact,Functi
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(contact, style: TextStyle()),
-                  StarRating(size: 20,rating: rating ?? 0,padding: EdgeInsets.zero,)
+                  // StarRating(size: 20,rating: rating ?? 0,padding: EdgeInsets.zero,)
                 ],
               ),
               trailing: Padding(

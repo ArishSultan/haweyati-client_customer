@@ -4,8 +4,6 @@ import 'package:haweyati/src/common/modals/confirmation-dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/rest/haweyati-service.dart';
 import 'package:haweyati/src/rest/notifications_service.dart';
-import 'package:haweyati/src/services/dynamic-links_service.dart';
-import 'package:haweyati/src/ui/widgets/rating-bar.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -169,7 +167,7 @@ class _HomePageState extends State<HomePage> {
                     radius: 50,
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.white,
-                 backgroundImage: (_appData.user?.profile?.image?.name ==null) ?
+                 backgroundImage: (AppData().user?.profile?.image?.name ==null) ?
                  AssetImage("assets/icons/avatar.png")
                  : NetworkImage(HaweyatiService.convertImgUrl(_appData.user.profile.image.name)),
                   )),
@@ -218,7 +216,7 @@ class _HomePageState extends State<HomePage> {
                               Spacer(),
                               Image.asset(GiftIcon,color: Colors.black,scale: 10),
                               SizedBox(width: 10,),
-                              Text("Rewards : ${_appData.user.points} points",style: TextStyle(fontSize: 11),),
+                              Text("Rewards : ${AppData().user.points} points",style: TextStyle(fontSize: 11),),
                               Spacer(),
                             ],
                           ),

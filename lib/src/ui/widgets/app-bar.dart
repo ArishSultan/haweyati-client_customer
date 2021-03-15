@@ -32,21 +32,21 @@ class HaweyatiAppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> _actions = [];
-    if (!hideHome)
-      _actions.add(IconButton(
-        icon: Image.asset(HomeIcon, width: 23, color: Colors.white),
-        onPressed: () async {
-          if (confirmOrderCancel) {
-            final result = await showDialog(
-                context: context,
-                builder: (context) => CancelOrderConfirmationDialog());
-
-            if (result ?? true) return;
-          }
-          Navigator.of(context).popUntil((route) => false);
-          Navigator.of(context).pushNamed(HOME_PAGE);
-        },
-      ));
+    // if (!hideHome)
+    //   _actions.add(IconButton(
+    //     icon: Image.asset(HomeIcon, width: 23, color: Colors.white),
+    //     onPressed: () async {
+    //       if (confirmOrderCancel) {
+    //         final result = await showDialog(
+    //             context: context,
+    //             builder: (context) => CancelOrderConfirmationDialog());
+    //
+    //         if (result ?? true) return;
+    //       }
+    //       Navigator.of(context).popUntil((route) => false);
+    //       Navigator.of(context).pushNamed(HOME_PAGE);
+    //     },
+    //   ));
     if (!hideCart)
       _actions.add(Center(
         child: ValueListenableBuilder(
