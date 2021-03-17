@@ -218,10 +218,8 @@ class DeliveryVehicleOrderConfirmationPage extends StatelessWidget {
           image: holder.item.product.image.name,
           table: DetailsTableAlt([
             'Price',
-            'Quantity',
           ], [
             '${holder.subtotal.toStringAsFixed(2)} SAR',
-            lang.nPieces(holder.item.qty),
           ], [
             2,
             1,

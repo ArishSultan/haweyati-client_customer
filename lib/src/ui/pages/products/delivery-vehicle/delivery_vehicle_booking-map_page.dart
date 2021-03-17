@@ -230,9 +230,11 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
               ..city =  _dropOffAddress.locality
               ..latitude = dropOffLocation.latitude
               ..longitude = dropOffLocation.longitude;
+            var _rest;
 
             await performLazyTask(context, () async {
-              var _rest = await EstimatedPriceRest().getPrice({
+
+               _rest = await EstimatedPriceRest().getPrice({
                 'vehicle' : selectedVehicle.id,
                 'pickUpLat' : _item.pickUpLocation.latitude,
                 'pickUpLng' : _item.pickUpLocation.longitude,
@@ -240,44 +242,41 @@ class _DeliveryVehicleMapPageState extends State<DeliveryVehicleMapPage> {
                 'dropOffLng' : _order.location.longitude,
               });
               if(_rest == null ) return;
-              final location = await showDialog(
-                  context: context,
-                  builder: (context) => ConfirmationDialog(
-                    title: Text('Proceed'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        DetailsTable([
-                          PriceRow(
-                            'Estimated Price',
-                            _rest.price,
-                          ),
-                          TableRow(
-                              children: [
-                                Text("Distance",style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey,
-                                  fontFamily: 'Lato',
-                                  height: 1.9,
-                                ),),
-                                Text(_rest.distance.toString() + " km",textAlign: TextAlign.right,),
-                              ]
-                          )
-                        ]),
-                      ],
-                    ),
-                  ));
-
-              if (location != true) return;
-              _item.distance = _rest.distance;
-              _order.addProduct(
-                _item, _rest.price,
-              );
-              navigateTo(context, DeliveryVehicleOrderConfirmationPage(_order));
-
             },message: 'Processing');
+            final location = await showDialog(
+                context: context,
+                builder: (context) => ConfirmationDialog(
+                  title: Text('Proceed'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      DetailsTable([
+                        PriceRow(
+                          'Estimated Price',
+                          _rest.price,
+                        ),
+                        TableRow(
+                            children: [
+                              Text("Distance",style: TextStyle(
+                                fontSize: 13,
+                                color: Colors.grey,
+                                fontFamily: 'Lato',
+                                height: 1.9,
+                              ),),
+                              Text(_rest.distance.toString() + " km",textAlign: TextAlign.right,),
+                            ]
+                        )
+                      ]),
+                    ],
+                  ),
+                ));
 
-
+            if (location != true) return;
+            _item.distance = _rest.distance;
+            _order.addProduct(
+              _item, _rest.price,
+            );
+            navigateTo(context, DeliveryVehicleOrderConfirmationPage(_order));
           },
         ),
       ),

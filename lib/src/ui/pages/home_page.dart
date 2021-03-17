@@ -44,7 +44,7 @@ class _HomePageState extends State<HomePage> {
       AppData().user = value;
     });
     Dio().get(apiUrl + '/unit/point-value').then((value) {
-    double rewardValue =  double.tryParse(value.data.toString()) ?? 0.0;
+    double rewardValue =  double.tryParse(value.data['value'].toString()) ?? 0.0;
          AppData().updateRewardPointSARValue(rewardValue);
     });
 
