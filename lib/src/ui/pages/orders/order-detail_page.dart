@@ -235,7 +235,7 @@ class _OrderDetailPageState extends State<OrderDetailPage> {
             textBaseline: TextBaseline.alphabetic,
             defaultVerticalAlignment: TableCellVerticalAlignment.baseline,
             children: [
-              priceRow("Subtotal", order.itemsSubtotal),
+              priceRow("Subtotal", order.subtotal),
               if (order.deliveryFee != null)  priceRow("Delivery Fee ( + )", order.deliveryFee),
               if (order.rewardPointsValue != null)  priceRow("Reward Value Used ( - )", order.rewardPointsValue),
               if (order.couponValue != null)  priceRow("Discount ( ${order.coupon} ( - ) ) ", order.couponValue),

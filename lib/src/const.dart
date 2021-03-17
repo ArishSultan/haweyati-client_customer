@@ -43,10 +43,10 @@ const DeliveryVehiclesServiceImage = '$_image/home-page/delivery-vehicles-bg.png
 const FinishingMaterialsServiceImage = '$_image/home-page/finishing-materials-bg.png';
 const ScaffoldingServiceImage = '$_image/home-page/scaffolding-bg.png';
 
-const FeatureImage1 = '$_image/features-page/feature-1.png';
-const FeatureImage2 = '$_image/features-page/feature-2.png';
-const FeatureImage3 = '$_image/features-page/feature-3.png';
-const FeatureImage4 = '$_image/features-page/feature-4.png';
+const FeatureImage1 = '$_image/features-page/1.png';
+const FeatureImage2 = '$_image/features-page/2.png';
+const FeatureImage3 = '$_image/features-page/3.png';
+const FeatureImage4 = '$_image/features-page/4.png';
 
 /// FeaturesPage Images
 

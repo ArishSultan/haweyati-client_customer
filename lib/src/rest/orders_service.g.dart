@@ -23,7 +23,6 @@ class _OrdersService implements OrdersService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(order?.toJson() ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final _result = await _dio.request<Map<String, dynamic>>('/orders/dummy',
         queryParameters: queryParameters,
         options: RequestOptions(
@@ -60,7 +59,6 @@ class _OrdersService implements OrdersService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     await _dio.request<void>('/orders/process-payment',
         queryParameters: queryParameters,
         options: RequestOptions(

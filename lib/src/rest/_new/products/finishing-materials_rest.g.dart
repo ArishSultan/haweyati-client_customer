@@ -65,7 +65,7 @@ class _FinishingMaterialsRest implements FinishingMaterialsRest {
         data: _data);
     var value = _result.data
         .map((dynamic i) =>
-        FinishingMaterial.fromJson(i as Map<String, dynamic>))
+            FinishingMaterial.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:haweyati/src/const.dart';
+import 'package:haweyati/src/base/assets.dart';
 
 class DottedBackgroundView extends Container {
   DottedBackgroundView({
@@ -14,7 +14,7 @@ class DottedBackgroundView extends Container {
       image: DecorationImage(
         fit: BoxFit.fitWidth,
         alignment: Alignment(0, 1),
-        image: AssetImage(Pattern)
+        image: AssetImage(Assets.dottedPatternImage)
       )
     )
   );

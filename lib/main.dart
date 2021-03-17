@@ -5,25 +5,26 @@ import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati_client_data_models/mixins/locale_mixin.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await AppData.initiate();
-  await Firebase.initializeApp();
-
-  final _appData = AppData();
-  // fcm.onTokenRefresh.listen((event) {
-  //   if (_appData.isAuthenticated) {
-  //     EasyRest().$patch(
-  //       endpoint: 'fcm/token',
-  //       payload: _appData.user.profile..token = event
-  //     );
-  //   }
-  // });
-
-  runApp(
-    HaweyatiApp(
-      locale: LocaleData.locale,
-      status: await _appData.isFuseBurnt,
-    ),
-  );
+  App.initializeAndRun();
+  // WidgetsFlutterBinding.ensureInitialized();
+  //
+  // await AppData.initiate();
+  // await Firebase.initializeApp();
+  //
+  // final _appData = AppData();
+  // // fcm.onTokenRefresh.listen((event) {
+  // //   if (_appData.isAuthenticated) {
+  // //     EasyRest().$patch(
+  // //       endpoint: 'fcm/token',
+  // //       payload: _appData.user.profile..token = event
+  // //     );
+  // //   }
+  // // });
+  //
+  // runApp(
+  //   HaweyatiApp(
+  //     locale: LocaleData.locale,
+  //     status: await _appData.isFuseBurnt,
+  //   ),
+  // );
 }

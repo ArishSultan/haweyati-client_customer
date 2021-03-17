@@ -23,7 +23,6 @@ class __AuthService implements _AuthService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(data?.toJson() ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final _result = await _dio.request<Map<String, dynamic>>('/auth/sign-in',
         queryParameters: queryParameters,
         options: RequestOptions(
@@ -79,7 +78,6 @@ class __AuthService implements _AuthService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(customer?.toJson() ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final _result = await _dio.request<Map<String, dynamic>>('/customers/guest',
         queryParameters: queryParameters,
         options: RequestOptions(
@@ -99,7 +97,6 @@ class __AuthService implements _AuthService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(customer?.toJson() ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final _result = await _dio.request<Map<String, dynamic>>(
         '/customers/convert-guest',
         queryParameters: queryParameters,
@@ -137,7 +134,6 @@ class __AuthService implements _AuthService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(customer?.toJson() ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     final _result = await _dio.request<Map<String, dynamic>>('/customers',
         queryParameters: queryParameters,
         options: RequestOptions(
@@ -195,7 +191,6 @@ class __AuthService implements _AuthService {
     final queryParameters = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(customer?.toJson() ?? <String, dynamic>{});
-    _data.removeWhere((k, v) => v == null);
     await _dio.request<void>('/customers/new',
         queryParameters: queryParameters,
         options: RequestOptions(

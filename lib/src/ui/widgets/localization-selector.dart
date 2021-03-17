@@ -1,13 +1,14 @@
+// @dart=2.12
+
 import 'package:flutter/material.dart';
+import 'package:haweyati/src/base/config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/ui/modals/dialogs/waiting_dialog.dart';
-import 'package:haweyati_client_data_models/data.dart';
-import 'package:haweyati_client_data_models/mixins/locale_mixin.dart';
 
 class LocalizationSelector extends StatelessWidget {
   LocalizationSelector();
 
-  final _appData = AppData();
+  final _appConfig = AppConfig();
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class LocalizationSelector extends StatelessWidget {
       icon: Icon(Icons.language, size: 20),
       dropdownColor: Color(0xFF313F53),
 
-      value: LocaleData.locale.value,
+      value: _appConfig.locale,
 
       items: [
         DropdownMenuItem(
@@ -39,15 +40,15 @@ class LocalizationSelector extends StatelessWidget {
       ],
 
       onChanged: (val) async {
-        if (LocaleData.locale.value.languageCode != val.languageCode) {
+        if (_appConfig.locale.languageCode != val?.languageCode) {
           /// Create 2s delay for smooth translation
           showDialog(
             context: context,
             builder: (context) => WaitingDialog(
-              message: AppLocalizations.of(context).changingLanguage
+              message: AppLocalizations.of(context)?.changingLanguage
             )
           );
-          _appData.changeLocale(await Future.delayed(Duration(seconds: 1), () => val));
+          _appConfig.locale = val; //await Future.delayed(Duration(seconds: 1), () => val);
           Navigator.of(context).pop();
         }
       }

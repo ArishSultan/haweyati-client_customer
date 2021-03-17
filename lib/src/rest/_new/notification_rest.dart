@@ -7,6 +7,7 @@ part 'notification_rest.g.dart';
 
 @RestApi(baseUrl: apiUrl)
 abstract class NotificationRest {
+  NotificationRest._();
   factory NotificationRest() => _NotificationRest(defaultDio);
 
   @GET('/fcm/get-unseen/{id}')

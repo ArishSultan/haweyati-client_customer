@@ -6,8 +6,8 @@ part of 'notification_rest.dart';
 // RetrofitGenerator
 // **************************************************************************
 
-class _NotificationRest implements NotificationRest {
-  _NotificationRest(this._dio, {this.baseUrl}) {
+class _NotificationRest extends NotificationRest {
+  _NotificationRest(this._dio, {this.baseUrl}) : super._() {
     ArgumentError.checkNotNull(_dio, '_dio');
     baseUrl ??= 'http://192.168.10.100:4000';
   }
@@ -32,13 +32,8 @@ class _NotificationRest implements NotificationRest {
         data: _data);
     var value = _result.data
         .map((dynamic i) =>
-        NotificationRequest.fromJson(i as Map<String, dynamic>))
+            NotificationRequest.fromJson(i as Map<String, dynamic>))
         .toList();
     return value;
-  }
-
-  @override
-  Future<List<NotificationRequest>> get() {
-    return this._get(AppData().user.id);
   }
 }

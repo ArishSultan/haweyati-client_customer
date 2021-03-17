@@ -77,19 +77,3 @@ class NotificationDataAdapter extends TypeAdapter<NotificationData> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
-
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
-
-Notification _$NotificationFromJson(Map<String, dynamic> json) {
-  return Notification()
-    ..body = json['body'] as String
-    ..title = json['title'] as String;
-}
-
-Map<String, dynamic> _$NotificationToJson(Notification instance) =>
-    <String, dynamic>{
-      'body': instance.body,
-      'title': instance.title,
-    };

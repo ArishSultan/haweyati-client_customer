@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:haweyati/src/const.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:haweyati/src/routes.dart';
 import 'package:haweyati/src/ui/views/localized_view.dart';
 import 'package:haweyati/src/ui/views/no-scroll_view.dart';
@@ -85,10 +84,10 @@ class _BottomControls extends StatelessWidget {
           margin: const EdgeInsets.fromLTRB(13, 0, 13, 23),
           child: Row(children: [
             Wrap(children: [
-              _FeatureViewIndicator(0, value),
-              _FeatureViewIndicator(1, value),
-              _FeatureViewIndicator(2, value),
-              _FeatureViewIndicator(3, value)
+              // _FeatureViewIndicator(0, value),
+              // _FeatureViewIndicator(1, value),
+              // _FeatureViewIndicator(2, value),
+              // _FeatureViewIndicator(3, value)
             ]),
 
             Spacer(),
@@ -104,21 +103,21 @@ class _BottomControls extends StatelessWidget {
                     horizontal: 12, vertical: 11
                   ))
                 ),
-                label: Transform.rotate(
-                  child: Image.asset(NextFeatureIcon, width: flag ? 20 : 30),
-                  angle: AppLocalizations.of(context).localeName == 'ar' ? 3.14 : 0
-                ),
-                icon: Text(AppLocalizations.of(context).getStarted),
+                // label: Transform.rotate(
+                //   child: Image.asset(NextFeatureIcon, width: flag ? 20 : 30),
+                //   angle: AppLocalizations.of(context).localeName == 'ar' ? 3.14 : 0
+                // ),
+                // icon: Text(AppLocalizations.of(context).getStarted),
               )
             else
               SizedBox(
                 width: 60,
                 height: 60,
                 child: TextButton(
-                  child: Transform.rotate(
-                    angle: AppLocalizations.of(context).localeName == 'ar' ? 3.14 : 0,
-                    child: Image.asset(NextFeatureIcon, width: flag ? 20 : 30)
-                  ),
+                  // child: Transform.rotate(
+                  //   // angle: AppLocalizations.of(context).localeName == 'ar' ? 3.14 : 0,
+                  //   // child: Image.asset(NextFeatureIcon, width: flag ? 20 : 30)
+                  // ),
 
                   onPressed: () => controller.nextPage(
                     curve: Curves.easeOut,
@@ -157,16 +156,7 @@ class _FeatureView extends Column {
     )
   ], crossAxisAlignment: CrossAxisAlignment.start);
 }
-class _FeatureViewIndicator extends Container {
-  _FeatureViewIndicator(int selected, int current): super(
-    width: 7, height: 7,
-    margin: const EdgeInsets.only(left: 5),
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: selected == current ? Color(0xFF313F53) : Colors.grey.shade300
-    )
-  );
-}
+
 
 class _AppBar extends StatelessWidget with PreferredSizeWidget {
   final String skipText;
